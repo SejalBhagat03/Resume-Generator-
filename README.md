@@ -2,6 +2,12 @@
 
 This project is a **programmatic resume builder** designed to compile a beautifully formatted, single-page, ATS-friendly resume PDF from structured data.
 
+## 💡 Why I Built This (My Inspiration)
+
+As a student, I faced numerous challenges when building and updating my resume in standard word processors. I don't have Microsoft Office installed on my laptop because it is too costly, and formatting a perfect, single-page professional resume in free alternative editors often resulted in frustrating layout shifts and broken margins.
+
+To solve this problem permanently, I built this **data-driven resume generator**. Instead of dealing with frustrating visual formatting, I can now compile a pixel-perfect, ATS-compliant resume instantly—**simply by adding my details to a structured JSON file!**
+
 ---
 
 ## 📂 What this Folder is For
