@@ -4,14 +4,6 @@ This project is a **programmatic resume builder** designed to compile a beautifu
 
 ---
 
-## 🎨 Visual Preview
-
-Here is a visual preview of the generated single-page vector PDF resume:
-
-![Resume Visual Preview](resume_preview.png)
-
----
-
 ## 📂 What this Folder is For
 
 This folder contains a lightweight automation system to manage and build your professional resume. Instead of using complex design software or standard word processors (which frequently suffer from layout shifts and page-overflow issues), you maintain your resume's content and design using **Resume-as-Code** principles:
