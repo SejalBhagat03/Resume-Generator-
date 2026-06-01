@@ -65,3 +65,5 @@ Check the output PDF **[Sejal_Bhagat_Resume.pdf](file:///c:/Users/HP/Documents/r
 * All text is formatted correctly.
 * The layout fits beautifully on a single page without overflowing to page 2 (the script will show a `[WARNING]` in your console if it overflows).
 * Hyperlinks (like GitHub/LinkedIn/Email) are fully functional.
+
+<!-- Last Updated: June 2026 -->
