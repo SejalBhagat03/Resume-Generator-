@@ -5,17 +5,17 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
-def generate_pdf():
-    pdf_filename = "Sejal_Bhagat_Resume.pdf"
-    
-    # Load resume data from JSON file
-    try:
-        with open("resume.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except Exception as e:
-        print(f"\n[ERROR] Failed to load resume.json: {e}")
-        print("Please make sure resume.json exists and is valid JSON.\n")
-        return
+def generate_pdf(data=None, pdf_filename="Sejal_Bhagat_Resume.pdf"):
+    # Load resume data from JSON file if not provided
+    if data is None:
+        try:
+            with open("resume.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception as e:
+            msg = f"Failed to load resume.json: {e}"
+            print(f"\n[ERROR] {msg}")
+            print("Please make sure resume.json exists and is valid JSON.\n")
+            return False, msg
     
     # 0.28 in top/bottom margins, 0.5 in left/right margins to guarantee single-page fit
     top_bottom_margin = 20
@@ -334,30 +334,31 @@ def generate_pdf():
     try:
         doc.build(story)
     except (PermissionError, OSError) as e:
+        msg = f"Could not write to '{pdf_filename}'! Please make sure the PDF file is NOT currently open in Adobe Reader, Chrome, or another viewer. Error: {e}"
         print("\n" + "!" * 70)
-        print("[ERROR] Could not write to 'Sejal_Bhagat_Resume.pdf'!")
-        print("Please make sure the PDF file is NOT currently open in Adobe Reader, Chrome, or another viewer.")
-        print("Detailed error details:", str(e))
+        print(f"[ERROR] {msg}")
         print("!" * 70 + "\n")
-        return
+        return False, msg
     
     print("Resume PDF successfully compiled.")
     
+    warning_msg = None
     # Check page count and warn if it exceeds 1 page
     try:
         from pypdf import PdfReader
         reader = PdfReader(pdf_filename)
         num_pages = len(reader.pages)
         if num_pages > 1:
+            warning_msg = f"Resume layout exceeds the target page limit! Current page count: {num_pages} page(s). Please shorten your content to keep it to 1 page."
             print("\n" + "!" * 70)
-            print(f"[WARNING] Resume layout exceeds the target page limit!")
-            print(f"Current page count: {num_pages} page(s).")
-            print("Please shorten your content in 'resume.json' to keep it to 1 page.")
+            print(f"[WARNING] {warning_msg}")
             print("!" * 70 + "\n")
         else:
             print("[SUCCESS] Page count check passed: Exactly 1 page.")
     except Exception as e:
         print(f"[NOTE] Could not check page count programmatically: {e}")
+        
+    return True, warning_msg
 
 if __name__ == "__main__":
     generate_pdf()
