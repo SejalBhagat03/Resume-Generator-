@@ -12,8 +12,8 @@ venv/
 env/
 ENV/
 
-# Streamlit local config
-.streamlit/
+# Streamlit secrets only (not config)
+.streamlit/secrets.toml
 
 # Temporary generated files
 Generated_Resume.pdf
