@@ -48,11 +48,32 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Base ── */
-html, body, [data-testid="stAppViewContainer"] {
+/* ── Base — force light theme on Streamlit Cloud & local ── */
+html, body, [data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > section,
+[data-testid="stVerticalBlock"],
+.main .block-container {
   font-family: 'Inter', sans-serif !important;
   background: #F0F2F8 !important;
+  color: #1E293B !important;
 }
+
+/* Force all generic text dark so cloud dark-mode doesn't override */
+p, span, div, li, td, th, label,
+h1, h2, h3, h4, h5, h6 {
+  color: #1E293B;
+}
+
+/* Streamlit markdown elements */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] span,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+  color: #1E293B !important;
+}
+
 #MainMenu, footer, [data-testid="stHeader"],
 [data-testid="stDecoration"], [data-testid="stToolbar"] { display: none !important; }
 [data-testid="stSidebar"] { display: none !important; }
