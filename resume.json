@@ -1,9 +1,9 @@
 {
   "personal": {
-    "name": "SEJAL BHAGAT",
-    "location": "Nagpur, India",
-    "phone": "+91 9022644273",
+    "name": "Sejal Bhagat",
     "email": "bhagatsejal08@gmail.com",
+    "phone": "+91 9022644273",
+    "location": "Nagpur, India",
     "linkedin": {
       "display": "linkedin/Sejal-Bhagat",
       "url": "https://linkedin.com/in/Sejal-Bhagat"
@@ -20,7 +20,7 @@
       "company": "Royals Webtech Ltd. Pvt",
       "location": "Nagpur, India",
       "period": "Dec 2025–Present",
-      "technologies": "React, Node.js, JavaScript, Bootstrap, PostgreSQL",
+      "technologies": "React, Node.js, JavaScript, Bootstrap, PostgreSQL,Firebase",
       "bullets": [
         "Engineered responsive user interfaces utilizing React, achieving a 30% enhancement in page load performance through streamlined code and optimized image delivery, directly improving user experience.",
         "Built reusable React components, reducing development time by 25%.",
@@ -100,6 +100,7 @@
   "position_of_responsibility": [
     {
       "role": "Technical Secretary, College Technical Club",
+      "period": "",
       "bullets": [
         "Organized and coordinated technical workshops and events for students in the college technical club."
       ]

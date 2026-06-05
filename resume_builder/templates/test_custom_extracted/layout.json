@@ -1,0 +1,25 @@
+{
+  "margins": {
+    "top": 20,
+    "bottom": 20,
+    "left": 36,
+    "right": 36
+  },
+  "header": {
+    "alignment": 0,
+    "name_font_size": 16.0,
+    "contact_font_size": 9.0
+  },
+  "sections": {
+    "title_font_size": 10.125,
+    "border_below": false,
+    "border_above": true,
+    "border_color": "#2563EB"
+  },
+  "body": {
+    "font_size": 7.8,
+    "leading": 10.3,
+    "bullet_indent": 15
+  },
+  "columns": 1
+}

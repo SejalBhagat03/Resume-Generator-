@@ -1,0 +1,11 @@
+{
+  "name": "ATS Professional",
+  "description": "A high-compatibility single-column resume design optimized strictly for Applicant Tracking Systems (ATS). Features standard alignment, pure black body text, standard headers, and standard list dividers.",
+  "ats_friendly": true,
+  "features": [
+    "100% parsable single-column table layout",
+    "Standard Helvetica-only typography",
+    "Plain solid dividers",
+    "Clear, logical header details"
+  ]
+}

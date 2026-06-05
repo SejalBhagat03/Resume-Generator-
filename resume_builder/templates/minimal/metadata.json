@@ -1,0 +1,11 @@
+{
+  "name": "Minimalist Compact",
+  "description": "An ultra-clean, minimal design that optimizes whitespace and decreases line Spacers to fit maximum content onto a single page. Great for candidates with high amounts of experience.",
+  "ats_friendly": true,
+  "features": [
+    "High text density layouts",
+    "Centered compact headers",
+    "Slate 800 clean body text",
+    "Light gray divider borders"
+  ]
+}

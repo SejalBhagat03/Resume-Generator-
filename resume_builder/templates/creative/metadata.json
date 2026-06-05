@@ -1,0 +1,11 @@
+{
+  "name": "Creative Banner",
+  "description": "A stylish, centered creative resume layout featuring a full-width colored header banner, custom primary-colored circular lists, and colored underline accents. Ideal for designers, marketers, and frontend specialists.",
+  "ats_friendly": true,
+  "features": [
+    "Full-width colored header banner",
+    "Centered name and contacts grid",
+    "Primary-colored bullet markers",
+    "Sleek bold divider lines"
+  ]
+}

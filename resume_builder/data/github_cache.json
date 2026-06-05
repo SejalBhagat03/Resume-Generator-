@@ -1,0 +1,117 @@
+{
+  "sejalbhagat03": [
+    {
+      "name": "Resume-Generator-",
+      "description": "Personal resume automation tool that generates clean, ATS-friendly PDF resumes from structured data.",
+      "language": "Python",
+      "stargazers_count": 0,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/Resume-Generator-"
+    },
+    {
+      "name": "study-buddy-ai",
+      "description": "\ud83c\udf93 StudyMate AI is an AI-powered study companion that generates quizzes, flashcards, and smart summaries from your notes using Google Gemini AI. Built with React, Node.js, and MongoDB.",
+      "language": "JavaScript",
+      "stargazers_count": 1,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/study-buddy-ai"
+    },
+    {
+      "name": "SejalBhagat03",
+      "description": "Welcome to my GitHub Profile",
+      "language": null,
+      "stargazers_count": 0,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/SejalBhagat03"
+    },
+    {
+      "name": "PYTHON",
+      "description": null,
+      "language": "Python",
+      "stargazers_count": 0,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/PYTHON"
+    },
+    {
+      "name": "ShramFlow-Labour-management-system",
+      "description": "ShramFlow is a full-stack labour management platform for tracking workforce activity, work entries, payments, and daily logs. It includes role-based access, real-time dashboards, geolocation work tracking, and mobile-responsive UI built with React, Node.js, and Supabase.",
+      "language": "JavaScript",
+      "stargazers_count": 1,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/ShramFlow-Labour-management-system"
+    },
+    {
+      "name": "React",
+      "description": "React learnings",
+      "language": "JavaScript",
+      "stargazers_count": 0,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/React"
+    },
+    {
+      "name": "My-Portfolio",
+      "description": null,
+      "language": "JavaScript",
+      "stargazers_count": 1,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/My-Portfolio"
+    },
+    {
+      "name": "Store-Rating-website",
+      "description": "Store Rating App allows users to rate stores, share reviews, and discover top-rated places. It provides a clean, user-friendly interface with secure authentication and smooth data handling. Built using React for the frontend, Node.js + Express for the backend, and PostgreSQL as the database.",
+      "language": "TypeScript",
+      "stargazers_count": 1,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/Store-Rating-website"
+    },
+    {
+      "name": "DigiSewa-2025-final-year-",
+      "description": "A final year project -Digital licensing and registration system built using Node.js,express,React,Blockchain,Postgresql.",
+      "language": "TypeScript",
+      "stargazers_count": 1,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/DigiSewa-2025-final-year-"
+    }
+  ],
+  "sejalbhagat03sejalbhagat03": [
+    {
+      "name": "resume-generator",
+      "description": "Streamlit Canva-style resume generator with live PDF compilation using ReportLab.",
+      "language": "Python",
+      "stargazers_count": 5,
+      "topics": [
+        "python",
+        "streamlit",
+        "reportlab",
+        "pdf-generator"
+      ],
+      "html_url": "https://github.com/sejalbhagat03sejalbhagat03/resume-generator"
+    },
+    {
+      "name": "labour-management-app",
+      "description": "Role-based project to manage construction layouts, labor logs, and materials.",
+      "language": "JavaScript",
+      "stargazers_count": 2,
+      "topics": [
+        "react",
+        "nodejs",
+        "mongodb",
+        "express"
+      ],
+      "html_url": "https://github.com/sejalbhagat03sejalbhagat03/labour-management-app"
+    },
+    {
+      "name": "digital-license-vault",
+      "description": "Digital credential storage and authentication platform using encryption.",
+      "language": "JavaScript",
+      "stargazers_count": 1,
+      "topics": [
+        "nodejs",
+        "react",
+        "cryptography",
+        "mysql"
+      ],
+      "html_url": "https://github.com/sejalbhagat03sejalbhagat03/digital-license-vault"
+    }
+  ]
+}

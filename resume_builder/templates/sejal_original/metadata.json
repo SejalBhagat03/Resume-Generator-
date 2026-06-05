@@ -1,0 +1,11 @@
+{
+  "name": "Sejal Original Template",
+  "description": "The default elegant top-header layout featuring horizontal divider accents, Helvetica typography, and clean spacing. Best for general tech applications.",
+  "ats_friendly": true,
+  "features": [
+    "Clean top contact header",
+    "Underline section separators",
+    "Indented skills list",
+    "Compact vertical spacing"
+  ]
+}

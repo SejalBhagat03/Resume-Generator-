@@ -1,0 +1,5 @@
+{
+  "name": "Custom Extracted Style",
+  "description": "Dynamic template rendered from layout configs extracted directly from user documents.",
+  "ats_friendly": true
+}

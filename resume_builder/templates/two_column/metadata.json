@@ -1,0 +1,11 @@
+{
+  "name": "Two-Column Split",
+  "description": "A stylish dual-panel design dividing your details. Left sidebar contains clean contact cards, nested technical categories, and qualifications. Right column details professional logs, project scopes, and highlights.",
+  "ats_friendly": false,
+  "features": [
+    "Clean left sidebar (31% width)",
+    "Vertical separator border line",
+    "High-impact right main panel (65% width)",
+    "Excellent for visual skimmability"
+  ]
+}

@@ -1,7 +1,7 @@
 @echo off
-title Resume Generator
+title Resume Builder Pro
 echo ===================================================
-echo   Generating Sejal Bhagat's Resume PDF...
+echo   Resume Builder Pro - PDF Generator
 echo ===================================================
 echo.
 
@@ -18,9 +18,15 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [SUCCESS] Sejal_Bhagat_Resume.pdf generated successfully!
+echo [SUCCESS] Resume PDF generated successfully!
 echo Opening your PDF resume now...
 echo.
 
-start "" "Sejal_Bhagat_Resume.pdf"
+REM Try to find and open the most recently generated PDF
+for /f "delims=" %%F in ('dir /b /od *.pdf 2^>nul') do set "LATEST_PDF=%%F"
+if defined LATEST_PDF (
+    start "" "%LATEST_PDF%"
+) else (
+    echo [WARNING] No PDF file found in current directory.
+)
 exit

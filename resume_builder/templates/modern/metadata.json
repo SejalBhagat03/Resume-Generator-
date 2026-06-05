@@ -1,0 +1,11 @@
+{
+  "name": "Modern Accent",
+  "description": "A clean, modern layout utilizing colored left-border block accents on section headers, custom primary-colored text elements, and elegant contact grids. Recommended for creative developers and engineers.",
+  "ats_friendly": true,
+  "features": [
+    "Left colored accent bar for titles",
+    "Slate 800 premium text styling",
+    "Clean aligned contact structure",
+    "Elegant bold and oblique details"
+  ]
+}
