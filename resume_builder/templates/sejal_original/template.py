@@ -11,9 +11,9 @@ class SejalOriginalTemplate(BaseTemplate):
         def scale_spacer(w, h):
             return Spacer(w, h * font_scale * spacing_scale)
         
-        # Margins and width dynamically scaled
+        # Margins and width dynamically scaled (margins from backup script are 1.8x on sides)
         top_bottom_margin = margin_size
-        left_right_margin = margin_size * 1.5
+        left_right_margin = margin_size * 1.8
         
         doc = SimpleDocTemplate(
             pdf_filename,
@@ -30,15 +30,26 @@ class SejalOriginalTemplate(BaseTemplate):
         # Styles
         styles = getSampleStyleSheet()
         
-        # Custom styles scaled by font_scale
+        # Custom styles scaled by font_scale (matching backup script exactly)
         name_style = ParagraphStyle(
             'NameStyle',
             parent=styles['Normal'],
             fontName='Helvetica-Bold',
-            fontSize=21 * font_scale,
-            leading=24 * font_scale,
-            textColor=colors.HexColor('#1E1B4B'), # Elegant Navy
+            fontSize=20 * font_scale,
+            leading=23 * font_scale,
+            textColor=colors.HexColor('#000000'), # Pure Black
             alignment=1 # Centered
+        )
+        
+        # Contact Info Style
+        contact_style = ParagraphStyle(
+            'ContactStyle',
+            parent=styles['Normal'],
+            fontName='Helvetica',
+            fontSize=9.0 * font_scale,
+            leading=12.0 * font_scale,
+            textColor=colors.HexColor('#000000'), # Pure Black
+            alignment=0 # Left aligned
         )
         
         # Section Title Style (Heading 10.5pt bold capitalized)
@@ -47,7 +58,7 @@ class SejalOriginalTemplate(BaseTemplate):
             parent=styles['Normal'],
             fontName='Helvetica-Bold',
             fontSize=10.5 * font_scale,
-            leading=13.0 * font_scale,
+            leading=12.5 * font_scale,
             textColor=colors.HexColor('#000000'), # Pure Black
             spaceAfter=0
         )
@@ -59,7 +70,7 @@ class SejalOriginalTemplate(BaseTemplate):
             fontName='Helvetica',
             fontSize=8.2 * font_scale,
             leading=10.5 * font_scale,
-            textColor=colors.HexColor('#1E293B') # Slate 800
+            textColor=colors.HexColor('#000000') # Pure Black
         )
         
         # Indented Tech Line Style (italicized)
@@ -69,22 +80,35 @@ class SejalOriginalTemplate(BaseTemplate):
             fontName='Helvetica-Oblique',
             fontSize=8.2 * font_scale,
             leading=10.5 * font_scale,
-            textColor=colors.HexColor('#475569'), # Slate 600
+            textColor=colors.HexColor('#000000'),
             leftIndent=12 * font_scale,
             spaceAfter=1 * font_scale * padding_scale
         )
         
-        # Indented Bullet Style (with hanging indent)
+        # Indented Bullet Style (with hanging indent of 22pt)
         bullet_style = ParagraphStyle(
             'BulletStyle',
             parent=styles['Normal'],
             fontName='Helvetica',
             fontSize=8.2 * font_scale,
             leading=10.5 * font_scale,
-            textColor=colors.HexColor('#1E293B'),
-            leftIndent=12 * font_scale,
+            textColor=colors.HexColor('#000000'),
+            leftIndent=22 * font_scale,
             firstLineIndent=-10 * font_scale,
             spaceAfter=1 * font_scale * padding_scale
+        )
+        
+        # Skills Bullet Style (indent of 12pt)
+        skills_bullet_style = ParagraphStyle(
+            'SkillsBulletStyle',
+            parent=styles['Normal'],
+            fontName='Helvetica',
+            fontSize=8.2 * font_scale,
+            leading=10.5 * font_scale,
+            textColor=colors.HexColor('#000000'),
+            leftIndent=12 * font_scale,
+            firstLineIndent=-10 * font_scale,
+            spaceAfter=1.5 * font_scale * padding_scale
         )
         
         # Bold Text Helper
@@ -99,81 +123,60 @@ class SejalOriginalTemplate(BaseTemplate):
         # --- HEADER SECTION ---
         personal = data.get("personal", {})
         name = personal.get("name", "SEJAL BHAGAT")
-        story.append(Paragraph(name, name_style))
-        story.append(scale_spacer(1, 2.5))
+        story.append(Paragraph(name.upper(), name_style))
+        story.append(scale_spacer(1, 2))
         
-        # Centered Contact Info block
+        # Two-column contact table exactly matching the layout in the image
         loc = personal.get("location", "")
         phone = personal.get("phone", "")
+        left_p1_text = f"{loc}" + (f" &nbsp;|&nbsp; {phone}" if phone and loc else (phone if phone else ""))
+        left_p1 = Paragraph(left_p1_text, contact_style)
+        
         email = personal.get("email", "")
+        email_text = f"<a href=\"mailto:{email}\"><font color=\"{accent_color}\"><u>{email}</u></font></a>" if email else ""
+        left_p2 = Paragraph(email_text, contact_style)
+        
+        right_align_style = ParagraphStyle('RightAlignContact', parent=contact_style, alignment=2)
         
         linkedin = personal.get("linkedin", {})
         linkedin_url = linkedin.get("url", "")
         linkedin_display = linkedin.get("display", "")
+        linkedin_text = f"<a href=\"{linkedin_url}\"><font color=\"{accent_color}\"><u>{linkedin_display}</u></font></a>" if linkedin_url else ""
+        right_p1 = Paragraph(linkedin_text, right_align_style)
         
         github = personal.get("github", {})
         github_url = github.get("url", "")
         github_display = github.get("display", "")
+        github_text = f"<a href=\"{github_url}\"><font color=\"{accent_color}\"><u>{github_display}</u></font></a>" if github_url else ""
+        right_p2 = Paragraph(github_text, right_align_style)
         
-        contact_parts = []
-        if loc:
-            contact_parts.append(loc)
-        if phone:
-            contact_parts.append(phone)
-        if email:
-            contact_parts.append(f"<a href='mailto:{email}'><font color='{accent_color}'>{email}</font></a>")
-            
-        linkedin_parts = []
-        if linkedin_display and linkedin_url:
-            linkedin_parts.append(f"<a href='{linkedin_url}'><font color='{accent_color}'>{linkedin_display}</font></a>")
-        github_parts = []
-        if github_display and github_url:
-            github_parts.append(f"<a href='{github_url}'><font color='{accent_color}'>{github_display}</font></a>")
-            
-        line1_text = " &nbsp;&bull;&nbsp; ".join(contact_parts)
-        socials = linkedin_parts + github_parts
-        line2_text = " &nbsp;&bull;&nbsp; ".join(socials)
-        
-        contact_center_style = ParagraphStyle(
-            'ContactCenterStyle',
-            parent=styles['Normal'],
-            fontName='Helvetica',
-            fontSize=8.5 * font_scale,
-            leading=11.5 * font_scale,
-            textColor=colors.HexColor('#475569'), # Slate 600
-            alignment=1 # Centered
-        )
-        
-        if line1_text:
-            story.append(Paragraph(line1_text, contact_center_style))
-        if line2_text:
-            story.append(Paragraph(line2_text, contact_center_style))
-            
-        story.append(scale_spacer(1, 3.5))
+        contact_table = Table([[ [left_p1, left_p2], [right_p1, right_p2] ]], colWidths=[width/2.0, width/2.0])
+        contact_table.setStyle(TableStyle([
+            ('VALIGN', (0,0), (-1,-1), 'TOP'),
+            ('LEFTPADDING', (0,0), (-1,-1), 0),
+            ('RIGHTPADDING', (0,0), (-1,-1), 0),
+            ('TOPPADDING', (0,0), (-1,-1), 0),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 0),
+        ]))
+        story.append(contact_table)
+        story.append(scale_spacer(1, 2))
         
         # --- HELPER FUNCTIONS ---
-        is_first_section = [True]
-        
         def add_section_header(title):
-            if not is_first_section[0]:
-                story.append(scale_spacer(1, 6)) # Margin before sections for breathing room
-            else:
-                is_first_section[0] = False
-                
             p = Paragraph(title.upper(), section_title_style)
             t = Table([[p]], colWidths=[width])
             t.setStyle(TableStyle([
-                ('LINEABOVE', (0,0), (-1,-1), 0.75, colors.HexColor(accent_color)),
-                ('TOPPADDING', (0,0), (-1,-1), 3.5),
+                ('LINEABOVE', (0,0), (-1,-1), 0.75, colors.HexColor(accent_color)), # Accent separator line above
+                ('TOPPADDING', (0,0), (-1,-1), 3),
                 ('BOTTOMPADDING', (0,0), (-1,-1), 2),
                 ('LEFTPADDING', (0,0), (-1,-1), 0),
                 ('RIGHTPADDING', (0,0), (-1,-1), 0),
             ]))
             story.append(t)
-            story.append(scale_spacer(1, 2.5))
+            story.append(scale_spacer(1, 2))
             
-        def add_row_header(left_text, right_text, is_bold=True):
-            left_p = Paragraph(left_text, bold_style if is_bold else body_style)
+        def add_row_with_bullet(left_text, right_text, is_bold=True):
+            left_p = Paragraph(f"&bull;&nbsp;&nbsp;{left_text}", bold_style if is_bold else body_style)
             
             right_align_style = ParagraphStyle(
                 'RightAlignRow',
@@ -183,21 +186,22 @@ class SejalOriginalTemplate(BaseTemplate):
             )
             right_p = Paragraph(right_text, right_align_style)
             
-            t = Table([[left_p, right_p]], colWidths=[width * 0.75, width * 0.25])
+            t = Table([[left_p, right_p]], colWidths=[width * 0.73, width * 0.27])
             t.setStyle(TableStyle([
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
                 ('LEFTPADDING', (0,0), (-1,-1), 0),
                 ('RIGHTPADDING', (0,0), (-1,-1), 0),
-                ('TOPPADDING', (0,0), (-1,-1), 1.5),
-                ('BOTTOMPADDING', (0,0), (-1,-1), 1.5),
+                ('TOPPADDING', (0,0), (-1,-1), 0.5),
+                ('BOTTOMPADDING', (0,0), (-1,-1), 0.5),
             ]))
             story.append(t)
             story.append(scale_spacer(1, 1))
-    
+
         def clean_bullet(text):
             if not text:
                 return ""
             text = text.strip()
+            # Strip common bullet prefixes
             for prefix in ["&bull;", "•", "-", "*"]:
                 if text.startswith(prefix):
                     text = text[len(prefix):].strip()
@@ -220,8 +224,8 @@ class SejalOriginalTemplate(BaseTemplate):
                 location = job.get("location", "")
                 period = job.get("period", "")
                 
-                left_text = f"<b>{role}</b>, {company}" + (f" &nbsp;|&nbsp; <i>{location}</i>" if location else "")
-                add_row_header(left_text, period, is_bold=False)
+                left_text = f"<b>{role}, {company}</b>" + (f" &nbsp;|&nbsp; <i>{location}</i>" if location else "")
+                add_row_with_bullet(left_text, period)
                 
                 techs = job.get("technologies", "")
                 if techs:
@@ -243,11 +247,11 @@ class SejalOriginalTemplate(BaseTemplate):
                 tools = proj.get("tools", "")
                 
                 if link:
-                    left_text = f"<b>{title}</b> &nbsp;|&nbsp; <a href='{link}'><font color='{accent_color}'>Link</font></a>"
+                    left_text = f"<b>{title}</b> &nbsp;|&nbsp; <a href=\"{link}\"><font color=\"{accent_color}\"><u>Link</u></font></a>"
                 else:
                     left_text = f"<b>{title}</b>"
                     
-                add_row_header(left_text, date, is_bold=False)
+                add_row_with_bullet(left_text, date)
                 
                 if tools:
                     story.append(Paragraph(f"<b>Tools:</b> {tools}", tech_style))
@@ -263,7 +267,7 @@ class SejalOriginalTemplate(BaseTemplate):
             add_section_header("Technical Skills")
             for skill_name, skill_val in technical_skills.items():
                 p_text = f"&bull;&nbsp;&nbsp;<b>{skill_name}:</b> {skill_val}"
-                story.append(Paragraph(p_text, bullet_style))
+                story.append(Paragraph(p_text, skills_bullet_style))
             story.append(scale_spacer(1, 2))
             
         # --- ACHIEVEMENTS SECTION ---
@@ -272,7 +276,7 @@ class SejalOriginalTemplate(BaseTemplate):
             add_section_header("Achievements")
             for achievement in achievements:
                 cleaned = clean_bullet(achievement)
-                story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", bullet_style))
+                story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", skills_bullet_style))
             story.append(scale_spacer(1, 2))
             
         # --- EDUCATION SECTION ---
@@ -286,7 +290,7 @@ class SejalOriginalTemplate(BaseTemplate):
                 per = edu.get("period", "")
                 
                 left_text = f"<b>{deg}</b>" + (f" &nbsp;|&nbsp; <i>{inst}</i>" if inst else "")
-                add_row_header(left_text, per, is_bold=False)
+                add_row_with_bullet(left_text, per)
                 if det:
                     story.append(Paragraph(det, tech_style))
                 story.append(scale_spacer(1, 1))
@@ -299,7 +303,7 @@ class SejalOriginalTemplate(BaseTemplate):
             for item in por:
                 role = item.get("role", "")
                 period = item.get("period", "")
-                add_row_header(f"<b>{role}</b>", period, is_bold=False)
+                add_row_with_bullet(f"<b>{role}</b>", period)
                 
                 for bullet in item.get("bullets", []):
                     cleaned = clean_bullet(bullet)
