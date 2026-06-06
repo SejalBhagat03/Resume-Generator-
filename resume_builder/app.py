@@ -619,7 +619,7 @@ def maybe_compile(d: dict, template_id: str, C: str, M: int, FS: float, FT: str)
     from streamlit.runtime.scriptrunner import get_script_run_ctx
     ctx = get_script_run_ctx()
     session_id = ctx.session_id if ctx else "default"
-    pdf_out = os.path.join(PROJECT_ROOT, "static", f"live_{session_id}.pdf")
+    pdf_out = os.path.join("resume_builder","exports","pdf",f"live_{session_id}.pdf")
     os.makedirs(os.path.dirname(pdf_out), exist_ok=True)
     ok, msg = build_pdf(
         data=d, template_id=template_id,
@@ -1464,19 +1464,96 @@ with right_col:
 
     # PDF Viewer
     if st.session_state.cok and st.session_state.pdf_b64:
-        from streamlit.runtime.scriptrunner import get_script_run_ctx
-        ctx = get_script_run_ctx()
-        session_id = ctx.session_id if ctx else "default"
-        pdf_url = f"/app/static/live_{session_id}.pdf?t={int(time.time())}"
-        st.markdown(
-            f'<div class="preview-card">'
-            f'<iframe src="{pdf_url}"'
-            f' width="100%"'
-            f' height="{max(600, int(st.session_state.get("vp_h", 680)))}px"'
-            f' style="border:none;display:block;" type="application/pdf">'
-            f'</iframe>'
-            f'</div>',
-            unsafe_allow_html=True)
+        # Render PDF via PDF.js on Canvas to bypass browser data-URI/iframe blocks
+        pdf_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+          <style>
+            body {{
+              margin: 0;
+              padding: 0;
+              background-color: #FAFBFF;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 16px;
+              padding: 10px;
+              font-family: system-ui, -apple-system, sans-serif;
+              overflow-x: hidden;
+            }}
+            canvas {{
+              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+              background-color: #fff;
+              max-width: 100%;
+              height: auto;
+              border-radius: 4px;
+            }}
+            ::-webkit-scrollbar {{
+              width: 6px;
+            }}
+            ::-webkit-scrollbar-thumb {{
+              background: #CBD5E1;
+              border-radius: 10px;
+            }}
+          </style>
+        </head>
+        <body>
+          <div id="pages-container" style="display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%;"></div>
+
+          <script>
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+            const base64PDF = "{st.session_state.pdf_b64}"; 
+
+            function base64ToUint8Array(base64) {{
+              const raw = atob(base64);
+              const uint8Array = new Uint8Array(raw.length);
+              for (let i = 0; i < raw.length; i++) {{
+                uint8Array[i] = raw.charCodeAt(i);
+              }}
+              return uint8Array;
+            }}
+
+            const pdfData = base64ToUint8Array(base64PDF);
+
+            pdfjsLib.getDocument({{ data: pdfData }}).promise.then(async (pdf) => {{
+              const container = document.getElementById('pages-container');
+              for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {{
+                const page = await pdf.getPage(pageNum);
+                const scale = 2.0; 
+                const viewport = page.getViewport({{ scale }});
+                
+                const canvas = document.createElement('canvas');
+                canvas.id = 'page-' + pageNum;
+                const context = canvas.getContext('2d');
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                canvas.style.width = '100%';
+                canvas.style.maxWidth = viewport.width / 2 + 'px'; 
+                
+                container.appendChild(canvas);
+                
+                await page.render({{
+                  canvasContext: context,
+                  viewport: viewport
+                }}).promise;
+              }}
+            }}).catch(err => {{
+              console.error('Error rendering PDF:', err);
+              document.body.innerHTML = '<div style="color:red;padding:20px;text-align:center;font-size:14px;">Failed to render PDF preview. Please download the PDF directly.</div>';
+            }});
+          </script>
+        </body>
+        </html>
+        """
+        st.markdown('<div class="preview-card">', unsafe_allow_html=True)
+        import streamlit.components.v1 as components
+        components.html(pdf_html, height=max(600, int(st.session_state.get("vp_h", 680))), scrolling=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # Quick download row
         st.markdown('<div style="height:8px"></div>', unsafe_allow_html=True)
