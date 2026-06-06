@@ -360,12 +360,51 @@ div[data-testid="stCheckbox"] label span {
 
 /* File uploader contrast */
 div[data-testid="stFileUploader"] section {
-  background-color: #FAFBFF !important;
+  background-color: #FAFAFB !important;
   border: 1px dashed #C7D2FE !important;
 }
 div[data-testid="stFileUploader"] section * {
   color: #1E293B !important;
 }
+
+/* ── Onboarding Banner ─────────────────────────────────── */
+.onboarding-banner {
+  background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+  border: 1.5px solid #C7D2FE;
+  border-left: 4px solid #6366F1;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: .86rem;
+  color: #3730A3;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.onboarding-banner b { color: #312E81; }
+.onboarding-banner .ob-step {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(99,102,241,.12);
+  border-radius: 100px;
+  padding: 2px 10px;
+  margin: 0 3px;
+  font-weight: 600;
+  font-size: .82rem;
+}
+
+/* ── Tab Hint Chips ────────────────────────────────────── */
+.tab-hint {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-left: 3px solid #6366F1;
+  border-radius: 8px;
+  padding: 8px 13px;
+  font-size: .8rem;
+  color: #475569;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+.tab-hint .th-icon { margin-right: 5px; }
+.tab-hint b { color: #1E293B; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -577,7 +616,10 @@ def maybe_compile(d: dict, template_id: str, C: str, M: int, FS: float, FT: str)
     if h == st.session_state.last_hash and st.session_state.pdf_b64:
         return   # nothing changed
     st.session_state.last_hash = h
-    pdf_out = os.path.join("resume_builder","exports","pdf",f"live_{template_id}.pdf")
+    from streamlit.runtime.scriptrunner import get_script_run_ctx
+    ctx = get_script_run_ctx()
+    session_id = ctx.session_id if ctx else "default"
+    pdf_out = os.path.join(PROJECT_ROOT, "static", f"live_{session_id}.pdf")
     os.makedirs(os.path.dirname(pdf_out), exist_ok=True)
     ok, msg = build_pdf(
         data=d, template_id=template_id,
@@ -797,18 +839,29 @@ with bar_brand:
     )
 
 with bar_page:
-    pages = {"workspace": "📄 Editor Workspace", "career": "💼 Career Center"}
-    new_page = st.selectbox(
-        "Page",
-        options=list(pages.keys()),
-        format_func=lambda k: pages[k],
-        index=list(pages.keys()).index(page),
-        key="topbar_page",
-        label_visibility="collapsed",
-    )
-    if new_page != page:
-        st.session_state.navigation_page = new_page
-        st.rerun()
+    nav1, nav2 = st.columns(2)
+    with nav1:
+        if st.button(
+            "📄 Editor",
+            key="nav_to_editor",
+            type="primary" if page == "workspace" else "secondary",
+            use_container_width=True,
+            help="Resume Editor — edit content and preview PDF",
+        ):
+            if page != "workspace":
+                st.session_state.navigation_page = "workspace"
+                st.rerun()
+    with nav2:
+        if st.button(
+            "💼 Career",
+            key="nav_to_career",
+            type="primary" if page == "career" else "secondary",
+            use_container_width=True,
+            help="Career Center — analyze, optimize, GitHub import",
+        ):
+            if page != "career":
+                st.session_state.navigation_page = "career"
+                st.rerun()
 
 if page == "workspace":
     with bar_tpl:
@@ -899,7 +952,25 @@ else:
                 st.session_state.last_hash = ""
                 st.rerun()
 
-# Clean margin instead of a solid separator line for a modern floating look
+# ── First-run onboarding banner (workspace only) ─────────────────────────
+if page == "workspace" and not st.session_state.get("onboarding_dismissed"):
+    ob_main, ob_close = st.columns([11, 1])
+    with ob_main:
+        st.markdown(
+            '<div class="onboarding-banner">'
+            '👋 <b>Welcome to Resume Builder Pro!</b>&nbsp; '
+            'Fill in your details using the tabs on the <span class="ob-step">⬅ left panel</span>, '
+            'and your resume updates live in the <span class="ob-step">preview ➡</span>. '
+            'Switch to <b>💼 Career</b> in the top bar to access gap analysis, GitHub import, and more tools.'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+    with ob_close:
+        if st.button("✕", key="dismiss_onboarding", help="Dismiss this tip"):
+            st.session_state.onboarding_dismissed = True
+            st.rerun()
+
+# Clean margin
 st.markdown('<div style="margin-bottom: 8px;"></div>', unsafe_allow_html=True)
 
 
@@ -1033,6 +1104,12 @@ with left_col:
 
     # ── TAB 1: Contact ───────────────────────────────
     with t_contact:
+        st.markdown(
+            '<div class="tab-hint"><span class="th-icon">✏️</span>'
+            'Fill in your <b>contact details and professional summary</b> here. '
+            'Every change updates the preview instantly — no need to save first.</div>',
+            unsafe_allow_html=True,
+        )
         p = d.get("personal", {})
 
         st.markdown('<div class="sec-title">Personal Details</div>', unsafe_allow_html=True)
@@ -1066,6 +1143,12 @@ with left_col:
 
     # ── TAB 2: Experience ─────────────────────────────
     with t_exp:
+        st.markdown(
+            '<div class="tab-hint"><span class="th-icon">💼</span>'
+            'Add each <b>job role</b> using the button below — list your most recent job first. '
+            'Use one bullet point per line in the Bullets field.</div>',
+            unsafe_allow_html=True,
+        )
         ec1, ec2 = st.columns([1,1])
         with ec1:
             if st.button("➕ Add Job", key="add_exp", use_container_width=True):
@@ -1098,6 +1181,13 @@ with left_col:
 
     # ── TAB 3: Projects ───────────────────────────────
     with t_projects:
+        st.markdown(
+            '<div class="tab-hint"><span class="th-icon">🚀</span>'
+            'Add your <b>best projects</b> here. Paste a GitHub or live demo link, '
+            'list the tools used, and describe what you built — one bullet per line. '
+            'Tip: use the <b>💼 Career → GitHub Evidence</b> tool to import repos automatically.</div>',
+            unsafe_allow_html=True,
+        )
         pc1, pc2 = st.columns([1,1])
         with pc1:
             if st.button("➕ Add Project", key="add_proj", use_container_width=True):
@@ -1128,6 +1218,12 @@ with left_col:
 
     # ── TAB 4: Skills ─────────────────────────────────
     with t_skills:
+        st.markdown(
+            '<div class="tab-hint"><span class="th-icon">🛠️</span>'
+            'Group your skills by <b>category</b> (e.g. Programming, Frontend, Tools). '
+            'Edit existing categories or add a new one using the fields at the bottom.</div>',
+            unsafe_allow_html=True,
+        )
         st.markdown('<div class="sec-title">Technical Skills</div>', unsafe_allow_html=True)
         sk = d.get("technical_skills",{})
         for i, k in enumerate(sk.keys()):
@@ -1141,6 +1237,12 @@ with left_col:
 
     # ── TAB 5: Education & Positions ──────────────────
     with t_edu:
+        st.markdown(
+            '<div class="tab-hint"><span class="th-icon">🎓</span>'
+            'Add your <b>degrees, institutions, and CGPA</b> here. '
+            'You can also add positions of responsibility (clubs, committees) in the section below.</div>',
+            unsafe_allow_html=True,
+        )
         ec1, ec2 = st.columns(2)
         with ec1:
             if st.button("➕ Add Education", key="add_edu", use_container_width=True):
@@ -1192,6 +1294,13 @@ with left_col:
 
     # ── TAB 6: Settings ───────────────────────────────
     with t_settings:
+        st.markdown(
+            '<div class="tab-hint"><span class="th-icon">⚙️</span>'
+            'Tweak <b>font size, margins, and page fitting</b> to make your resume fit perfectly on one page. '
+            'Use <b>Auto Compress</b> to let the app squeeze everything automatically. '
+            'Download the final PDF or JSON from the buttons below.</div>',
+            unsafe_allow_html=True,
+        )
         st.markdown('<div class="sec-title">Page Layout</div>', unsafe_allow_html=True)
 
         # Margins with explanation
@@ -1355,9 +1464,13 @@ with right_col:
 
     # PDF Viewer
     if st.session_state.cok and st.session_state.pdf_b64:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+        ctx = get_script_run_ctx()
+        session_id = ctx.session_id if ctx else "default"
+        pdf_url = f"/app/static/live_{session_id}.pdf?t={int(time.time())}"
         st.markdown(
             f'<div class="preview-card">'
-            f'<iframe src="data:application/pdf;base64,{st.session_state.pdf_b64}"'
+            f'<iframe src="{pdf_url}"'
             f' width="100%"'
             f' height="{max(600, int(st.session_state.get("vp_h", 680)))}px"'
             f' style="border:none;display:block;" type="application/pdf">'
