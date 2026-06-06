@@ -751,16 +751,13 @@ def collect_resume() -> dict:
         proj_data.append({"title":ti,"link":lk,"date":dt,"tools":tl,
                           "bullets":[x.strip() for x in bs.split("\n") if x.strip()]})
 
-    # skills
+    # skills — only collect edits to existing rows; new category is added via the ➕ button
     sk = d.get("technical_skills",{})
     sk_data = {}
     for i, k in enumerate(sk.keys()):
         nk = g(f"f_sk{i}", k)
         nv = g(f"f_sv{i}", sk[k])
         if nk: sk_data[nk] = nv
-    ncat = g("f_ncat","").strip()
-    nval = g("f_nval","").strip()
-    if ncat: sk_data[ncat] = nval
 
     # achievements
     achl_raw = g("f_ach", "\n".join(d.get("achievements",[])))
@@ -1221,19 +1218,52 @@ with left_col:
         st.markdown(
             '<div class="tab-hint"><span class="th-icon">🛠️</span>'
             'Group your skills by <b>category</b> (e.g. Programming, Frontend, Tools). '
-            'Edit existing categories or add a new one using the fields at the bottom.</div>',
+            'Edit existing categories or add a new one below, then click <b>➕ Add Skill</b>.</div>',
             unsafe_allow_html=True,
         )
         st.markdown('<div class="sec-title">Technical Skills</div>', unsafe_allow_html=True)
         sk = d.get("technical_skills",{})
-        for i, k in enumerate(sk.keys()):
-            sc1, sc2 = st.columns([.32,.68])
-            with sc1: st.text_input("Category", k, key=f"f_sk{i}")
-            with sc2: st.text_input("Skills",   sk[k], key=f"f_sv{i}")
-        st.markdown("**Add new skill category:**")
-        nc1, nc2 = st.columns([.32,.68])
+        keys_list = list(sk.keys())
+        sk_changed = False
+        new_sk = {}
+        for i, k in enumerate(keys_list):
+            sc1, sc2, sc3 = st.columns([.30, .60, .10])
+            with sc1: nk = st.text_input("Category", k, key=f"f_sk{i}")
+            with sc2: nv = st.text_input("Skills",   sk[k], key=f"f_sv{i}")
+            with sc3:
+                st.markdown('<div style="margin-top:28px"></div>', unsafe_allow_html=True)
+                if st.button("🗑", key=f"rm_sk{i}", help="Remove this skill category"):
+                    push_undo(d)
+                    new_sk_after_del = {kk: vv for j,(kk,vv) in enumerate(sk.items()) if j != i}
+                    d["technical_skills"] = new_sk_after_del
+                    save_to_disk(d); st.session_state.resume = d; st.session_state.last_hash = ""; st.rerun()
+            if nk:
+                new_sk[nk] = nv
+
+        st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
+        st.markdown("**➕ Add new skill category:**")
+        nc1, nc2, nc3 = st.columns([.30, .60, .10])
         with nc1: st.text_input("New Category", "", placeholder="e.g. Databases", key="f_ncat")
         with nc2: st.text_input("Skills",       "", placeholder="e.g. MySQL, MongoDB", key="f_nval")
+        with nc3:
+            st.markdown('<div style="margin-top:28px"></div>', unsafe_allow_html=True)
+            if st.button("➕", key="add_sk_btn", help="Add this skill category"):
+                ncat = st.session_state.get("f_ncat","").strip()
+                nval = st.session_state.get("f_nval","").strip()
+                if ncat:
+                    push_undo(d)
+                    live_sk = {}
+                    for i2, k2 in enumerate(list(d.get("technical_skills",{}).keys())):
+                        nk2 = st.session_state.get(f"f_sk{i2}", k2)
+                        nv2 = st.session_state.get(f"f_sv{i2}", d["technical_skills"][k2])
+                        if nk2: live_sk[nk2] = nv2
+                    live_sk[ncat] = nval
+                    d["technical_skills"] = live_sk
+                    save_to_disk(d); st.session_state.resume = d; st.session_state.last_hash = ""
+                    # Clear inputs
+                    for k3 in ["f_ncat", "f_nval"]:
+                        if k3 in st.session_state: del st.session_state[k3]
+                    st.rerun()
 
     # ── TAB 5: Education & Positions ──────────────────
     with t_edu:
@@ -1462,98 +1492,143 @@ with right_col:
     if st.session_state.cmsg:
         st.warning(f"⚠️ {st.session_state.cmsg}")
 
-    # PDF Viewer
+    # PDF Viewer — auto-resizing + clickable links
     if st.session_state.cok and st.session_state.pdf_b64:
-        # Render PDF via PDF.js on Canvas to bypass browser data-URI/iframe blocks
-        pdf_html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-          <style>
-            body {{
-              margin: 0;
-              padding: 0;
-              background-color: #FAFBFF;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 16px;
-              padding: 10px;
-              font-family: system-ui, -apple-system, sans-serif;
-              overflow-x: hidden;
-            }}
-            canvas {{
-              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-              background-color: #fff;
-              max-width: 100%;
-              height: auto;
-              border-radius: 4px;
-            }}
-            ::-webkit-scrollbar {{
-              width: 6px;
-            }}
-            ::-webkit-scrollbar-thumb {{
-              background: #CBD5E1;
-              border-radius: 10px;
-            }}
-          </style>
-        </head>
-        <body>
-          <div id="pages-container" style="display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%;"></div>
+        pdf_b64 = st.session_state.pdf_b64
+        pdf_html = f"""<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  html, body {{
+    background: #F0F2F8;
+    overflow-x: hidden;
+    width: 100%;
+  }}
+  #pages-container {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 6px 4px 10px 4px;
+  }}
+  .page-wrapper {{
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    line-height: 0;
+    border-radius: 3px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    background: #fff;
+  }}
+  .page-wrapper canvas {{
+    display: block;
+    width: 100%;
+    height: auto !important;
+    border-radius: 3px;
+  }}
+  .link-overlay {{
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+  }}
+  ::-webkit-scrollbar {{ width: 5px; }}
+  ::-webkit-scrollbar-thumb {{ background: #CBD5E1; border-radius: 10px; }}
+</style>
+</head>
+<body>
+<div id="pages-container"></div>
+<script>
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-          <script>
-            const pdfjsLib = window['pdfjs-dist/build/pdf'];
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+  const base64PDF = "{pdf_b64}";
 
-            const base64PDF = "{st.session_state.pdf_b64}"; 
+  function b64ToArr(b64) {{
+    const raw = atob(b64);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return arr;
+  }}
 
-            function base64ToUint8Array(base64) {{
-              const raw = atob(base64);
-              const uint8Array = new Uint8Array(raw.length);
-              for (let i = 0; i < raw.length; i++) {{
-                uint8Array[i] = raw.charCodeAt(i);
-              }}
-              return uint8Array;
-            }}
+  function sendHeight() {{
+    const h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    ) + 24;
+    window.parent.postMessage({{ type: 'streamlit:setFrameHeight', height: h }}, '*');
+  }}
 
-            const pdfData = base64ToUint8Array(base64PDF);
+  pdfjsLib.getDocument({{ data: b64ToArr(base64PDF) }}).promise.then(async (pdf) => {{
+    const container = document.getElementById('pages-container');
+    const SCALE = 2.0;
 
-            pdfjsLib.getDocument({{ data: pdfData }}).promise.then(async (pdf) => {{
-              const container = document.getElementById('pages-container');
-              for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {{
-                const page = await pdf.getPage(pageNum);
-                const scale = 2.0; 
-                const viewport = page.getViewport({{ scale }});
-                
-                const canvas = document.createElement('canvas');
-                canvas.id = 'page-' + pageNum;
-                const context = canvas.getContext('2d');
-                
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                canvas.style.width = '100%';
-                canvas.style.maxWidth = viewport.width / 2 + 'px'; 
-                
-                container.appendChild(canvas);
-                
-                await page.render({{
-                  canvasContext: context,
-                  viewport: viewport
-                }}).promise;
-              }}
-            }}).catch(err => {{
-              console.error('Error rendering PDF:', err);
-              document.body.innerHTML = '<div style="color:red;padding:20px;text-align:center;font-size:14px;">Failed to render PDF preview. Please download the PDF directly.</div>';
-            }});
-          </script>
-        </body>
-        </html>
-        """
-        st.markdown('<div class="preview-card">', unsafe_allow_html=True)
+    for (let p = 1; p <= pdf.numPages; p++) {{
+      const page   = await pdf.getPage(p);
+      const vp     = page.getViewport({{ scale: SCALE }});
+
+      // Wrapper div (relative position for link overlays)
+      const wrapper = document.createElement('div');
+      wrapper.className = 'page-wrapper';
+      wrapper.style.maxWidth = (vp.width / SCALE) + 'px';
+      wrapper.style.width = '100%';
+
+      // Canvas
+      const canvas = document.createElement('canvas');
+      const ctx    = canvas.getContext('2d');
+      canvas.height = vp.height;
+      canvas.width  = vp.width;
+      wrapper.appendChild(canvas);
+
+      // Render PDF page onto canvas
+      await page.render({{ canvasContext: ctx, viewport: vp }}).promise;
+
+      // --- Clickable link overlays ---
+      const annotations = await page.getAnnotations();
+      for (const annot of annotations) {{
+        if (annot.subtype !== 'Link') continue;
+        const url = annot.url || (annot.action && annot.action.url);
+        if (!url) continue;
+
+        // Convert PDF rect [x1,y1,x2,y2] to viewport coordinates
+        const [x1, y1, x2, y2] = vp.convertToViewportRectangle(annot.rect);
+        const left   = Math.min(x1, x2);
+        const top    = Math.min(y1, y2);
+        const width  = Math.abs(x2 - x1);
+        const height = Math.abs(y2 - y1);
+
+        // Express as % of canvas dimensions so it scales with CSS width
+        const a = document.createElement('a');
+        a.href   = url;
+        a.target = '_blank';
+        a.rel    = 'noopener noreferrer';
+        a.className = 'link-overlay';
+        a.style.left   = (left   / vp.width  * 100) + '%';
+        a.style.top    = (top    / vp.height * 100) + '%';
+        a.style.width  = (width  / vp.width  * 100) + '%';
+        a.style.height = (height / vp.height * 100) + '%';
+        wrapper.appendChild(a);
+      }}
+
+      container.appendChild(wrapper);
+    }}
+
+    // Let DOM settle then report height
+    setTimeout(sendHeight, 150);
+  }}).catch(err => {{
+    console.error('PDF render error:', err);
+    document.getElementById('pages-container').innerHTML =
+      '<div style="color:#c0392b;padding:20px;text-align:center;font-size:13px;">&#9888;&#65039; Failed to render PDF preview.<br>Use the Download button below.</div>';
+    setTimeout(sendHeight, 100);
+  }});
+</script>
+</body>
+</html>"""
         import streamlit.components.v1 as components
-        components.html(pdf_html, height=max(600, int(st.session_state.get("vp_h", 680))), scrolling=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        components.html(pdf_html, height=750, scrolling=True)
 
         # Quick download row
         st.markdown('<div style="height:8px"></div>', unsafe_allow_html=True)

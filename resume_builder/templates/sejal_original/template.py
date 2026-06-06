@@ -224,8 +224,8 @@ class SejalOriginalTemplate(BaseTemplate):
                 location = job.get("location", "")
                 period = job.get("period", "")
                 
-                left_text = f"<b>{role}, {company}</b>" + (f" &nbsp;|&nbsp; <i>{location}</i>" if location else "")
-                add_row_with_bullet(left_text, period)
+                left_text = f"<b>{role}</b>" + (f", {company}" if company else "") + (f" &nbsp;|&nbsp; <i>{location}</i>" if location else "")
+                add_row_with_bullet(left_text, period, is_bold=False)
                 
                 techs = job.get("technologies", "")
                 if techs:
@@ -251,7 +251,7 @@ class SejalOriginalTemplate(BaseTemplate):
                 else:
                     left_text = f"<b>{title}</b>"
                     
-                add_row_with_bullet(left_text, date)
+                add_row_with_bullet(left_text, date, is_bold=False)
                 
                 if tools:
                     story.append(Paragraph(f"<b>Tools:</b> {tools}", tech_style))
@@ -290,9 +290,31 @@ class SejalOriginalTemplate(BaseTemplate):
                 per = edu.get("period", "")
                 
                 left_text = f"<b>{deg}</b>" + (f" &nbsp;|&nbsp; <i>{inst}</i>" if inst else "")
-                add_row_with_bullet(left_text, per)
-                if det:
-                    story.append(Paragraph(det, tech_style))
+                
+                # If the period is long (e.g., "Expected Graduation: 2026"), it is cleaner to put it
+                # on the second line alongside the CGPA details, matching Sejal's original layout.
+                is_period_long = len(per) > 9 or "expect" in per.lower() or "grad" in per.lower()
+                
+                if is_period_long:
+                    add_row_with_bullet(left_text, "", is_bold=False)
+                    second_line_parts = []
+                    if det:
+                        second_line_parts.append(det)
+                    if per:
+                        second_line_parts.append(per)
+                    if second_line_parts:
+                        det_text = " &nbsp;|&nbsp; ".join(second_line_parts)
+                        story.append(Paragraph(det_text, tech_style))
+                else:
+                    # For short periods (like 12th/10th), place both Grade and Period on the same line to save vertical space
+                    right_parts = []
+                    if det:
+                        right_parts.append(det)
+                    if per:
+                        right_parts.append(per)
+                    right_text = " &nbsp;|&nbsp; ".join(right_parts)
+                    add_row_with_bullet(left_text, right_text, is_bold=False)
+                
                 story.append(scale_spacer(1, 1))
             story.append(scale_spacer(1, 2))
         
@@ -303,7 +325,7 @@ class SejalOriginalTemplate(BaseTemplate):
             for item in por:
                 role = item.get("role", "")
                 period = item.get("period", "")
-                add_row_with_bullet(f"<b>{role}</b>", period)
+                add_row_with_bullet(f"<b>{role}</b>", period, is_bold=False)
                 
                 for bullet in item.get("bullets", []):
                     cleaned = clean_bullet(bullet)

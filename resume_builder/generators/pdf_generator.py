@@ -72,8 +72,8 @@ def build_pdf(data=None, template_id="sejal_original", pdf_filename=None, accent
         ]
         
         # Readability Safeguard: If user allows aggressive compact mode, we add font scaling steps down to 0.75
-        # Otherwise, we limit font scaling to 0.95 (equivalent to keeping text sizes >= 10pt)
-        min_allowable_font = 0.75 if aggressive_compact else 0.95
+        # Otherwise, we allow font scaling down to 0.80 (still readable at ~8pt) to fit all content sections
+        min_allowable_font = 0.75 if aggressive_compact else 0.80
         
         if scale > min_allowable_font:
             curr_scale = scale
