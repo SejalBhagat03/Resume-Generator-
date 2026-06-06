@@ -13,7 +13,7 @@
       "url": "https://github.com/SejalBhagat03"
     }
   },
-  "summary": "Final-year Computer Science Engineering student with professional experience as a Software Developer Intern. Specialized in end-to-end web engineering, from crafting responsive React user interfaces to developing robust backend REST APIs and managing database architectures (SQL & NoSQL).",
+  "summary": "Specialized Frontend Developer and Software Developer Intern. Experienced in building responsive visual interfaces, reusable React components, and user-centric layouts. Strong focus on UI/UX excellence, performance optimization, and client-side logic.",
   "experience": [
     {
       "role": "Software Developer Intern",
@@ -64,12 +64,13 @@
     }
   ],
   "technical_skills": {
-    "Frontend": "HTML5, CSS3, React.js, Tailwind CSS, Bootstrap, JavaScript (ES6+), TypeScript",
-    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication, Firebase",
-    "Databases": "PostgreSQL, MongoDB, MySQL",
-    "Tools & DevOps": "Git, GitHub, Postman, Docker, Vite, VS Code, npm/yarn",
-    "Languages": "JavaScript, TypeScript, Python, C++, C",
-    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks"
+    "Core Frontend": "React.js, JavaScript (ES6+), TypeScript, HTML5, CSS3",
+    "Styling & UI": "Tailwind CSS, Bootstrap, Responsive Web Design, CSS layouts",
+    "State & Tooling": "Context API, Vite, npm/yarn, Chrome DevTools",
+    "APIs & Integration": "REST APIs, JSON, Postman, Firebase",
+    "Developer Tools": "Git, GitHub, VS Code, Docker",
+    "Languages": "JavaScript, TypeScript, Python, C++",
+    "Core CS": "Data Structures & Algorithms, OOP"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",

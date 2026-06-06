@@ -13,7 +13,7 @@
       "url": "https://github.com/SejalBhagat03"
     }
   },
-  "summary": "Final-year Computer Science Engineering student with professional experience as a Software Developer Intern. Specialized in end-to-end web engineering, from crafting responsive React user interfaces to developing robust backend REST APIs and managing database architectures (SQL & NoSQL).",
+  "summary": "Final-year Computer Science Engineering student with hands-on software developer internship experience. Skilled in modern web architectures, scalable API development, and software design patterns. Proven record of building secure, database-driven web applications and solving complex algorithmic challenges.",
   "experience": [
     {
       "role": "Software Developer Intern",
@@ -64,11 +64,10 @@
     }
   ],
   "technical_skills": {
-    "Frontend": "HTML5, CSS3, React.js, Tailwind CSS, Bootstrap, JavaScript (ES6+), TypeScript",
-    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication, Firebase",
+    "Programming": "C++, Python, JavaScript, TypeScript, C",
+    "Web Technologies": "HTML5, CSS3, React.js, Tailwind CSS, Bootstrap, Node.js, Express.js, REST APIs",
     "Databases": "PostgreSQL, MongoDB, MySQL",
-    "Tools & DevOps": "Git, GitHub, Postman, Docker, Vite, VS Code, npm/yarn",
-    "Languages": "JavaScript, TypeScript, Python, C++, C",
+    "Tools & Platform": "Git, GitHub, Postman, VS Code, Vite, Docker, Cloudflare, Netlify",
     "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks"
   },
   "achievements": [

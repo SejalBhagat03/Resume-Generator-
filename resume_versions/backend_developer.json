@@ -13,7 +13,7 @@
       "url": "https://github.com/SejalBhagat03"
     }
   },
-  "summary": "Final-year Computer Science Engineering student with professional experience as a Software Developer Intern. Specialized in end-to-end web engineering, from crafting responsive React user interfaces to developing robust backend REST APIs and managing database architectures (SQL & NoSQL).",
+  "summary": "Focused Backend Developer and Software Developer Intern. Experienced in designing robust server-side logic, secure RESTful APIs, and SQL/NoSQL database architectures. Skilled in authentication models (JWT), authorization controls, and system optimization.",
   "experience": [
     {
       "role": "Software Developer Intern",
@@ -30,24 +30,24 @@
   ],
   "projects": [
     {
+      "title": "Store Review Platform (RateHub)",
+      "link": "https://github.com/SejalBhagat03/Store-Rating-website",
+      "date": "Dec 2025",
+      "tools": "Node.js, Express.js, PostgreSQL, REST APIs, JWT Authentication",
+      "bullets": [
+        "Built a platform for collecting and managing store reviews with secure role-based access and JWT authentication.",
+        "Implemented custom authorization layers for normal users, store owners, and administrators to ensure robust data privacy."
+      ]
+    },
+    {
       "title": "Labor Management System",
       "link": "https://github.com/SejalBhagat03/ShramFlow-Labour-management-system",
       "date": "Jan 2026",
-      "tools": "React, Node.js, MongoDB, REST APIs",
+      "tools": "Node.js, MongoDB, REST APIs, JWT, Backend Validation",
       "bullets": [
         "Built a full-stack labor management platform with OCR-based diary scanning and AI-assisted data extraction.",
         "Developed supervisor dashboards with Hindi language support and real-time work/payment tracking.",
         "Implemented secure REST APIs and validation checks to identify duplicate records and payment inconsistencies for payroll verification."
-      ]
-    },
-    {
-      "title": "Store Review Platform (RateHub)",
-      "link": "https://github.com/SejalBhagat03/Store-Rating-website",
-      "date": "Dec 2025",
-      "tools": "React, Node.js, Express.js, PostgreSQL",
-      "bullets": [
-        "Built a platform for collecting and managing store reviews with secure role-based access and JWT authentication.",
-        "Implemented custom authorization layers for normal users, store owners, and administrators to ensure robust data privacy."
       ]
     },
     {
@@ -64,12 +64,12 @@
     }
   ],
   "technical_skills": {
-    "Frontend": "HTML5, CSS3, React.js, Tailwind CSS, Bootstrap, JavaScript (ES6+), TypeScript",
-    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication, Firebase",
-    "Databases": "PostgreSQL, MongoDB, MySQL",
-    "Tools & DevOps": "Git, GitHub, Postman, Docker, Vite, VS Code, npm/yarn",
-    "Languages": "JavaScript, TypeScript, Python, C++, C",
-    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks"
+    "Backend Engineering": "Node.js, Express.js, RESTful APIs, JWT Authentication, FastAPI",
+    "Databases": "PostgreSQL, MongoDB, MySQL, Database Normalization & Indexing",
+    "Security & Systems": "Role-based Access Control (RBAC), Data Sanitization, Input Validation",
+    "Tools & DevOps": "Git, GitHub, Postman, Docker, Linux Command Line",
+    "Languages": "Python, JavaScript, TypeScript, C++, C",
+    "Core CS": "Data Structures & Algorithms, DBMS, Operating Systems, Computer Networks"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",
