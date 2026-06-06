@@ -544,6 +544,10 @@ _s("show_import", False)
 _s("wiz_step",    "upload")
 _s("wiz_blk",     [])
 _s("wiz_lay",     None)
+# Profile versions manager
+_s("show_create_profile", False)
+_s("create_profile_type", "new")
+_s("show_delete_confirm", False)
 
 
 # ═══════════════════════════════════════════════════════
@@ -557,13 +561,35 @@ def _read_json(path: str) -> dict:
     except Exception:
         return copy.deepcopy(DEFAULT)
 
+def get_profile_path() -> str:
+    if "current_profile_path" not in st.session_state:
+        st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
+    return st.session_state.current_profile_path
+
 def save_to_disk(d: dict):
-    with open(RESUME_JSON, "w", encoding="utf-8") as f:
+    with open(get_profile_path(), "w", encoding="utf-8") as f:
         json.dump(d, f, indent=2)
     _read_json.clear()
 
 def load_from_disk() -> dict:
-    return _read_json(RESUME_JSON)
+    return _read_json(get_profile_path())
+
+def list_profile_options() -> dict:
+    versions_dir = os.path.join(PROJECT_ROOT, "resume_versions")
+    os.makedirs(versions_dir, exist_ok=True)
+    options = {
+        "Default Profile": os.path.join(PROJECT_ROOT, "resume.json")
+    }
+    # List all custom profiles in the resume_versions directory
+    try:
+        for fname in os.listdir(versions_dir):
+            if fname.endswith(".json"):
+                base = os.path.splitext(fname)[0]
+                display_name = base.replace("_", " ").title() + " Profile"
+                options[display_name] = os.path.join(versions_dir, fname)
+    except Exception:
+        pass
+    return options
 
 
 # ═══════════════════════════════════════════════════════
@@ -1094,6 +1120,138 @@ with left_col:
         st.session_state.editor_notification = None  # Clear notification
 
     d = st.session_state.resume
+
+    # ── DOMAIN RESUME PROFILES ──
+    st.markdown('<div class="sec-title" style="margin-top: 5px; margin-bottom: 5px;">Domain Resume Profiles</div>', unsafe_allow_html=True)
+    profiles = list_profile_options()
+    
+    # Reverse lookup path to find the current active display name
+    curr_path = get_profile_path()
+    curr_display = "Default Profile"
+    for name, path in profiles.items():
+        if os.path.abspath(path) == os.path.abspath(curr_path):
+            curr_display = name
+            break
+            
+    # If the current path is not in the options (e.g. deleted or moved), fallback to Default
+    if curr_display not in profiles:
+        curr_display = "Default Profile"
+        st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
+        st.session_state.resume = load_from_disk()
+        d = st.session_state.resume
+        st.rerun()
+
+    # Dropdown to switch profiles + Action buttons
+    p_sel, p_actions = st.columns([3, 1.8])
+    with p_sel:
+        selected_name = st.selectbox(
+            "Active Profile Selection",
+            options=list(profiles.keys()),
+            index=list(profiles.keys()).index(curr_display),
+            key="profile_selector_dropdown",
+            label_visibility="collapsed",
+            help="Switch between different domain resumes (e.g., AI/ML, Full Stack). Each profile is saved independently."
+        )
+        if selected_name != curr_display:
+            st.session_state.current_profile_path = profiles[selected_name]
+            st.session_state.resume = load_from_disk()
+            st.session_state.last_hash = ""
+            st.rerun()
+            
+    with p_actions:
+        col_new, col_dup, col_del = st.columns(3)
+        with col_new:
+            btn_new = st.button("➕", help="Create a new blank profile", use_container_width=True)
+        with col_dup:
+            btn_dup = st.button("👥", help="Duplicate current profile", use_container_width=True)
+        with col_del:
+            is_default = (selected_name == "Default Profile")
+            btn_del = st.button("🗑️", help="Delete current profile", disabled=is_default, use_container_width=True)
+
+    # Forms for profile creation / duplication / deletion
+    if btn_new:
+        st.session_state.show_create_profile = True
+        st.session_state.create_profile_type = "new"
+        st.session_state.show_delete_confirm = False
+        st.rerun()
+        
+    if btn_dup:
+        st.session_state.show_create_profile = True
+        st.session_state.create_profile_type = "duplicate"
+        st.session_state.show_delete_confirm = False
+        st.rerun()
+        
+    if btn_del:
+        st.session_state.show_delete_confirm = True
+        st.session_state.show_create_profile = False
+        st.rerun()
+
+    # Show new/duplicate profile form
+    if st.session_state.get("show_create_profile", False):
+        p_type = st.session_state.create_profile_type
+        action_verb = "Create New" if p_type == "new" else "Duplicate Current"
+        with st.form("create_profile_form", clear_on_submit=True):
+            st.markdown(f"**{action_verb} Profile**")
+            new_name = st.text_input("Profile Name (e.g. AI ML Engineer, Backend Developer)", placeholder="AI ML Engineer")
+            fc1, fc2 = st.columns(2)
+            with fc1:
+                submit = st.form_submit_button("Confirm", use_container_width=True, type="primary")
+            with fc2:
+                cancel = st.form_submit_button("Cancel", use_container_width=True)
+                
+            if submit and new_name.strip():
+                clean_name = re.sub(r"[^a-zA-Z0-9\s_-]", "", new_name).strip()
+                file_base = clean_name.lower().replace(" ", "_")
+                if file_base:
+                    new_file_name = f"{file_base}.json"
+                    new_path = os.path.join(PROJECT_ROOT, "resume_versions", new_file_name)
+                    
+                    if p_type == "new":
+                        content = copy.deepcopy(DEFAULT)
+                    else:
+                        content = copy.deepcopy(st.session_state.resume)
+                        
+                    # Save new profile to disk
+                    with open(new_path, "w", encoding="utf-8") as f:
+                        json.dump(content, f, indent=2)
+                        
+                    # Switch to new profile
+                    st.session_state.current_profile_path = new_path
+                    st.session_state.resume = content
+                    st.session_state.last_hash = ""
+                    st.session_state.show_create_profile = False
+                    st.success(f"Profile '{clean_name}' created successfully!")
+                    st.rerun()
+            if cancel:
+                st.session_state.show_create_profile = False
+                st.rerun()
+
+    # Show delete profile confirmation
+    if st.session_state.get("show_delete_confirm", False):
+        with st.form("delete_profile_form"):
+            st.error(f"⚠️ Are you sure you want to delete the profile: **{selected_name}**?")
+            st.write("This action cannot be undone and the file will be deleted permanently.")
+            dfc1, dfc2 = st.columns(2)
+            with dfc1:
+                confirm_del = st.form_submit_button("Yes, Delete", use_container_width=True, type="primary")
+            with dfc2:
+                cancel_del = st.form_submit_button("Cancel", use_container_width=True)
+                
+            if confirm_del:
+                path_to_delete = profiles[selected_name]
+                if os.path.exists(path_to_delete) and selected_name != "Default Profile":
+                    os.remove(path_to_delete)
+                st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
+                st.session_state.resume = load_from_disk()
+                st.session_state.last_hash = ""
+                st.session_state.show_delete_confirm = False
+                st.success("Profile deleted successfully.")
+                st.rerun()
+            if cancel_del:
+                st.session_state.show_delete_confirm = False
+                st.rerun()
+
+    st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
 
     t_contact, t_exp, t_projects, t_skills, t_edu, t_settings = st.tabs([
         "👤 Contact", "💼 Experience", "🚀 Projects", "🛠️ Skills", "🎓 Education", "⚙️ Settings"
