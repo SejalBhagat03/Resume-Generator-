@@ -34,13 +34,23 @@ pip install -r requirements.txt
 
 ## Step 3 — Run The App
 
-### Option A — Standard (Hot Reload Partially Works)
+### Option A — The Double-Click Launcher (Windows Only — Easiest! 🚀)
+Simply double-click the `run.bat` file in the root directory!
+* It will check if Python is installed.
+* Set up a virtual environment and download dependencies automatically.
+* Start the Streamlit app and open it in your browser immediately.
+
+---
+
+### Option B — Standard CLI Run
 ```bash
 python -m streamlit run app.py
 ```
 Then open: **http://localhost:8501**
 
-### Option B — Full Hot Reload (Recommended for Development)
+---
+
+### Option C — Full Hot Reload (Recommended for Core Development)
 ```bash
 python -m streamlit run resume_builder\app.py
 ```

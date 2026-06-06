@@ -1,32 +1,62 @@
 @echo off
 title Resume Builder Pro
+setlocal enabledelayedexpansion
+
 echo ===================================================
-echo   Resume Builder Pro - PDF Generator
+echo        📄 RESUME BUILDER PRO - LAUNCHER 🚀
 echo ===================================================
 echo.
 
-python generate_resume.py
-
+:: 1. Check Python installation
+python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo.
-    echo [ERROR] Failed to compile resume!
-    echo Please ensure Python and the 'reportlab' library are installed.
-    echo You can install dependencies using: pip install -r requirements.txt
+    echo [ERROR] Python was not found on your system!
+    echo Please download and install Python 3.10+ from: https://www.python.org/
+    echo Make sure to check the option "Add Python to PATH" during installation.
     echo.
     pause
-    exit /b %errorlevel%
+    exit /b 1
 )
 
+:: 2. Check virtual environment
+if not exist ".venv" (
+    echo [SETUP] Setting up a virtual environment (.venv)...
+    python -m venv .venv
+    if !errorlevel! neq 0 (
+        echo [ERROR] Failed to create virtual environment!
+        pause
+        exit /b 1
+    )
+    echo [SETUP] Virtual environment created successfully.
+)
+
+:: 3. Activate Virtual Environment
+echo [LAUNCH] Activating virtual environment...
+call .venv\Scripts\activate.bat
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to activate virtual environment!
+    pause
+    exit /b 1
+)
+
+:: 4. Install/Update requirements
+echo [SETUP] Checking & updating dependencies...
+pip install -r requirements.txt
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to install dependencies!
+    pause
+    exit /b 1
+)
+
+:: 5. Launch the Streamlit App
 echo.
-echo [SUCCESS] Resume PDF generated successfully!
-echo Opening your PDF resume now...
+echo ===================================================
+echo   [SUCCESS] App is ready! Starting Streamlit...
+echo   If the browser doesn't open automatically, go to:
+echo   http://localhost:8501
+echo ===================================================
 echo.
 
-REM Try to find and open the most recently generated PDF
-for /f "delims=" %%F in ('dir /b /od *.pdf 2^>nul') do set "LATEST_PDF=%%F"
-if defined LATEST_PDF (
-    start "" "%LATEST_PDF%"
-) else (
-    echo [WARNING] No PDF file found in current directory.
-)
-exit
+python -m streamlit run app.py
+
+pause
