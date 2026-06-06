@@ -728,6 +728,10 @@ def sanitize_html(text: str) -> str:
 # ═══════════════════════════════════════════════════════
 def collect_resume() -> dict:
     """Build resume dict from live widget session-state keys."""
+    # Safety protection bypass: if profile is locked, do not read inputs or update content
+    if st.session_state.resume.get("metadata", {}).get("locked", False):
+        return st.session_state.resume
+
     ss = st.session_state
     d  = st.session_state.resume   # fallback for missing keys
 
@@ -1249,15 +1253,26 @@ def show_dashboard():
                 # Load stats for this profile
                 metrics = get_profile_metrics(path)
                 
+                # Check lock status of this profile
+                is_profile_locked = False
+                try:
+                    with open(path, "r", encoding="utf-8") as pf:
+                        pdata = json.load(pf)
+                    is_profile_locked = pdata.get("metadata", {}).get("locked", False)
+                except Exception:
+                    pass
+                
                 # Is this the currently loaded profile?
                 curr_loaded_path = get_profile_path()
                 is_active = (os.path.abspath(path) == os.path.abspath(curr_loaded_path))
                 active_badge = '<span style="background: #EEF2FF; border: 1px solid #C7D2FE; color: #4F46E5; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; float: right;">ACTIVE</span>' if is_active else ''
                 
+                lock_symbol = " 🔒" if is_profile_locked else ""
+                
                 st.markdown(
                     f'<div class="profile-card">'
                     f'{active_badge}'
-                    f'<div class="profile-title">{display_name}</div>'
+                    f'<div class="profile-title">{display_name}{lock_symbol}</div>'
                     f'<div class="profile-sub">{metrics["name"]} &bull; {metrics["email"]}</div>'
                     f'<div style="margin-bottom: 15px;">'
                     f'<span class="metric-pill">💼 {metrics["exp_count"]} Jobs</span>'
@@ -1287,6 +1302,10 @@ def show_dashboard():
                         with open(path, "r", encoding="utf-8") as f:
                             content = json.load(f)
                             
+                        # Ensure cloned copy starts as unlocked by default so user can edit it
+                        if "metadata" in content:
+                            content["metadata"]["locked"] = False
+                            
                         with open(new_path, "w", encoding="utf-8") as f:
                             json.dump(content, f, indent=2)
                             
@@ -1294,7 +1313,9 @@ def show_dashboard():
                         st.rerun()
                 with c_del:
                     is_def = (display_name == "Default Profile")
-                    if st.button("🗑️ Del", key=f"del_profile_{idx}", use_container_width=True, disabled=is_def):
+                    is_del_disabled = is_def or is_profile_locked
+                    del_help = "Locked profiles cannot be deleted. Unlock them first." if is_profile_locked else ("Default profile cannot be deleted." if is_def else "Delete this profile")
+                    if st.button("🗑️ Del", key=f"del_profile_{idx}", use_container_width=True, disabled=is_del_disabled, help=del_help):
                         st.session_state.delete_target_path = path
                         st.session_state.delete_target_name = display_name
                         st.session_state.show_dash_delete_confirm = True
@@ -1366,17 +1387,48 @@ with left_col:
         d = st.session_state.resume
         st.rerun()
 
-    # Premium active profile banner showing saving status
-    st.markdown(
-        f'<div style="background: #EEF2FF; border: 1px solid #C7D2FE; border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">'
-        f'<div>'
-        f'<span style="font-size: 0.72rem; font-weight: 700; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Active Resume Profile</span>'
-        f'<span style="font-size: 1.05rem; font-weight: 700; color: #1E293B;">{curr_display}</span>'
-        f'</div>'
-        f'<span style="font-size: 0.72rem; font-weight: 500; color: #64748B;">💾 Auto-saved</span>'
-        f'</div>',
-        unsafe_allow_html=True
-    )
+    # Check lock status
+    is_locked = d.get("metadata", {}).get("locked", False)
+
+    # Premium active profile banner showing saving status and lock controls
+    if is_locked:
+        b_col1, b_col2 = st.columns([4, 1.2])
+        with b_col1:
+            st.markdown(
+                f'<div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 12px; height: 55px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 12px;">'
+                f'<span style="font-size: 0.72rem; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Active Resume Profile</span>'
+                f'<span style="font-size: 1.02rem; font-weight: 700; color: #1E293B;">{curr_display} <span style="font-size: 0.85rem; color: #D97706; font-weight: 600;">🔒 Locked (Read-Only)</span></span>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+        with b_col2:
+            if st.button("🔓 Unlock", key="btn_unlock_banner", use_container_width=True, help="Unlock this profile to enable editing"):
+                if "metadata" not in d:
+                    d["metadata"] = {}
+                d["metadata"]["locked"] = False
+                st.session_state.resume = d
+                save_to_disk(d)
+                st.session_state.last_hash = ""
+                st.rerun()
+    else:
+        b_col1, b_col2 = st.columns([4, 1.2])
+        with b_col1:
+            st.markdown(
+                f'<div style="background: #EEF2FF; border: 1px solid #C7D2FE; border-radius: 8px; padding: 12px; height: 55px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 12px;">'
+                f'<span style="font-size: 0.72rem; font-weight: 700; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Active Resume Profile</span>'
+                f'<span style="font-size: 1.02rem; font-weight: 700; color: #1E293B;">{curr_display} <span style="font-size: 0.85rem; color: #10B981; font-weight: 600;">&bull; Editable</span></span>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+        with b_col2:
+            if st.button("🔒 Lock", key="btn_lock_banner", use_container_width=True, help="Lock this profile to prevent accidental edits/deletions"):
+                if "metadata" not in d:
+                    d["metadata"] = {}
+                d["metadata"]["locked"] = True
+                st.session_state.resume = d
+                save_to_disk(d)
+                st.session_state.last_hash = ""
+                st.rerun()
 
     # Simple switcher dropdown in the editor
     with st.expander("🔄 Switch Active Resume Profile", expanded=False):
