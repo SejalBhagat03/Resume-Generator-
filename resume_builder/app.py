@@ -538,7 +538,7 @@ _s("compile_ts",  0.0)
 _s("undo_stack",  [])
 _s("redo_stack",  [])
 _s("last_resume_hash", "")
-_s("navigation_page", "workspace")
+_s("navigation_page", "dashboard")
 # Import wizard
 _s("show_import", False)
 _s("wiz_step",    "upload")
@@ -849,9 +849,9 @@ st.markdown('<div id="top-bar-marker"></div>', unsafe_allow_html=True)
 # Determine columns layout dynamically based on current page view
 page = st.session_state.navigation_page
 if page == "workspace":
-    bar_brand, bar_page, bar_tpl, bar_clr, bar_ur, bar_mode = st.columns([2.5, 2.5, 2.5, 2.2, 2.3, 2.5], gap="small")
+    bar_brand, bar_page, bar_tpl, bar_clr, bar_ur, bar_mode = st.columns([2.2, 3.6, 2.2, 1.8, 1.8, 2.2], gap="small")
 else:
-    bar_brand, bar_page, bar_empty, bar_mode = st.columns([2.5, 2.5, 7.0, 2.5], gap="small")
+    bar_brand, bar_page, bar_empty, bar_mode = st.columns([2.2, 3.6, 5.5, 2.5], gap="small")
 
 with bar_brand:
     st.markdown(
@@ -862,8 +862,19 @@ with bar_brand:
     )
 
 with bar_page:
-    nav1, nav2 = st.columns(2)
+    nav1, nav2, nav3 = st.columns(3)
     with nav1:
+        if st.button(
+            "🏠 Portfolio",
+            key="nav_to_dashboard",
+            type="primary" if page == "dashboard" else "secondary",
+            use_container_width=True,
+            help="Portfolio Hub — view and manage your domain resumes",
+        ):
+            if page != "dashboard":
+                st.session_state.navigation_page = "dashboard"
+                st.rerun()
+    with nav2:
         if st.button(
             "📄 Editor",
             key="nav_to_editor",
@@ -874,7 +885,7 @@ with bar_page:
             if page != "workspace":
                 st.session_state.navigation_page = "workspace"
                 st.rerun()
-    with nav2:
+    with nav3:
         if st.button(
             "💼 Career",
             key="nav_to_career",
@@ -1103,6 +1114,223 @@ if st.session_state.show_import:
 # ═══════════════════════════════════════════════════════
 # ③ TWO-PANEL LAYOUT OR CAREER CENTER
 # ═══════════════════════════════════════════════════════
+def get_profile_metrics(path: str) -> dict:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        personal = data.get("personal", {})
+        name = personal.get("name", "SEJAL BHAGAT")
+        email = personal.get("email", "")
+        exp_count = len(data.get("experience", []))
+        proj_count = len(data.get("projects", []))
+        skills = data.get("technical_skills", {})
+        skills_count = sum(len(v.split(",")) for v in skills.values()) if isinstance(skills, dict) else 0
+        return {
+            "name": name,
+            "email": email,
+            "exp_count": exp_count,
+            "proj_count": proj_count,
+            "skills_count": skills_count
+        }
+    except Exception:
+        return {
+            "name": "SEJAL BHAGAT",
+            "email": "",
+            "exp_count": 0,
+            "proj_count": 0,
+            "skills_count": 0
+        }
+
+def show_dashboard():
+    # Premium card CSS styles
+    st.markdown("""
+    <style>
+      .profile-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 15px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .profile-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        border-color: #C7D2FE;
+      }
+      .profile-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1E293B;
+        margin-bottom: 4px;
+      }
+      .profile-sub {
+        font-size: 0.82rem;
+        color: #64748B;
+        margin-bottom: 16px;
+      }
+      .metric-pill {
+        background: #F1F5F9;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 0.72rem;
+        color: #475569;
+        display: inline-block;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="sec-title" style="font-size: 1.8rem; margin-top: 15px; margin-bottom: 8px;">💼 Resume Portfolio Hub</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color: #64748B; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5;">'
+                'Manage multiple resume profiles tailored for different job applications (e.g. AI/ML, Full Stack, Frontend).'
+                '<br>Select a profile to edit, clone it, or delete custom profiles. Every edit is saved automatically.</div>', unsafe_allow_html=True)
+                
+    profiles = list_profile_options()
+    
+    # Grid of profiles: 3 columns
+    cols = st.columns(3, gap="medium")
+    
+    # Sort profiles: Default first, then custom profiles alphabetically
+    sorted_profiles = []
+    if "Default Profile" in profiles:
+        sorted_profiles.append(("Default Profile", profiles["Default Profile"]))
+    for name, path in sorted(profiles.items()):
+        if name != "Default Profile":
+            sorted_profiles.append((name, path))
+            
+    # Add a dummy "Create New" option at the end
+    sorted_profiles.append(("➕ Create Profile", "NEW"))
+    
+    for idx, (display_name, path) in enumerate(sorted_profiles):
+        col = cols[idx % 3]
+        with col:
+            if path == "NEW":
+                # Render the create card
+                st.markdown(
+                    '<div class="profile-card" style="border: 2px dashed #CBD5E1; background: #F8FAFC; text-align: center; padding: 35px 20px;">'
+                    '<div style="font-size: 2.2rem; color: #94A3B8; margin-bottom: 8px;">➕</div>'
+                    '<div style="font-weight: 700; color: #475569; font-size: 1.1rem;">Create New Profile</div>'
+                    '<div style="font-size: 0.78rem; color: #94A3B8; margin-top: 5px;">Build a custom resume version for a new job domain</div>'
+                    '</div>', unsafe_allow_html=True
+                )
+                
+                # Options form underneath the create card
+                with st.expander("Create Profile Options", expanded=False):
+                    new_name = st.text_input("New Profile Name", placeholder="e.g. AI ML Engineer", key="new_profile_name_dash")
+                    p_base = st.selectbox("Base Content", ["Blank Template", "Clone Default Profile"], key="new_profile_base_dash")
+                    
+                    if st.button("Confirm Create", key="btn_confirm_create_dash", type="primary", use_container_width=True):
+                        if new_name.strip():
+                            clean_name = re.sub(r"[^a-zA-Z0-9\s_-]", "", new_name).strip()
+                            file_base = clean_name.lower().replace(" ", "_")
+                            if file_base:
+                                new_file_name = f"{file_base}.json"
+                                new_path = os.path.join(PROJECT_ROOT, "resume_versions", new_file_name)
+                                
+                                if p_base == "Blank Template":
+                                    content = copy.deepcopy(DEFAULT)
+                                else:
+                                    content = _read_json(os.path.join(PROJECT_ROOT, "resume.json"))
+                                    
+                                with open(new_path, "w", encoding="utf-8") as f:
+                                    json.dump(content, f, indent=2)
+                                    
+                                st.session_state.current_profile_path = new_path
+                                st.session_state.resume = content
+                                st.session_state.last_hash = ""
+                                st.session_state.navigation_page = "workspace"
+                                st.success(f"Profile '{clean_name}' created!")
+                                st.rerun()
+            else:
+                # Load stats for this profile
+                metrics = get_profile_metrics(path)
+                
+                # Is this the currently loaded profile?
+                curr_loaded_path = get_profile_path()
+                is_active = (os.path.abspath(path) == os.path.abspath(curr_loaded_path))
+                active_badge = '<span style="background: #EEF2FF; border: 1px solid #C7D2FE; color: #4F46E5; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; float: right;">ACTIVE</span>' if is_active else ''
+                
+                st.markdown(
+                    f'<div class="profile-card">'
+                    f'{active_badge}'
+                    f'<div class="profile-title">{display_name}</div>'
+                    f'<div class="profile-sub">{metrics["name"]} &bull; {metrics["email"]}</div>'
+                    f'<div style="margin-bottom: 15px;">'
+                    f'<span class="metric-pill">💼 {metrics["exp_count"]} Jobs</span>'
+                    f'<span class="metric-pill">🚀 {metrics["proj_count"]} Projects</span>'
+                    f'<span class="metric-pill">🛠️ {metrics["skills_count"]} Skills</span>'
+                    f'</div>'
+                    f'</div>', unsafe_allow_html=True
+                )
+                
+                # Card actions row
+                c_edit, c_dup, c_del = st.columns([1, 1, 1])
+                with c_edit:
+                    if st.button("✏️ Edit", key=f"edit_profile_{idx}", use_container_width=True, type="primary"):
+                        st.session_state.current_profile_path = path
+                        st.session_state.resume = load_from_disk()
+                        st.session_state.last_hash = ""
+                        st.session_state.navigation_page = "workspace"
+                        st.rerun()
+                with c_dup:
+                    if st.button("👥 Clone", key=f"clone_profile_{idx}", use_container_width=True):
+                        # Create clone file
+                        base_name = os.path.splitext(os.path.basename(path))[0]
+                        new_fname = f"{base_name}_copy.json"
+                        new_path = os.path.join(PROJECT_ROOT, "resume_versions", new_fname)
+                        
+                        # Load source content
+                        with open(path, "r", encoding="utf-8") as f:
+                            content = json.load(f)
+                            
+                        with open(new_path, "w", encoding="utf-8") as f:
+                            json.dump(content, f, indent=2)
+                            
+                        st.success("Profile cloned!")
+                        st.rerun()
+                with c_del:
+                    is_def = (display_name == "Default Profile")
+                    if st.button("🗑️ Del", key=f"del_profile_{idx}", use_container_width=True, disabled=is_def):
+                        st.session_state.delete_target_path = path
+                        st.session_state.delete_target_name = display_name
+                        st.session_state.show_dash_delete_confirm = True
+                        st.rerun()
+
+    # Handle delete confirmation on dashboard page
+    if st.session_state.get("show_dash_delete_confirm", False):
+        target_name = st.session_state.get("delete_target_name", "")
+        target_path = st.session_state.get("delete_target_path", "")
+        
+        with st.form("dash_delete_confirm_form"):
+            st.error(f"⚠️ Delete Profile: **{target_name}**?")
+            st.write("Are you sure you want to permanently delete this resume profile?")
+            df1, df2 = st.columns(2)
+            with df1:
+                if st.form_submit_button("Yes, Delete", use_container_width=True, type="primary"):
+                    if os.path.exists(target_path) and target_name != "Default Profile":
+                        os.remove(target_path)
+                    st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
+                    st.session_state.resume = load_from_disk()
+                    st.session_state.last_hash = ""
+                    st.session_state.show_dash_delete_confirm = False
+                    st.success("Profile deleted successfully.")
+                    st.rerun()
+            with df2:
+                if st.form_submit_button("Cancel", use_container_width=True):
+                    st.session_state.show_dash_delete_confirm = False
+                    st.rerun()
+
+# ═══════════════════════════════════════════════════════
+# ③ PAGE NAVIGATOR ROUTING
+# ═══════════════════════════════════════════════════════
+if st.session_state.navigation_page == "dashboard":
+    show_dashboard()
+    st.stop()
+
 if st.session_state.navigation_page == "career":
     from resume_builder.career_dashboard import show_career_center
     show_career_center()
@@ -1121,11 +1349,8 @@ with left_col:
 
     d = st.session_state.resume
 
-    # ── DOMAIN RESUME PROFILES ──
-    st.markdown('<div class="sec-title" style="margin-top: 5px; margin-bottom: 5px;">Domain Resume Profiles</div>', unsafe_allow_html=True)
+    # ── ACTIVE RESUME BANNER ──
     profiles = list_profile_options()
-    
-    # Reverse lookup path to find the current active display name
     curr_path = get_profile_path()
     curr_display = "Default Profile"
     for name, path in profiles.items():
@@ -1141,115 +1366,39 @@ with left_col:
         d = st.session_state.resume
         st.rerun()
 
-    # Dropdown to switch profiles + Action buttons
-    p_sel, p_actions = st.columns([3, 1.8])
-    with p_sel:
+    # Premium active profile banner showing saving status
+    st.markdown(
+        f'<div style="background: #EEF2FF; border: 1px solid #C7D2FE; border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">'
+        f'<div>'
+        f'<span style="font-size: 0.72rem; font-weight: 700; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Active Resume Profile</span>'
+        f'<span style="font-size: 1.05rem; font-weight: 700; color: #1E293B;">{curr_display}</span>'
+        f'</div>'
+        f'<span style="font-size: 0.72rem; font-weight: 500; color: #64748B;">💾 Auto-saved</span>'
+        f'</div>',
+        unsafe_allow_html=True
+    )
+
+    # Simple switcher dropdown in the editor
+    with st.expander("🔄 Switch Active Resume Profile", expanded=False):
         selected_name = st.selectbox(
-            "Active Profile Selection",
+            "Select Profile",
             options=list(profiles.keys()),
             index=list(profiles.keys()).index(curr_display),
             key="profile_selector_dropdown",
-            label_visibility="collapsed",
-            help="Switch between different domain resumes (e.g., AI/ML, Full Stack). Each profile is saved independently."
+            help="Switch to editing a different domain resume. All edits are saved automatically."
         )
         if selected_name != curr_display:
             st.session_state.current_profile_path = profiles[selected_name]
             st.session_state.resume = load_from_disk()
             st.session_state.last_hash = ""
             st.rerun()
-            
-    with p_actions:
-        col_new, col_dup, col_del = st.columns(3)
-        with col_new:
-            btn_new = st.button("➕", help="Create a new blank profile", use_container_width=True)
-        with col_dup:
-            btn_dup = st.button("👥", help="Duplicate current profile", use_container_width=True)
-        with col_del:
-            is_default = (selected_name == "Default Profile")
-            btn_del = st.button("🗑️", help="Delete current profile", disabled=is_default, use_container_width=True)
-
-    # Forms for profile creation / duplication / deletion
-    if btn_new:
-        st.session_state.show_create_profile = True
-        st.session_state.create_profile_type = "new"
-        st.session_state.show_delete_confirm = False
-        st.rerun()
         
-    if btn_dup:
-        st.session_state.show_create_profile = True
-        st.session_state.create_profile_type = "duplicate"
-        st.session_state.show_delete_confirm = False
-        st.rerun()
-        
-    if btn_del:
-        st.session_state.show_delete_confirm = True
-        st.session_state.show_create_profile = False
-        st.rerun()
-
-    # Show new/duplicate profile form
-    if st.session_state.get("show_create_profile", False):
-        p_type = st.session_state.create_profile_type
-        action_verb = "Create New" if p_type == "new" else "Duplicate Current"
-        with st.form("create_profile_form", clear_on_submit=True):
-            st.markdown(f"**{action_verb} Profile**")
-            new_name = st.text_input("Profile Name (e.g. AI ML Engineer, Backend Developer)", placeholder="AI ML Engineer")
-            fc1, fc2 = st.columns(2)
-            with fc1:
-                submit = st.form_submit_button("Confirm", use_container_width=True, type="primary")
-            with fc2:
-                cancel = st.form_submit_button("Cancel", use_container_width=True)
-                
-            if submit and new_name.strip():
-                clean_name = re.sub(r"[^a-zA-Z0-9\s_-]", "", new_name).strip()
-                file_base = clean_name.lower().replace(" ", "_")
-                if file_base:
-                    new_file_name = f"{file_base}.json"
-                    new_path = os.path.join(PROJECT_ROOT, "resume_versions", new_file_name)
-                    
-                    if p_type == "new":
-                        content = copy.deepcopy(DEFAULT)
-                    else:
-                        content = copy.deepcopy(st.session_state.resume)
-                        
-                    # Save new profile to disk
-                    with open(new_path, "w", encoding="utf-8") as f:
-                        json.dump(content, f, indent=2)
-                        
-                    # Switch to new profile
-                    st.session_state.current_profile_path = new_path
-                    st.session_state.resume = content
-                    st.session_state.last_hash = ""
-                    st.session_state.show_create_profile = False
-                    st.success(f"Profile '{clean_name}' created successfully!")
-                    st.rerun()
-            if cancel:
-                st.session_state.show_create_profile = False
-                st.rerun()
-
-    # Show delete profile confirmation
-    if st.session_state.get("show_delete_confirm", False):
-        with st.form("delete_profile_form"):
-            st.error(f"⚠️ Are you sure you want to delete the profile: **{selected_name}**?")
-            st.write("This action cannot be undone and the file will be deleted permanently.")
-            dfc1, dfc2 = st.columns(2)
-            with dfc1:
-                confirm_del = st.form_submit_button("Yes, Delete", use_container_width=True, type="primary")
-            with dfc2:
-                cancel_del = st.form_submit_button("Cancel", use_container_width=True)
-                
-            if confirm_del:
-                path_to_delete = profiles[selected_name]
-                if os.path.exists(path_to_delete) and selected_name != "Default Profile":
-                    os.remove(path_to_delete)
-                st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
-                st.session_state.resume = load_from_disk()
-                st.session_state.last_hash = ""
-                st.session_state.show_delete_confirm = False
-                st.success("Profile deleted successfully.")
-                st.rerun()
-            if cancel_del:
-                st.session_state.show_delete_confirm = False
-                st.rerun()
+        st.markdown(
+            '<div style="font-size: 0.75rem; color: #64748B; margin-top: 5px; text-align: right;">'
+            'Want to create, clone, or delete profiles? Go to the <b>🏠 Portfolio</b> tab at the top.'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
     st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
 
