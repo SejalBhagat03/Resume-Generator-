@@ -16,14 +16,17 @@ from resume_builder.utils.project_story import ProjectStoryGenerator
 from resume_builder.utils.knowledge_graph import KnowledgeGraphRenderer
 
 # ─── Tool Definitions ────────────────────────────────────────────────────────
-CAREER_TOOLS = [
-    {
-        "id":    "master_sync",
-        "icon":  "👤",
-        "title": "Master Profile Sync",
-        "desc":  "One edit updates ALL resume versions at once",
-        "how":   "Edit your shared contact info and core skills below, then click <b>Sync</b> — every saved version updates automatically.",
-    },
+# GitHub is always shown prominently at the top of Career Center
+GITHUB_TOOL = {
+    "id":    "github",
+    "icon":  "🐙",
+    "title": "GitHub Evidence",
+    "desc":  "Prove your skills with real repos",
+    "how":   "Enter your GitHub username and click <b>Load Repos</b>. Then add any project to your resume in one click.",
+}
+
+# Advanced tools — hidden in collapsed expander by default
+ADVANCED_TOOLS = [
     {
         "id":    "consistency",
         "icon":  "🔍",
@@ -53,13 +56,6 @@ CAREER_TOOLS = [
         "how":   "Expand any question to see what the interviewer is testing and which topics you should cover in your answer.",
     },
     {
-        "id":    "github",
-        "icon":  "🐙",
-        "title": "GitHub Evidence",
-        "desc":  "Prove your skills with real repos",
-        "how":   "Enter your GitHub username and click <b>Load Repos</b>. Then add any project to your resume in one click.",
-    },
-    {
         "id":    "project_story",
         "icon":  "📝",
         "title": "Project Story Gen",
@@ -73,7 +69,17 @@ CAREER_TOOLS = [
         "desc":  "See how your skills & experience connect",
         "how":   "The graph links every skill to the project or job where you used it. Hover over nodes to see details.",
     },
+    {
+        "id":    "master_sync",
+        "icon":  "👤",
+        "title": "Master Profile Sync",
+        "desc":  "One edit updates ALL resume versions at once",
+        "how":   "Edit your shared contact info and core skills below, then click <b>Sync</b> — every saved version updates automatically.",
+    },
 ]
+
+# Combined list for lookup purposes
+CAREER_TOOLS = [GITHUB_TOOL] + ADVANCED_TOOLS
 
 # ─── Career Center CSS ───────────────────────────────────────────────────────
 _CAREER_CSS = """
@@ -254,6 +260,11 @@ _CAREER_CSS = """
     font-size: .76rem;
     color: #64748B;
 }
+@media (max-width: 768px) {
+    .career-hero {
+        padding: 16px 20px !important;
+    }
+}
 </style>
 """
 
@@ -287,13 +298,28 @@ def _section_title(text: str):
 # ─── Main Entry Point ─────────────────────────────────────────────────────────
 def show_career_center():
     st.markdown(_CAREER_CSS, unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    .adv-tools-expander summary {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #4F46E5 !important;
+    }
+    .tool-card-btn button {
+        border-radius: 10px !important;
+        padding: 10px 8px !important;
+        height: auto !important;
+        min-height: 52px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
     d = st.session_state.resume
     ensure_setup(d)
 
     # ── Initialize active tool ─────────────────────────────────────────────
     if "career_active_tool" not in st.session_state:
-        st.session_state.career_active_tool = "master_sync"
+        st.session_state.career_active_tool = "github"
 
     # ── Compute all metrics up-front ───────────────────────────────────────
     cc_res      = ConsistencyChecker.analyze(d)
@@ -314,151 +340,136 @@ def show_career_center():
     # ══════════════════════════════════════════════════════════════════════
     st.markdown(
         '<div class="career-hero">'
-        '<h1>💼 Career Center</h1>'
-        '<p>Your 8-tool career lab. Analyze gaps, prove skills, and manage multiple tailored resume versions — all in one place.<br>'
-        '<span style="opacity:.75;font-size:.82rem;">Pick a tool from the grid below to get started.</span></p>'
+        '<h1>📈 Career Insights</h1>'
+        '<p>Connect GitHub, check your resume health, and discover skill gaps in seconds.<br>'
+        '<span style="opacity:.75;font-size:.82rem;">Start with GitHub below — add real repos to your resume in one click.</span></p>'
         '</div>',
         unsafe_allow_html=True,
     )
 
-    # ══════════════════════════════════════════════════════════════════════
-    # VERSION MANAGER  (collapsible — doesn't dominate the page)
-    # ══════════════════════════════════════════════════════════════════════
-    with st.expander(
-        f"📁 Resume Versions  ·  {'**' + selected_option + '**' if selected_option != 'Default Workspace' else 'Default Workspace'}  —  click to save or switch",
-        expanded=False,
-    ):
-        _how_to(
-            "Save your current workspace as a named version (e.g. <b>frontend_developer</b>), "
-            "then switch between versions using the dropdown. All versions inherit Master Profile data."
-        )
-        v_col1, v_col2 = st.columns([2, 1])
-        with v_col1:
-            options = ["Default Workspace"] + versions
-            sel = st.selectbox(
-                "Active Resume Version",
-                options=options,
-                index=options.index(selected_option),
-                key="career_version_select",
-            )
-            if sel != selected_option:
-                st.session_state.active_version = sel
-                if sel == "Default Workspace":
-                    from resume_builder.app import load_from_disk
-                    st.session_state.resume = load_from_disk()
-                else:
-                    st.session_state.resume = load_version(sel)
-                st.session_state.last_hash = ""
-                selected_option = sel
-                st.success(f"✅ Loaded version: **{sel}**")
-                st.rerun()
+    st.markdown('<div style="height:5px"></div>', unsafe_allow_html=True)
 
-        with v_col2:
-            new_ver = st.text_input(
-                "Save as new version",
-                placeholder="e.g. frontend_developer",
-                key="career_new_ver",
-            )
-            if st.button("💾 Save As Version", use_container_width=True, type="primary"):
-                if new_ver:
-                    clean = new_ver.strip().lower().replace(" ", "_")
-                    save_version(clean, d)
-                    st.session_state.active_version = clean
-                    selected_option = clean
-                    st.success(f"✅ Saved: **{clean}**")
-                    st.rerun()
-                else:
-                    st.error("Please enter a version name.")
-
-        if versions:
-            st.markdown(
-                f"**{len(versions)} saved version(s):** "
-                + "  ".join(f"`{v}`" for v in versions)
-            )
-        else:
-            st.caption("No saved versions yet. Use the field above to save your first one.")
 
     # ══════════════════════════════════════════════════════════════════════
-    # KPI ROW — color-coded with explanations
+    # GOAL SELECTION MENU (PHASES 9 & 10)
     # ══════════════════════════════════════════════════════════════════════
-    st.markdown('<div style="height:16px"></div>', unsafe_allow_html=True)
-    k1, k2, k3, k4 = st.columns(4)
-    con_cls  = _score_color(cc_res["score"])
-    ev_cls   = _score_color(ev_score)
-    gap_cls  = _score_color(gap_res["match_pct"])
-    warn_cls = _score_color(len(cc_res["warnings"]), invert=True)
+    active_id = st.session_state.career_active_tool
+    
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+    # Compact GitHub hero (promote GitHub connection)
+    gh_user = st.session_state.get('github_username','')
+    gh_col1, gh_col2 = st.columns([3,2])
+    with gh_col1:
+        st.markdown("<div style='font-weight:800;font-size:1.05rem;'>🐙 Connect Your GitHub</div>", unsafe_allow_html=True)
+        st.markdown("<div style='color:#64748B;margin-top:6px;'>Import projects directly into your resume and verify skills from real code.</div>", unsafe_allow_html=True)
+        gh_input = st.text_input("GitHub Username", value=gh_user, key='cd_gh_user', placeholder='e.g. SejalBhagat03')
+        if st.button('Connect GitHub', key='cd_gh_connect'):
+            if gh_input.strip():
+                st.session_state.github_username = gh_input.strip()
+                st.session_state['gh_load_triggered'] = True
+                st.success(f"Connected to GitHub as {st.session_state.github_username}")
+                st.experimental_rerun()
+    with gh_col2:
+        st.markdown('<div style="font-weight:700;margin-bottom:6px;">Benefits</div>', unsafe_allow_html=True)
+        st.markdown('<ul style="color:#374151;"><li>Import projects</li><li>Verify skills</li><li>Auto-generate bullets</li><li>Improve resume score</li></ul>', unsafe_allow_html=True)
 
-    with k1:
+    st.markdown("### 🎯 Choose your career goal:")
+    g1, g2, g3, g4 = st.columns(4)
+    
+    with g1:
+        is_active = (active_id == "consistency")
         st.markdown(
-            _kpi_card("Consistency Score", f"{cc_res['score']}%",
-                      "Data accuracy across all sections", con_cls),
-            unsafe_allow_html=True,
+            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
+            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'  <div>'
+            f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">🚀 Improve Resume</div>'
+            f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">Fix ATS issues, improve content quality, and strengthen bullets.</p>'
+            f'    <ul style="margin-top:8px;color:#374151;">'
+            f'      <li>Fix ATS & formatting issues</li>'
+            f'      <li>Improve descriptions with impact</li>'
+            f'      <li>Quantify achievements</li>'
+            f'    </ul>'
+            f'  </div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
-    with k2:
+        if st.button("Start", key="goal_improve_btn", type="primary" if is_active else "secondary", use_container_width=True):
+            st.session_state.career_active_tool = "consistency"
+            st.rerun()
+
+    with g2:
+        is_active = (active_id == "interview_prep")
         st.markdown(
-            _kpi_card("Evidence Score", f"{ev_score}%",
-                      "Resume skills proven by GitHub", ev_cls),
-            unsafe_allow_html=True,
-        )
-    with k3:
+            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
+            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'  <div>'
+            f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">💼 Interview Prep</div>'
+            f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">Project questions, HR preparation, and technical practice.</p>'
+            f'    <ul style="margin-top:8px;color:#374151;">'
+            f'      <li>Behavioral & HR questions</li>'
+            f'      <li>Project architecture prompts</li>'
+            f'      <li>Technical skill drills</li>'
+            f'    </ul>'
+            f'  </div>'
+            f'</div>',
+            unsafe_allow_html=True)
+        if st.button("Start", key="goal_interview_btn", type="primary" if is_active else "secondary", use_container_width=True):
+            st.session_state.career_active_tool = "interview_prep"
+            st.rerun()
+
+    with g3:
+        is_active = (active_id == "gap_analyzer")
         st.markdown(
-            _kpi_card("Career Match", f"{gap_res['match_pct']}%",
-                      f"Match vs {target_role}", gap_cls),
-            unsafe_allow_html=True,
+            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
+            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'  <div>'
+            f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">📈 Skill Gap Analysis</div>'
+            f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">See how your skills match target roles and where to focus learning.</p>'
+            f'    <ul style="margin-top:8px;color:#374151;">'
+            f'      <li>Select a target role</li>'
+            f'      <li>See matching vs missing skills</li>'
+            f'      <li>Get a recommended learning path</li>'
+            f'    </ul>'
+            f'  </div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
-    with k4:
-        w_count = len(cc_res["warnings"])
+        if st.button("Start", key="goal_gap_btn", type="primary" if is_active else "secondary", use_container_width=True):
+            st.session_state.career_active_tool = "gap_analyzer"
+            st.rerun()
+
+    with g4:
+        is_active = (active_id == "github")
         st.markdown(
-            _kpi_card("Warnings", str(w_count),
-                      "Issues to fix (0 is ideal)", warn_cls),
-            unsafe_allow_html=True,
+            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
+            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'  <div>'
+            f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">🐙 GitHub Projects</div>'
+            f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">Connect repos and import projects directly into your resume.</p>'
+            f'    <ul style="margin-top:8px;color:#374151;">'
+            f'      <li>Import projects in one click</li>'
+            f'      <li>Verify skills from code</li>'
+            f'      <li>Auto-generate bullets</li>'
+            f'    </ul>'
+            f'  </div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
+        if st.button("Start", key="goal_github_btn", type="primary" if is_active else "secondary", use_container_width=True):
+            st.session_state.career_active_tool = "github"
+            st.rerun()
 
-    # ══════════════════════════════════════════════════════════════════════
-    # FEATURE CARD GRID — tool navigation
-    # ══════════════════════════════════════════════════════════════════════
-    _section_title("🛠️ Career Tools — click any card to open")
+    st.markdown("<hr style='margin: 20px 0; border: 0.5px solid #E2E8F0;'/>", unsafe_allow_html=True)
 
-    # Row 1: first 4 tools
-    row1 = st.columns(4)
-    for i, tool in enumerate(CAREER_TOOLS[:4]):
-        with row1[i]:
-            is_active = st.session_state.career_active_tool == tool["id"]
-            clicked = st.button(
-                f"{tool['icon']} **{tool['title']}**",
-                key=f"tool_btn_{tool['id']}",
-                use_container_width=True,
-                type="primary" if is_active else "secondary",
-            )
-            st.caption(tool["desc"])
-            if clicked:
-                st.session_state.career_active_tool = tool["id"]
-                st.rerun()
-
-    # Row 2: next 4 tools
-    row2 = st.columns(4)
-    for i, tool in enumerate(CAREER_TOOLS[4:]):
-        with row2[i]:
-            is_active = st.session_state.career_active_tool == tool["id"]
-            clicked = st.button(
-                f"{tool['icon']} **{tool['title']}**",
-                key=f"tool_btn_{tool['id']}",
-                use_container_width=True,
-                type="primary" if is_active else "secondary",
-            )
-            st.caption(tool["desc"])
-            if clicked:
-                st.session_state.career_active_tool = tool["id"]
-                st.rerun()
-
-    # ══════════════════════════════════════════════════════════════════════
-    # ACTIVE TOOL CONTENT AREA
-    # ══════════════════════════════════════════════════════════════════════
-    active_id   = st.session_state.career_active_tool
-    active_tool = next((t for t in CAREER_TOOLS if t["id"] == active_id), CAREER_TOOLS[0])
+    # ── Set active_tool reference for content rendering below ──────────────
+    active_tool = next((t for t in CAREER_TOOLS if t["id"] == active_id), GITHUB_TOOL)
 
     st.markdown(
-        f'<div class="cc-tool-header">'
+        f'<div class="cc-tool-header" style="margin-top:16px; margin-bottom:12px;">'
         f'<span class="cc-tool-icon">{active_tool["icon"]}</span>'
         f'<div><div class="cc-tool-title">{active_tool["title"]}</div>'
         f'<div class="cc-tool-desc">{active_tool["desc"]}</div></div>'
@@ -466,6 +477,7 @@ def show_career_center():
         unsafe_allow_html=True,
     )
     _how_to(active_tool["how"])
+
 
     # ── 1. MASTER PROFILE SYNC ────────────────────────────────────────────
     if active_id == "master_sync":
@@ -876,3 +888,86 @@ def show_career_center():
         graph_html = KnowledgeGraphRenderer.render_graph_html(d)
         import streamlit.components.v1 as components
         components.html(graph_html, height=520, scrolling=True)
+
+    # ══════════════════════════════════════════════════════════════════════
+    # ADVANCED TOOLS EXPANDER (PHASE 10)
+    # ══════════════════════════════════════════════════════════════════════
+    st.markdown("<hr style='margin: 25px 0; border: 0.5px solid #E2E8F0;'/>", unsafe_allow_html=True)
+    
+    adv_tool_ids = ["achievements", "project_story", "knowledge_graph", "master_sync"]
+    adv_is_open = active_id in adv_tool_ids or st.session_state.get("adv_tools_expanded", False)
+    
+    with st.expander("⚡ Advanced Tools ▼ — Metrics, Stories, Graph, Sync, Versions", expanded=adv_is_open):
+        st.markdown(
+            '<div style="background:#F1F5F9; border-left:4px solid #64748B; border-radius:8px;'
+            'padding:10px 14px; margin-bottom:14px; font-size:.83rem; color:#475569;">'
+            '💡 <b>Advanced Tools</b> help you fine-tune details or manage profile versioning. Select a tool to open it.'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        
+        # Display advanced tools grid
+        adv_cols = st.columns(4)
+        adv_list = [
+            {"id": "achievements", "icon": "💡", "title": "Quantifier", "desc": "Achievement metrics"},
+            {"id": "project_story", "icon": "📝", "title": "Story Gen", "desc": "STAR & social posts"},
+            {"id": "knowledge_graph", "icon": "🕸️", "title": "Skill Graph", "desc": "Skills connector"},
+            {"id": "master_sync", "icon": "👤", "title": "Master Sync", "desc": "Sync all profiles"},
+        ]
+        for idx, tool in enumerate(adv_list):
+            with adv_cols[idx]:
+                is_active = (active_id == tool["id"])
+                if st.button(
+                    f"{tool['icon']} **{tool['title']}**",
+                    key=f"adv_tool_btn_{tool['id']}",
+                    use_container_width=True,
+                    type="primary" if is_active else "secondary",
+                ):
+                    st.session_state.career_active_tool = tool["id"]
+                    st.session_state.adv_tools_expanded = True
+                    st.rerun()
+                st.caption(tool["desc"])
+                
+        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+        st.markdown("##### 📁 Version Manager")
+        _how_to(
+            "Save your current workspace as a named version, then switch between versions using the dropdown."
+        )
+        v_col1, v_col2 = st.columns([2, 1])
+        with v_col1:
+            options = ["Default Workspace"] + versions
+            sel = st.selectbox(
+                "Active Resume Version",
+                options=options,
+                index=options.index(selected_option),
+                key="career_version_select_bottom",
+            )
+            if sel != selected_option:
+                st.session_state.active_version = sel
+                if sel == "Default Workspace":
+                    from resume_builder.app import load_from_disk
+                    st.session_state.resume = load_from_disk()
+                else:
+                    st.session_state.resume = load_version(sel)
+                st.session_state.last_hash = ""
+                st.rerun()
+        with v_col2:
+            new_ver = st.text_input(
+                "Save as new version",
+                placeholder="e.g. frontend_developer",
+                key="career_new_ver_bottom",
+            )
+            if st.button("💾 Save Version", key="save_version_btn_bottom", use_container_width=True, type="primary"):
+                if new_ver:
+                    clean = new_ver.strip().lower().replace(" ", "_")
+                    save_version(clean, d)
+                    st.session_state.active_version = clean
+                    st.success(f"Saved: **{clean}**")
+                    st.rerun()
+                else:
+                    st.error("Please enter a version name.")
+        if versions:
+            st.markdown(f"**{len(versions)} saved version(s):** " + "  ".join(f"`{v}`" for v in versions))
+        else:
+            st.caption("No saved versions yet.")
+

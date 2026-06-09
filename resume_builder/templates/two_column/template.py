@@ -88,7 +88,21 @@ class TwoColumnTemplate(BaseTemplate):
         personal = data.get("personal", {})
         name = personal.get("name", "SEJAL BHAGAT")
         left_story.append(Paragraph(name, name_style))
-        left_story.append(scale_spacer(1, 4))
+        left_story.append(scale_spacer(1, 2))
+        
+        # Professional Title
+        title = personal.get("title", "")
+        if title:
+            title_style = ParagraphStyle(
+                'TCSideTitleRole',
+                parent=sidebar_body_style,
+                fontSize=9.5 * font_scale,
+                leading=11.5 * font_scale,
+                textColor=colors.HexColor(accent_color),
+                fontName='Helvetica-Bold'
+            )
+            left_story.append(Paragraph(title, title_style))
+            left_story.append(scale_spacer(1, 4))
         
         # Contact info
         loc = personal.get("location", "")
@@ -231,10 +245,20 @@ class TwoColumnTemplate(BaseTemplate):
                 right_story.append(scale_spacer(1, 3))
             right_story.append(scale_spacer(1, 2))
             
-        # Achievements
+        # Certifications & Achievements
         achievements = data.get("achievements", [])
-        if achievements:
-            add_main_header("Achievements")
+        certifications = data.get("certifications", [])
+        if achievements or certifications:
+            if achievements and certifications:
+                header_title = "Certifications & Achievements"
+            elif certifications:
+                header_title = "Certifications"
+            else:
+                header_title = "Achievements"
+            add_main_header(header_title)
+            for cert in certifications:
+                cleaned = clean_bullet(cert)
+                right_story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", bullet_style))
             for achievement in achievements:
                 cleaned = clean_bullet(achievement)
                 right_story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", bullet_style))

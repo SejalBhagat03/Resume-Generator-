@@ -1,0 +1,41 @@
+{
+  "personal": {
+    "name": "SEJAL BHAGAT",
+    "title": "",
+    "email": "bhagatsejal08@gmail.com",
+    "phone": "+91 9022644273",
+    "location": "Nagpur, India",
+    "linkedin": {
+      "display": "linkedin/Sejal-Bhagat",
+      "url": "https://linkedin.com/in/Sejal-Bhagat"
+    },
+    "github": {
+      "display": "github.com/SejalBhagat03",
+      "url": "https://github.com/SejalBhagat03"
+    },
+    "portfolio": {
+      "display": "",
+      "url": ""
+    }
+  },
+  "summary": "Final-year Computer Science student with full-stack development experience.",
+  "experience": [],
+  "projects": [],
+  "technical_skills": {
+    "Programming": "C++, Python, JavaScript",
+    "Frontend": "HTML, CSS, React.js",
+    "Tools": "Git, VS Code, Postman"
+  },
+  "achievements": [],
+  "certifications": [],
+  "education": [],
+  "position_of_responsibility": [],
+  "metadata": {
+    "template": "ats",
+    "color": "#6366F1",
+    "margins": 20,
+    "fscale": 1.0,
+    "fitting": "Auto Compress",
+    "last_edited": 1780998813.820236
+  }
+}

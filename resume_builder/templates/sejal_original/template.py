@@ -126,6 +126,20 @@ class SejalOriginalTemplate(BaseTemplate):
         story.append(Paragraph(name.upper(), name_style))
         story.append(scale_spacer(1, 2))
         
+        # Professional Title
+        title = personal.get("title", "")
+        if title:
+            title_style = ParagraphStyle(
+                'HeaderTitle',
+                parent=contact_style,
+                fontSize=11 * font_scale,
+                leading=13 * font_scale,
+                textColor=colors.HexColor(accent_color),
+                fontName='Helvetica-Bold'
+            )
+            story.append(Paragraph(title, title_style))
+            story.append(scale_spacer(1, 2))
+        
         # Two-column contact table exactly matching the layout in the image
         loc = personal.get("location", "")
         phone = personal.get("phone", "")
@@ -270,10 +284,20 @@ class SejalOriginalTemplate(BaseTemplate):
                 story.append(Paragraph(p_text, skills_bullet_style))
             story.append(scale_spacer(1, 2))
             
-        # --- ACHIEVEMENTS SECTION ---
+        # --- CERTIFICATIONS & ACHIEVEMENTS SECTION ---
         achievements = data.get("achievements", [])
-        if achievements:
-            add_section_header("Achievements")
+        certifications = data.get("certifications", [])
+        if achievements or certifications:
+            if achievements and certifications:
+                header_title = "Certifications & Achievements"
+            elif certifications:
+                header_title = "Certifications"
+            else:
+                header_title = "Achievements"
+            add_section_header(header_title)
+            for cert in certifications:
+                cleaned = clean_bullet(cert)
+                story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", skills_bullet_style))
             for achievement in achievements:
                 cleaned = clean_bullet(achievement)
                 story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", skills_bullet_style))

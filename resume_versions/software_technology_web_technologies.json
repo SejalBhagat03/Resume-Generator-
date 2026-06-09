@@ -1,6 +1,17 @@
 {
+  "metadata": {
+    "locked": false,
+    "title": "bj",
+    "last_edited": 1781026045.0380108,
+    "template": "sejal_original",
+    "color": "#6366F1",
+    "margins": 20,
+    "fscale": 1.0,
+    "fitting": "Auto Compress"
+  },
   "personal": {
-    "name": "Sejal Bhagat",
+    "name": "",
+    "title": "",
     "email": "bhagatsejal08@gmail.com",
     "phone": "+91 9022644273",
     "location": "Nagpur, India",
@@ -11,6 +22,10 @@
     "github": {
       "display": "github.com/SejalBhagat03",
       "url": "https://github.com/SejalBhagat03"
+    },
+    "portfolio": {
+      "display": "",
+      "url": ""
     }
   },
   "summary": "Final-year Computer Science Engineering student with hands-on software developer internship experience. Skilled in modern web architectures, scalable API development, and software design patterns. Proven record of building secure, database-driven web applications and solving complex algorithmic challenges.",
@@ -64,17 +79,21 @@
     }
   ],
   "technical_skills": {
-    "Programming": "C++, Python, JavaScript, TypeScript, C",
-    "Web Technologies": "HTML5, CSS3, React.js, Tailwind CSS, Bootstrap, Node.js, Express.js, REST APIs",
-    "Databases": "PostgreSQL, MongoDB, MySQL",
-    "Tools & Platform": "Git, GitHub, Postman, VS Code, Vite, Docker, Cloudflare, Netlify",
-    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks"
+    "Programming": "C++, Python, JavaScript, TypeScript",
+    "Frontend": "HTML, CSS, React.js, Tailwind CSS, Bootstrap",
+    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication",
+    "Databases": "MongoDB, PostgreSQL, MySQL",
+    "Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
+    "Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
+    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
+    "AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",
     "<b>Problem Solving:</b> Completed 300+ Data Structures and Algorithms (DSA) problems across LeetCode and GeeksforGeeks.",
     "<b>Innovation:</b> Participated in the Smart India Hackathon (SIH), collaborating in a team to build robust technical solutions."
   ],
+  "certifications": [],
   "education": [
     {
       "degree": "B.Tech. in Computer Science Engineering",
@@ -103,8 +122,5 @@
         "Organized and coordinated technical workshops and events for students in the college technical club."
       ]
     }
-  ],
-  "metadata": {
-    "locked": false
-  }
+  ]
 }

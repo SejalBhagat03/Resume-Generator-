@@ -222,10 +222,20 @@ class CreativeTemplate(BaseTemplate):
                 story.append(Paragraph(p_text, ParagraphStyle('CreativeSkillList', parent=body_style, leftIndent=10*font_scale, spaceAfter=2.5*font_scale)))
             story.append(scale_spacer(1, 3))
             
-        # --- ACHIEVEMENTS ---
+        # --- CERTIFICATIONS & ACHIEVEMENTS ---
         achievements = data.get("achievements", [])
-        if achievements:
-            add_section_header("Key Achievements")
+        certifications = data.get("certifications", [])
+        if achievements or certifications:
+            if achievements and certifications:
+                header_title = "Certifications & Achievements"
+            elif certifications:
+                header_title = "Certifications"
+            else:
+                header_title = "Key Achievements"
+            add_section_header(header_title)
+            for cert in certifications:
+                cleaned = clean_bullet(cert)
+                story.append(Paragraph(f"<font color='{accent_color}'>&bull;</font>&nbsp;&nbsp;{cleaned}", ParagraphStyle('CreativeAch', parent=body_style, leftIndent=14*font_scale, firstLineIndent=-8*font_scale, spaceAfter=2*font_scale)))
             for achievement in achievements:
                 cleaned = clean_bullet(achievement)
                 story.append(Paragraph(f"<font color='{accent_color}'>&bull;</font>&nbsp;&nbsp;{cleaned}", ParagraphStyle('CreativeAch', parent=body_style, leftIndent=14*font_scale, firstLineIndent=-8*font_scale, spaceAfter=2*font_scale)))

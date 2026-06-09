@@ -281,10 +281,20 @@ class ExtractedLayoutTemplate(BaseTemplate):
                 story.append(Paragraph(p_text, ParagraphStyle('SkillList', parent=body_style, leftIndent=8*font_scale, spaceAfter=2*font_scale)))
             story.append(scale_spacer(1, 4))
             
-        # --- ACHIEVEMENTS ---
+        # --- CERTIFICATIONS & ACHIEVEMENTS ---
         achievements = data.get("achievements", [])
-        if achievements:
-            add_section_header("Achievements")
+        certifications = data.get("certifications", [])
+        if achievements or certifications:
+            if achievements and certifications:
+                header_title = "Certifications & Achievements"
+            elif certifications:
+                header_title = "Certifications"
+            else:
+                header_title = "Achievements"
+            add_section_header(header_title)
+            for cert in certifications:
+                cleaned = clean_bullet(cert)
+                story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", bullet_style))
             for achievement in achievements:
                 cleaned = clean_bullet(achievement)
                 story.append(Paragraph(f"&bull;&nbsp;&nbsp;{cleaned}", bullet_style))

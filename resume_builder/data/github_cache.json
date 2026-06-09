@@ -1,4 +1,102 @@
 {
+  "torvalds": [
+    {
+      "name": "linux",
+      "description": "Linux kernel source tree",
+      "language": "C",
+      "stargazers_count": 235885,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/linux"
+    },
+    {
+      "name": "GuitarPedal",
+      "description": "Linus learns analog circuits",
+      "language": "C",
+      "stargazers_count": 1985,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/GuitarPedal"
+    },
+    {
+      "name": "ScrollWheel",
+      "description": "Minimalist RP2350 magnetic sensor scroll wheel toy project",
+      "language": "C",
+      "stargazers_count": 253,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/ScrollWheel"
+    },
+    {
+      "name": "1590A",
+      "description": "Random odd guitar pedal design in kicad",
+      "language": "OpenSCAD",
+      "stargazers_count": 565,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/1590A"
+    },
+    {
+      "name": "AudioNoise",
+      "description": "Random digital audio effects",
+      "language": "C",
+      "stargazers_count": 4378,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/AudioNoise"
+    },
+    {
+      "name": "pesconvert",
+      "description": "Brother PES file converter",
+      "language": "C",
+      "stargazers_count": 561,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/pesconvert"
+    },
+    {
+      "name": "libgit2",
+      "description": "A cross-platform, linkable library implementation of Git that you can use in your application.",
+      "language": "C",
+      "stargazers_count": 360,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/libgit2"
+    },
+    {
+      "name": "test-tlb",
+      "description": "Stupid memory latency and TLB tester",
+      "language": "C",
+      "stargazers_count": 1006,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/test-tlb"
+    },
+    {
+      "name": "uemacs",
+      "description": "Random version of microemacs with my private modificatons",
+      "language": "C",
+      "stargazers_count": 2043,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/uemacs"
+    },
+    {
+      "name": "HunspellColorize",
+      "description": "Wrapper around 'less' to colorize spelling mistakes using Hunspell",
+      "language": "C",
+      "stargazers_count": 346,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/HunspellColorize"
+    },
+    {
+      "name": "libdc-for-dirk",
+      "description": "Only use for syncing with Dirk, don't use for anything else",
+      "language": "C",
+      "stargazers_count": 387,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/libdc-for-dirk"
+    },
+    {
+      "name": "subsurface-for-dirk",
+      "description": "Do not use - the real upstream is  Subsurface-divelog/subsurface",
+      "language": "C++",
+      "stargazers_count": 457,
+      "topics": [],
+      "html_url": "https://github.com/torvalds/subsurface-for-dirk"
+    }
+  ],
   "sejalbhagat03": [
     {
       "name": "Resume-Generator-",
@@ -7,6 +105,14 @@
       "stargazers_count": 0,
       "topics": [],
       "html_url": "https://github.com/SejalBhagat03/Resume-Generator-"
+    },
+    {
+      "name": "user-feedback-collection-app",
+      "description": null,
+      "language": "Dart",
+      "stargazers_count": 0,
+      "topics": [],
+      "html_url": "https://github.com/SejalBhagat03/user-feedback-collection-app"
     },
     {
       "name": "study-buddy-ai",
@@ -73,45 +179,78 @@
       "html_url": "https://github.com/SejalBhagat03/DigiSewa-2025-final-year-"
     }
   ],
-  "sejalbhagat03sejalbhagat03": [
+  "octocat": [
     {
-      "name": "resume-generator",
-      "description": "Streamlit Canva-style resume generator with live PDF compilation using ReportLab.",
-      "language": "Python",
-      "stargazers_count": 5,
-      "topics": [
-        "python",
-        "streamlit",
-        "reportlab",
-        "pdf-generator"
-      ],
-      "html_url": "https://github.com/sejalbhagat03sejalbhagat03/resume-generator"
+      "name": "hello-worId",
+      "description": "My first repository on GitHub.",
+      "language": null,
+      "stargazers_count": 752,
+      "topics": [],
+      "html_url": "https://github.com/octocat/hello-worId",
+      "updated_at": "2026-06-09T08:58:19Z"
     },
     {
-      "name": "labour-management-app",
-      "description": "Role-based project to manage construction layouts, labor logs, and materials.",
-      "language": "JavaScript",
-      "stargazers_count": 2,
-      "topics": [
-        "react",
-        "nodejs",
-        "mongodb",
-        "express"
-      ],
-      "html_url": "https://github.com/sejalbhagat03sejalbhagat03/labour-management-app"
+      "name": "Spoon-Knife",
+      "description": "This repo is for demonstration purposes only.",
+      "language": "HTML",
+      "stargazers_count": 13836,
+      "topics": [],
+      "html_url": "https://github.com/octocat/Spoon-Knife",
+      "updated_at": "2026-06-09T05:45:10Z"
     },
     {
-      "name": "digital-license-vault",
-      "description": "Digital credential storage and authentication platform using encryption.",
-      "language": "JavaScript",
-      "stargazers_count": 1,
-      "topics": [
-        "nodejs",
-        "react",
-        "cryptography",
-        "mysql"
-      ],
-      "html_url": "https://github.com/sejalbhagat03sejalbhagat03/digital-license-vault"
+      "name": "Hello-World",
+      "description": "My first repository on GitHub!",
+      "language": null,
+      "stargazers_count": 3615,
+      "topics": [],
+      "html_url": "https://github.com/octocat/Hello-World",
+      "updated_at": "2026-06-09T04:33:46Z"
+    },
+    {
+      "name": "git-consortium",
+      "description": "This repo is for demonstration purposes only.",
+      "language": null,
+      "stargazers_count": 577,
+      "topics": [],
+      "html_url": "https://github.com/octocat/git-consortium",
+      "updated_at": "2026-06-09T02:12:31Z"
+    },
+    {
+      "name": "boysenberry-repo-1",
+      "description": "Testing",
+      "language": null,
+      "stargazers_count": 449,
+      "topics": [],
+      "html_url": "https://github.com/octocat/boysenberry-repo-1",
+      "updated_at": "2026-06-09T02:12:30Z"
+    },
+    {
+      "name": "test-repo1",
+      "description": null,
+      "language": null,
+      "stargazers_count": 456,
+      "topics": [],
+      "html_url": "https://github.com/octocat/test-repo1",
+      "updated_at": "2026-06-09T02:12:27Z"
+    },
+    {
+      "name": "linguist",
+      "description": "Language Savant. If your repository's language is being reported incorrectly, send us a pull request!",
+      "language": "Ruby",
+      "stargazers_count": 722,
+      "topics": [],
+      "html_url": "https://github.com/octocat/linguist",
+      "updated_at": "2026-06-09T02:12:20Z"
+    },
+    {
+      "name": "octocat.github.io",
+      "description": null,
+      "language": "CSS",
+      "stargazers_count": 1112,
+      "topics": [],
+      "html_url": "https://github.com/octocat/octocat.github.io",
+      "updated_at": "2026-06-08T18:36:39Z"
     }
   ]
 }

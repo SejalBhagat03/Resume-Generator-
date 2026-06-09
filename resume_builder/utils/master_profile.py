@@ -11,7 +11,7 @@ MASTER_PROFILE_PATH = os.path.join(PROJECT_ROOT, "master_profile.json")
 VERSIONS_DIR = os.path.join(PROJECT_ROOT, "resume_versions")
 
 # Common fields inherited from Master Profile
-MASTER_KEYS = ["personal", "education", "technical_skills", "achievements", "position_of_responsibility"]
+MASTER_KEYS = ["personal", "education", "technical_skills", "achievements", "certifications", "position_of_responsibility"]
 
 def ensure_setup(active_resume_data: dict):
     """Ensure master_profile.json and versions directory exist."""

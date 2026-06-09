@@ -31,7 +31,7 @@ class GitHubIntegration:
     @staticmethod
     def fetch_repos(username: str) -> list:
         """
-        Fetch public repositories for a user from GitHub API.
+        Fetch ALL public repositories for a user from GitHub API with pagination.
         Caches results to prevent rate limiting.
         """
         username_clean = username.strip().lower()
@@ -42,32 +42,49 @@ class GitHubIntegration:
         if username_clean in cache:
             return cache[username_clean]
 
-        # Call GitHub API with User-Agent
-        url = f"https://api.github.com/users/{username_clean}/repos?per_page=100&sort=updated"
-        req = urllib.request.Request(
-            url,
-            headers={"User-Agent": "Resume-Builder-Pro-Agent"}
-        )
-
+        all_repos = []
+        page = 1
+        
         try:
-            with urllib.request.urlopen(req, timeout=5) as response:
-                repos = json.loads(response.read().decode())
+            while True:
+                # Fetch repos with pagination (100 per page is GitHub's max)
+                url = f"https://api.github.com/users/{username_clean}/repos?per_page=100&page={page}&sort=updated"
+                req = urllib.request.Request(
+                    url,
+                    headers={
+                        "User-Agent": "Resume-Builder-Pro-Agent",
+                        "Accept": "application/vnd.github+json"
+                    }
+                )
+
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    repos = json.loads(response.read().decode())
+                    
+                    if not repos:
+                        # No more repositories on this page - we're done
+                        break
+                    
+                    # Filter down repository fields to keep cache small
+                    for r in repos:
+                        all_repos.append({
+                            "name": r.get("name"),
+                            "description": r.get("description"),
+                            "language": r.get("language"),
+                            "stargazers_count": r.get("stargazers_count", 0),
+                            "topics": r.get("topics") or [],
+                            "html_url": r.get("html_url"),
+                            "updated_at": r.get("updated_at")
+                        })
+                    
+                    page += 1
                 
-                # Filter down repository fields to keep cache small
-                clean_repos = []
-                for r in repos:
-                    clean_repos.append({
-                        "name": r.get("name"),
-                        "description": r.get("description"),
-                        "language": r.get("language"),
-                        "stargazers_count": r.get("stargazers_count"),
-                        "topics": r.get("topics", []),
-                        "html_url": r.get("html_url")
-                    })
+                # Limit to reasonable number to avoid infinite loops (>1000 repos is rare)
+                if page > 10:
+                    break
                 
-                cache[username_clean] = clean_repos
-                GitHubIntegration.save_cache(cache)
-                return clean_repos
+            cache[username_clean] = all_repos
+            GitHubIntegration.save_cache(cache)
+            return all_repos
 
         except Exception as ex:
             # Fallback mock data if GitHub API fails, offline, or rate limited
@@ -118,6 +135,28 @@ class GitHubIntegration:
                 "languages": {}
             }
 
+        def _impact_score(repo: dict) -> int:
+            score = 0
+            if repo.get("description"):
+                score += 20
+            score += min(30, int(repo.get("stargazers_count", 0) * 4))
+            score += min(20, len(repo.get("topics", [])) * 6)
+            if repo.get("language"):
+                score += 10
+            updated_at = repo.get("updated_at")
+            if updated_at:
+                try:
+                    from datetime import datetime, timedelta
+                    dt = datetime.strptime(updated_at, "%Y-%m-%dT%H:%M:%SZ")
+                    age_days = (datetime.utcnow() - dt).days
+                    if age_days <= 180:
+                        score += 20
+                    elif age_days <= 365:
+                        score += 10
+                except Exception:
+                    pass
+            return min(100, score)
+
         languages = {}
         topics_count = {}
         detected_skills = set()
@@ -134,22 +173,24 @@ class GitHubIntegration:
                 topics_count[t] = topics_count.get(t, 0) + 1
                 detected_skills.add(t)
 
-            # Suggest any repository with stargazers or topics as a project
             desc = r.get("description") or "GitHub public repository."
             lang_str = lang or ""
             if topics:
                 lang_str += f" ({', '.join(topics[:3])})"
-            
-            # Format clean bullet suggestion
-            suggested_bullet = f"Developed a public repository '{r['name']}' utilizing {lang_str} - {desc}"
+
+            suggested_bullet = f"Designed and delivered the '{r['name']}' repository using {lang_str}. {desc}"
+            impact_score = _impact_score(r)
 
             suggested_projects.append({
                 "name": r["name"].replace("-", " ").replace("_", " ").title(),
                 "tech": lang,
                 "description": desc,
+                "topics": topics,
                 "suggested_bullet": suggested_bullet,
-                "stars": r["stargazers_count"],
-                "url": r["html_url"]
+                "stars": r.get("stargazers_count", 0),
+                "url": r.get("html_url"),
+                "updated_at": r.get("updated_at"),
+                "impact_score": impact_score
             })
 
         # Calculate a GitHub Evidence Score (0-100)
@@ -165,9 +206,16 @@ class GitHubIntegration:
             score += min(30, total_stars * 10) # Up to 30 points for popularity/stars
         score = min(100, score)
 
+        sorted_projects = sorted(suggested_projects, key=lambda rp: rp["impact_score"], reverse=True)
+        recommended_projects = [rp for rp in sorted_projects if rp["impact_score"] >= 55][:6]
+        recommended_names = {rp["name"] for rp in recommended_projects}
+        other_projects = [rp for rp in sorted_projects if rp["name"] not in recommended_names]
+
         return {
             "detected_skills": sorted(list(detected_skills)),
             "suggested_projects": suggested_projects,
+            "recommended_projects": recommended_projects,
+            "other_projects": other_projects,
             "evidence_score": score,
             "languages": languages
         }

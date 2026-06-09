@@ -64,13 +64,14 @@
     }
   ],
   "technical_skills": {
-    "Core Frontend": "React.js, JavaScript (ES6+), TypeScript, HTML5, CSS3",
-    "Styling & UI": "Tailwind CSS, Bootstrap, Responsive Web Design, CSS layouts",
-    "State & Tooling": "Context API, Vite, npm/yarn, Chrome DevTools",
-    "APIs & Integration": "REST APIs, JSON, Postman, Firebase",
-    "Developer Tools": "Git, GitHub, VS Code, Docker",
-    "Languages": "JavaScript, TypeScript, Python, C++",
-    "Core CS": "Data Structures & Algorithms, OOP"
+    "Programming": "C++, Python, JavaScript, TypeScript",
+    "Frontend": "HTML, CSS, React.js, Tailwind CSS, Bootstrap",
+    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication",
+    "Databases": "MongoDB, PostgreSQL, MySQL",
+    "Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
+    "Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
+    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
+    "AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",
@@ -105,8 +106,5 @@
         "Organized and coordinated technical workshops and events for students in the college technical club."
       ]
     }
-  ],
-  "metadata": {
-    "locked": false
-  }
+  ]
 }

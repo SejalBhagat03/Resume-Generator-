@@ -64,12 +64,14 @@
     }
   ],
   "technical_skills": {
-    "Backend Engineering": "Node.js, Express.js, RESTful APIs, JWT Authentication, FastAPI",
-    "Databases": "PostgreSQL, MongoDB, MySQL, Database Normalization & Indexing",
-    "Security & Systems": "Role-based Access Control (RBAC), Data Sanitization, Input Validation",
-    "Tools & DevOps": "Git, GitHub, Postman, Docker, Linux Command Line",
-    "Languages": "Python, JavaScript, TypeScript, C++, C",
-    "Core CS": "Data Structures & Algorithms, DBMS, Operating Systems, Computer Networks"
+    "Programming": "C++, Python, JavaScript, TypeScript",
+    "Frontend": "HTML, CSS, React.js, Tailwind CSS, Bootstrap",
+    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication",
+    "Databases": "MongoDB, PostgreSQL, MySQL",
+    "Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
+    "Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
+    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
+    "AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",

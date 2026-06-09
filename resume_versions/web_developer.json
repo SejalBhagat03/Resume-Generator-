@@ -64,12 +64,14 @@
     }
   ],
   "technical_skills": {
-    "Frontend Development": "React.js, JavaScript, TypeScript, HTML5, CSS3, Tailwind CSS, Bootstrap",
-    "APIs & Backend": "Node.js, Express.js, RESTful APIs, JWT Authentication, Firebase",
+    "Programming": "C++, Python, JavaScript, TypeScript",
+    "Frontend": "HTML, CSS, React.js, Tailwind CSS, Bootstrap",
+    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication",
     "Databases": "MongoDB, PostgreSQL, MySQL",
-    "Tools & Hosting": "Git, GitHub, Netlify, Cloudflare, VS Code, Vite, Postman",
-    "Languages": "JavaScript, TypeScript, Python, C++",
-    "Core CS": "Data Structures & Algorithms, OOP, DBMS"
+    "Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
+    "Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
+    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
+    "AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",

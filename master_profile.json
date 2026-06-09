@@ -17,8 +17,8 @@
     {
       "degree": "B.Tech. in Computer Science Engineering",
       "institution": "G. H. Raisoni University",
-      "details": "CGPA: 9.1 / 10 &nbsp;|&nbsp; Expected Graduation: 2026",
-      "period": ""
+      "details": "CGPA: 9.1 / 10",
+      "period": "Expected Graduation: 2026"
     },
     {
       "degree": "12th",
@@ -40,7 +40,8 @@
     "Databases": "MongoDB, PostgreSQL, MySQL",
     "Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
     "Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
-    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks"
+    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
+    "AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
   },
   "achievements": [
     "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",
