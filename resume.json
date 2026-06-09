@@ -1,13 +1,22 @@
 {
+  "metadata": {
+    "title": "Full Stack developer",
+    "last_edited": 1781027126.8150628,
+    "template": "sejal_original",
+    "color": "#6366F1",
+    "margins": 20,
+    "fscale": 1.0,
+    "fitting": "Auto Compress"
+  },
   "personal": {
-    "name": "Test Name",
+    "name": "SEJAL BHAGAT",
     "title": "",
     "email": "bhagatsejal08@gmail.com",
     "phone": "+91 9022644273",
     "location": "Nagpur, India",
     "linkedin": {
       "display": "linkedin/Sejal-Bhagat",
-      "url": "https://linkedin/Sejal-Bhagat"
+      "url": "https://linkedin.com/in/Sejal-Bhagat"
     },
     "github": {
       "display": "github.com/SejalBhagat03",
@@ -29,14 +38,5 @@
   "achievements": [],
   "certifications": [],
   "education": [],
-  "position_of_responsibility": [],
-  "metadata": {
-    "template": "sejal_original",
-    "color": "#6366F1",
-    "margins": 20,
-    "fscale": 1.0,
-    "fitting": "Auto Compress",
-    "last_edited": 1781008435.0440767,
-    "title": "bj"
-  }
+  "position_of_responsibility": []
 }

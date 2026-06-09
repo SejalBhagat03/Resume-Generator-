@@ -1842,7 +1842,8 @@ def render_pdf_thumbnail(pdf_b64: str, key: str):
 
 @st.dialog("Create New Resume", width="large")
 def show_create_resume_dialog():
-    if "create_wizard_step" not in st.session_state:
+    # Reset to step 1 when dialog is freshly opened
+    if st.session_state.get("wizard_just_opened", True):
         st.session_state.create_wizard_step = 1
         st.session_state.wizard_resume_type = "Fresh Graduate"
         st.session_state.wizard_import_source = "Start Empty"
@@ -1851,6 +1852,7 @@ def show_create_resume_dialog():
         st.session_state.wizard_selected_repos = []
         st.session_state.wizard_resume_title = ""
         st.session_state.wizard_template = "sejal_original"
+        st.session_state.wizard_just_opened = False
 
     # Step progress indicator at the top
     step = st.session_state.create_wizard_step
@@ -1875,9 +1877,8 @@ def show_create_resume_dialog():
         st.session_state.wizard_resume_type = res_type
         
         st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-        if st.button("Next ➡️", type="primary", use_container_width=True):
+        if st.button("Next ➡️", type="primary", use_container_width=True, key="wiz_next_1"):
             st.session_state.create_wizard_step = 2
-            st.rerun()
 
     elif step == 2:
         st.markdown("### 📥 Step 2: Choose your starting point")
@@ -1917,13 +1918,11 @@ def show_create_resume_dialog():
         st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         w2_col1, w2_col2 = st.columns(2)
         with w2_col1:
-            if st.button("⬅️ Back", use_container_width=True):
+            if st.button("⬅️ Back", use_container_width=True, key="wiz_back_2"):
                 st.session_state.create_wizard_step = 1
-                st.rerun()
         with w2_col2:
-            if st.button("Next ➡️", type="primary", use_container_width=True):
+            if st.button("Next ➡️", type="primary", use_container_width=True, key="wiz_next_2"):
                 st.session_state.create_wizard_step = 3
-                st.rerun()
 
     elif step == 3:
         st.markdown("### 🎨 Step 3: Choose template and title")
@@ -1940,9 +1939,8 @@ def show_create_resume_dialog():
         st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         w3_col1, w3_col2 = st.columns(2)
         with w3_col1:
-            if st.button("⬅️ Back", use_container_width=True):
+            if st.button("⬅️ Back", use_container_width=True, key="wiz_back_3"):
                 st.session_state.create_wizard_step = 2
-                st.rerun()
         with w3_col2:
             if st.button("🚀 Create Resume", type="primary", use_container_width=True):
                 title = res_title.strip() or f"{st.session_state.wizard_resume_type} Resume"
@@ -2030,6 +2028,7 @@ def show_create_resume_dialog():
                     json.dump(content, f, indent=2)
                     
                 st.session_state.create_wizard_step = 1
+                st.session_state.wizard_just_opened = True  # Reset for next open
                 if "wizard_uploaded_file" in st.session_state:
                     del st.session_state.wizard_uploaded_file
                 if "wizard_github_repos" in st.session_state:
@@ -2109,6 +2108,7 @@ def show_home():
                             unsafe_allow_html=True
                         )
                         if st.button("✨ Create New", key="btn_create_new_dashboard", use_container_width=True, type="primary"):
+                            st.session_state.wizard_just_opened = True
                             show_create_resume_dialog()
                 else:
                     # Existing resume card rendering

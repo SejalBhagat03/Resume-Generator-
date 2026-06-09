@@ -6,7 +6,7 @@
     "margins": 20,
     "fscale": 1.0,
     "fitting": "Auto Compress",
-    "last_edited": 1781028517.1975636
+    "last_edited": 1781028471.7044377
   },
   "personal": {
     "name": "SEJAL BHAGAT",
@@ -98,15 +98,6 @@
       "bullets": [
         "\u007f  Built a platform for collecting and managing store reviews with secure role-based access and JWT authentication.",
         "\u007f  Implemented custom authorization layers for normal users, store owners, and administrators to ensure robust data privacy."
-      ]
-    },
-    {
-      "title": "React",
-      "link": "https://github.com/SejalBhagat03/React",
-      "date": "Present",
-      "tools": "JavaScript",
-      "bullets": [
-        "Designed, built, and maintained the React repository using JavaScript, delivering business value through React learnings"
       ]
     }
   ],

@@ -24,24 +24,34 @@ def parse_contact_details(text):
     if phone_match:
         contacts["phone"] = phone_match.group(1).strip()
         
-    # 3. LinkedIn & GitHub Urls
-    li_match = re.search(r'(linkedin\.com/in/[a-zA-Z0-9_-]+|linkedin/[a-zA-Z0-9_-]+)', text, re.IGNORECASE)
+    # 3. LinkedIn URL — handle linkedin.com/in/User AND linkedin/User.Name shorthand
+    li_match = re.search(
+        r'linkedin\.com/in/([a-zA-Z0-9_.\-]+)|linkedin\.com/([a-zA-Z0-9_.\-]+)|linkedin/([a-zA-Z0-9_.\-]+)',
+        text, re.IGNORECASE
+    )
     if li_match:
-        val = li_match.group(1).strip()
+        # Grab whichever capture group matched
+        username = next(g for g in li_match.groups() if g)
+        full_url = f"https://linkedin.com/in/{username}"
         contacts["linkedin"] = {
-            "display": val,
-            "url": f"https://{val}" if not val.startswith("http") else val
+            "display": f"linkedin.com/in/{username}",
+            "url": full_url
         }
         
-    gh_match = re.search(r'(github\.com/[a-zA-Z0-9_-]+|github/[a-zA-Z0-9_-]+)', text, re.IGNORECASE)
+    # 4. GitHub URL — handle github.com/User AND github/User shorthand
+    gh_match = re.search(
+        r'github\.com/([a-zA-Z0-9_.\-]+)|github/([a-zA-Z0-9_.\-]+)',
+        text, re.IGNORECASE
+    )
     if gh_match:
-        val = gh_match.group(1).strip()
+        username = next(g for g in gh_match.groups() if g)
+        full_url = f"https://github.com/{username}"
         contacts["github"] = {
-            "display": val,
-            "url": f"https://{val}" if not val.startswith("http") else val
+            "display": f"github.com/{username}",
+            "url": full_url
         }
         
-    # 4. Location (City, Country / State)
+    # 5. Location (City, Country / State)
     loc_match = re.search(r'\b([A-Z][a-zA-Z\s]+,\s*[A-Z][a-zA-Z\s]+)\b', text)
     if loc_match:
         # Ignore common keywords that might match the pattern
@@ -49,11 +59,14 @@ def parse_contact_details(text):
         if not any(k in potential.lower() for k in ["linkedin", "github", "email", "phone"]):
             contacts["location"] = potential
             
-    # 5. Name Heuristics: Usually the first line of the document that is not empty
+    # 6. Name Heuristics: Usually the first line of the document that is not empty
     lines = [l.strip() for l in text.split("\n") if l.strip()]
     for line in lines[:5]:
-        # Filter out links, email, phone keywords
-        if "@" in line or "http" in line or "/" in line or "+" in line:
+        # Filter out lines with links, email, phone, or url-like characters
+        if "@" in line or "http" in line or "+" in line:
+            continue
+        # Allow dots in names (e.g. "Dr. Smith") but skip lines with multiple slashes (URLs)
+        if line.count("/") > 1:
             continue
         words = line.split()
         if 2 <= len(words) <= 4:
@@ -179,33 +192,75 @@ def parse_projects(lines):
     projects = []
     current_proj = None
     
-    link_pattern = re.compile(r'(https?://[^\s]+|github\.com/[^\s]+)', re.IGNORECASE)
-    date_pattern = re.compile(r'(\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|February|March|April|May|June|July|August|September|October|November|December)\s*\d{4}|\b\d{4})', re.IGNORECASE)
+    # Matches full URLs or bare github.com paths
+    url_pattern = re.compile(r'https?://[^\s]+', re.IGNORECASE)
+    gh_bare_pattern = re.compile(r'github\.com/[^\s|,]+', re.IGNORECASE)
+    date_pattern = re.compile(
+        r'(\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|February|March|April|'
+        r'May|June|July|August|September|October|November|December)\s*\d{4}|\b\d{4})',
+        re.IGNORECASE
+    )
     
     for line in lines:
         is_bullet = line.startswith(('•', '-', '*', 'o', '▪')) or re.match(r'^\d+[\.\)]', line)
         cleaned_line = re.sub(r'^[\W\d_]+', '', line).strip()
         
-        # Link check
-        link_match = link_pattern.search(line)
-        link = link_match.group(1).strip("()[]{}") if link_match else ""
+        # Extract URL from line: prefer full URL, fall back to bare github.com path
+        url_match = url_pattern.search(line)
+        gh_match = gh_bare_pattern.search(line)
+        if url_match:
+            link = url_match.group(0).strip("()[]{},")
+        elif gh_match:
+            link = "https://" + gh_match.group(0).strip("()[]{},")
+        else:
+            link = ""
         
-        # Determine if it's a new project header line
-        # Project header usually lists project title, tools, date
+        # Detect '| GitHub' or '| Link' as a clickable cue (even without a URL)
+        has_github_label = bool(re.search(r'\|\s*github\b', line, re.IGNORECASE))
+        
         date_match = date_pattern.search(line)
+        date = date_match.group(1).strip() if date_match else ""
         
-        # A new project header usually does not start with bullet indicators
-        if not is_bullet and (link or date_match or (len(line) < 60 and not current_proj)):
+        # Determine if this line is a new project header:
+        # - Not a bullet point
+        # - Has a date, OR a URL, OR a '| GitHub' label, OR is short enough to be a title
+        is_header = (not is_bullet) and (link or has_github_label or date_match or 
+                                          (len(line) < 80 and not current_proj))
+        
+        if is_header:
             if current_proj:
                 projects.append(current_proj)
                 
-            date = date_match.group(1).strip() if date_match else ""
-            title_text = date_pattern.sub("", line)
-            title_text = link_pattern.sub("", title_text).strip()
-            title_text = re.sub(r'[|,\-—–\(\)]', '', title_text).strip()
+            # Extract title: take the text before the first pipe '|', strip date and URL
+            # Split on pipe first to get the project name cleanly
+            pipe_parts = line.split('|')
+            title_raw = pipe_parts[0]  # Everything before the first pipe
+            title_raw = date_pattern.sub("", title_raw)   # remove date
+            title_raw = url_pattern.sub("", title_raw)    # remove full URLs
+            title_raw = gh_bare_pattern.sub("", title_raw) # remove bare github paths
+            # Clean up separators and whitespace
+            title_raw = re.sub(r'[\-—–\(\)]+', '', title_raw).strip()
+            # Collapse multiple spaces
+            title_raw = re.sub(r'\s{2,}', ' ', title_raw).strip()
+            
+            # If title is still empty, check remainder of pipe parts
+            if not title_raw and len(pipe_parts) > 1:
+                for part in pipe_parts[1:]:
+                    candidate = re.sub(r'(?i)github|link|gitlab', '', part).strip()
+                    candidate = re.sub(r'[^a-zA-Z0-9\s]', '', candidate).strip()
+                    if candidate:
+                        title_raw = candidate
+                        break
+            
+            # Build project link: if we found a GitHub label but no URL,
+            # try to construct one from the full line's github mention
+            if not link and has_github_label:
+                # Try to find username from a github.com reference earlier in the doc
+                # but for now just leave link empty (better than a wrong URL)
+                link = ""
             
             current_proj = {
-                "title": title_text if title_text else "Project Title",
+                "title": title_raw if title_raw else "Untitled Project",
                 "link": link,
                 "date": date,
                 "tools": "",
@@ -214,7 +269,7 @@ def parse_projects(lines):
         else:
             if not current_proj:
                 current_proj = {
-                    "title": "Project Title",
+                    "title": "Untitled Project",
                     "link": "",
                     "date": "",
                     "tools": "",
@@ -224,8 +279,9 @@ def parse_projects(lines):
             if is_bullet:
                 current_proj["bullets"].append(cleaned_line)
             else:
-                if "tools:" in line.lower() or "tech:" in line.lower() or "technologies:" in line.lower():
-                    tools_part = re.sub(r'^(tools|tech|technologies)\s*:\s*', '', line, flags=re.IGNORECASE).strip()
+                if re.match(r'^(tools|tech|technologies)\s*:', line, re.IGNORECASE):
+                    tools_part = re.sub(r'^(tools|tech|technologies)\s*:\s*', '', line,
+                                        flags=re.IGNORECASE).strip()
                     current_proj["tools"] = tools_part
                 else:
                     current_proj["bullets"].append(line)

@@ -261,7 +261,11 @@ class SejalOriginalTemplate(BaseTemplate):
                 tools = proj.get("tools", "")
                 
                 if link:
-                    left_text = f"<b>{title}</b> &nbsp;|&nbsp; <a href=\"{link}\"><font color=\"{accent_color}\"><u>Link</u></font></a>"
+                    # Normalize link to have proper https:// prefix
+                    if link and not link.startswith("http"):
+                        link = f"https://{link}"
+                    link_label = "GitHub" if "github.com" in link.lower() else "Link"
+                    left_text = f"<b>{title}</b> &nbsp;|&nbsp; <a href=\"{link}\"><font color=\"{accent_color}\"><u>{link_label}</u></font></a>"
                 else:
                     left_text = f"<b>{title}</b>"
                     
