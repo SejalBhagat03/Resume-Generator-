@@ -12,9 +12,9 @@ Architecture
 import streamlit as st
 import json, os, base64, re, time, copy
 
-from resume_builder.generators import build_pdf
+from core.pdf_engine import build_pdf
 from resume_builder.templates import TEMPLATES, register_templates
-from resume_builder.utils.health_scorer import calculate_health_score
+from analysis.health_scorer import calculate_health_score
 from resume_builder.parser.reader import (
     extract_pdf_layout_and_text,
     extract_docx_layout_and_text,
@@ -31,9 +31,9 @@ from resume_builder.generators.custom_html import (
     analyze_html_template_styles,
 )
 from resume_builder.career_dashboard import show_career_center
-from resume_builder.utils.achievement_quantifier import AchievementQuantifier
-from resume_builder.utils.gap_analyzer import CareerGapAnalyzer
-from resume_builder.utils.github_integration import GitHubIntegration
+from analysis.achievement_quantifier import AchievementQuantifier
+from analysis.gap_analyzer import CareerGapAnalyzer
+from services.github_service import GitHubIntegration
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
@@ -1814,7 +1814,10 @@ def render_pdf_thumbnail(pdf_b64: str, key: str):
         return arr;
       }}
     
-      pdfjsLib.getDocument({{ data: b64ToArr(base64PDF) }}).promise.then(async (pdf) => {{
+      pdfjsLib.getDocument({{
+        data: b64ToArr(base64PDF),
+        standardFontDataUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/standard_fonts/'
+      }}).promise.then(async (pdf) => {{
         const page = await pdf.getPage(1);
         const canvas = document.getElementById(\'thumbnail-canvas\');
         const ctx = canvas.getContext(\'2d\');
@@ -1896,7 +1899,7 @@ def show_create_resume_dialog():
                 st.session_state.wizard_github_username = gh_user.strip()
                 if st.button("🔍 Fetch Projects", type="primary", use_container_width=True):
                     with st.spinner("Fetching repositories..."):
-                        from resume_builder.utils.github_integration import GitHubIntegration
+                        from services.github_service import GitHubIntegration
                         repos = GitHubIntegration.fetch_repos(gh_user.strip())
                         st.session_state.wizard_github_repos = repos
                 
@@ -1966,7 +1969,7 @@ def show_create_resume_dialog():
                 
                 # GitHub Import integration
                 if st.session_state.wizard_import_source == "GitHub" and st.session_state.wizard_selected_repos:
-                    from resume_builder.utils.github_integration import GitHubIntegration
+                    from services.github_service import GitHubIntegration
                     gh_analysis = GitHubIntegration.analyze_profile(st.session_state.wizard_github_username)
                     imported_projects = []
                     for rp in gh_analysis.get("suggested_projects", []):
@@ -3199,7 +3202,10 @@ const h = Math.max(
 window.parent.postMessage({{ type: 'streamlit:setFrameHeight', height: h }}, '*');
   }}
 
-  pdfjsLib.getDocument({{ data: b64ToArr(base64PDF) }}).promise.then(async (pdf) => {{
+  pdfjsLib.getDocument({{
+    data: b64ToArr(base64PDF),
+    standardFontDataUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/standard_fonts/'
+  }}).promise.then(async (pdf) => {{
 const container = document.getElementById('pages-container');
 const SCALE = 2.0;
 

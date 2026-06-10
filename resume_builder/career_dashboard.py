@@ -2,18 +2,18 @@ import streamlit as st
 import json
 import os
 import copy
-from resume_builder.utils.master_profile import (
+from analysis.master_profile import (
     ensure_setup, load_master_profile, save_master_profile,
     list_versions, load_version, save_version, update_resume_with_master, save_active_resume_and_sync
 )
-from resume_builder.utils.consistency_checker import ConsistencyChecker
-from resume_builder.utils.achievement_quantifier import AchievementQuantifier
-from resume_builder.utils.gap_analyzer import CareerGapAnalyzer
-from resume_builder.utils.interview_prep import InterviewPrep
-from resume_builder.utils.github_integration import GitHubIntegration
-from resume_builder.utils.evidence_system import EvidenceSystem
-from resume_builder.utils.project_story import ProjectStoryGenerator
-from resume_builder.utils.knowledge_graph import KnowledgeGraphRenderer
+from analysis.consistency_checker import ConsistencyChecker
+from analysis.achievement_quantifier import AchievementQuantifier
+from analysis.gap_analyzer import CareerGapAnalyzer
+from analysis.interview_prep import InterviewPrep
+from services.github_service import GitHubIntegration
+from analysis.evidence_system import EvidenceSystem
+from analysis.project_story import ProjectStoryGenerator
+from analysis.knowledge_graph import KnowledgeGraphRenderer
 
 # ─── Tool Definitions ────────────────────────────────────────────────────────
 # GitHub is always shown prominently at the top of Career Center

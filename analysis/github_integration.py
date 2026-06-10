@@ -4,8 +4,9 @@ import urllib.request
 import urllib.error
 
 # Determine cache location
-UTILS_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(os.path.dirname(UTILS_DIR), "data")
+ANALYSIS_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(ANALYSIS_DIR)
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 CACHE_FILE = os.path.join(DATA_DIR, "github_cache.json")
 
 class GitHubIntegration:

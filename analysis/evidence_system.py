@@ -1,5 +1,5 @@
 import re
-from resume_builder.utils.github_integration import GitHubIntegration
+from analysis.github_integration import GitHubIntegration
 
 class EvidenceSystem:
     @staticmethod

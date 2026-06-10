@@ -3,9 +3,9 @@ import json
 import copy
 
 # Absolute paths determined from this file's position
-UTILS_DIR = os.path.dirname(os.path.abspath(__file__))
-BUILDER_DIR = os.path.dirname(UTILS_DIR)
-PROJECT_ROOT = os.path.dirname(BUILDER_DIR)
+ANALYSIS_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(ANALYSIS_DIR)
+BUILDER_DIR = os.path.join(PROJECT_ROOT, "resume_builder")
 
 MASTER_PROFILE_PATH = os.path.join(PROJECT_ROOT, "master_profile.json")
 VERSIONS_DIR = os.path.join(PROJECT_ROOT, "resume_versions")
