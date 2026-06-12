@@ -1540,12 +1540,21 @@ div:has(button[key="hero_import_btn"]) button:hover {
 
 /* Mobile viewport container adjustments */
 @media (max-width: 767px) {
-  /* Hide all desktop widgets by content and keys */
-  div:has(#hero-marker),
-  div:has(#search-section-marker),
-  div:has(#continue-card-marker),
-  div:has(#my-resumes-grid-marker),
-  div:has(#bottom-nav-marker),
+  div[data-testid="element-container"]:has(#hero-marker),
+  div[data-testid="element-container"]:has(#hero-marker) + [data-testid="stHorizontalBlock"],
+  div[data-testid="element-container"]:has(#search-section-marker),
+  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"],
+  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + [data-testid="stHorizontalBlock"],
+  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div[data-testid="element-container"],
+  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div:has([data-testid="stHorizontalBlock"]),
+  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div:has(input[placeholder="Search resumes..."]),
+  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div:has(button[key="home_filter_btn"]),
+  div[data-testid="element-container"]:has(#continue-card-marker),
+  div[data-testid="element-container"]:has(#continue-card-marker) + [data-testid="stHorizontalBlock"],
+  div[data-testid="element-container"]:has(#my-resumes-grid-marker),
+  div[data-testid="element-container"]:has(#my-resumes-grid-marker) + [data-testid="stHorizontalBlock"],
+  div[data-testid="element-container"]:has(#bottom-nav-marker),
+  div[data-testid="element-container"]:has(#bottom-nav-marker) + [data-testid="stHorizontalBlock"],
   .section-header-row,
   .resume-grid-card,
   .template-scroll-container,
@@ -1554,6 +1563,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   div[data-testid="element-container"]:has(button[key="hero_import_btn"]),
   div[data-testid="element-container"]:has(.hero-resume-illustration),
   div[data-testid="element-container"]:has(.search-input-box),
+  div[data-testid="element-container"]:has(input[placeholder="Search resumes..."]),
   div[data-testid="element-container"]:has(button[key="home_filter_btn"]),
   div[data-testid="element-container"]:has(.continue-card-content),
   div[data-testid="element-container"]:has(button[key="btn_continue_icon"]),
@@ -2059,23 +2069,33 @@ div:has(button[key="hero_import_btn"]) button:hover {
 
 @media (min-width: 768px) {
   /* Hide all mobile layout elements on desktop */
-  div:has(#mob-hero-marker),
+  div[data-testid="element-container"]:has(#mob-hero-marker),
+  div[data-testid="element-container"]:has(#mob-hero-marker) + div[data-testid="element-container"],
+  div[data-testid="element-container"]:has(#mob-hero-marker) + div[data-testid="element-container"] + [data-testid="stHorizontalBlock"],
   .mob-hero-card,
   div[data-testid="element-container"]:has(button[key="mob_hero_create_btn"]),
   div[data-testid="element-container"]:has(button[key="mob_hero_import_btn"]),
-  div:has(#mob-search-marker),
-  div:has(.mob-search-row-container),
+  div[data-testid="element-container"]:has(#mob-search-marker),
+  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"],
+  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + [data-testid="stHorizontalBlock"],
+  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div[data-testid="element-container"],
+  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div:has([data-testid="stHorizontalBlock"]),
+  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div:has(input[placeholder="Search your resumes..."]),
+  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div:has(button[key="mob_filter_btn"]),
+  div[data-testid="element-container"]:has(.mob-search-row-container),
   div[data-testid="element-container"]:has(.mob-search-input-box),
+  div[data-testid="element-container"]:has(input[placeholder="Search your resumes..."]),
   div[data-testid="element-container"]:has(button[key="mob_filter_btn"]),
-  div:has(.mob-continue-card),
+  div[data-testid="element-container"]:has(.mob-continue-card),
   div[data-testid="element-container"]:has(button[key="mob_btn_continue_icon"]),
-  div:has(.mob-resume-card-container),
-  div:has(.mob-dashed-create-card),
+  div[data-testid="element-container"]:has(.mob-resume-card-container),
+  div[data-testid="element-container"]:has(.mob-dashed-create-card),
   div[data-testid="element-container"]:has(button[key^="mob_grid_edit_"]),
   div[data-testid="element-container"]:has(button[key^="mob_grid_options_"]),
   .mob-fab,
   .mob-bottom-nav,
-  div:has(.mob-section-header-row) {
+  div[data-testid="element-container"]:has(.mob-section-header-row),
+  div[data-testid="element-container"]:has(.mob-section-header-row) + div[data-testid="element-container"] {
     display: none !important;
   }
 }

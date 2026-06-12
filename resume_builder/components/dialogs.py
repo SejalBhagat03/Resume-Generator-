@@ -15,7 +15,6 @@ from resume_builder.parser.engine import (
 )
 
 def render_pdf_thumbnail(pdf_b64: str, key: str):
-    import app
     if not pdf_b64:
         st.markdown(
             '<div style="background: #FAFBFF; border-bottom: 1px solid #F1F5F9; height: 110px; display: flex; align-items: center; justify-content: center;">'
@@ -25,7 +24,7 @@ def render_pdf_thumbnail(pdf_b64: str, key: str):
         )
         return
         
-    pdf_js_b64, pdf_worker_b64 = app.load_local_pdfjs_assets()
+    pdf_js_b64, pdf_worker_b64 = st.session_state.load_local_pdfjs_assets_fn()
     html_content = f"""<!DOCTYPE html>
     <html>
     <head>
@@ -116,7 +115,6 @@ def render_pdf_thumbnail(pdf_b64: str, key: str):
 
 @st.dialog("Import Resume")
 def show_import_dialog():
-    import app
     
     st.markdown("Upload your existing resume (PDF, DOCX, or TXT) to extract its structure and text details.")
     
@@ -193,13 +191,13 @@ def show_import_dialog():
         with wz2:
             if st.button("✅ Confirm & Import", type="primary", key="wz_ok", use_container_width=True):
                 parsed = parse_mapped_blocks_to_json(mapped)
-                app.push_undo(st.session_state.resume)
+                st.session_state.push_undo_fn(st.session_state.resume)
                 st.session_state.resume = parsed
                 if st.session_state.get("_do_ext") and st.session_state.wiz_lay:
                     tn = st.session_state.get("_tname","my_style")
-                    rn = app.save_extracted_template(st.session_state.wiz_lay, tn)
+                    rn = st.session_state.save_extracted_template_fn(st.session_state.wiz_lay, tn)
                     st.session_state.template = rn
-                app.save_to_disk(parsed)
+                st.session_state.save_to_disk_fn(parsed)
                 st.session_state.last_hash = ""
                 st.session_state.wiz_step = "upload"
                 st.session_state.wiz_blk  = []

@@ -10,7 +10,7 @@ from analysis.consistency_checker import ConsistencyChecker
 from analysis.achievement_quantifier import AchievementQuantifier
 from analysis.gap_analyzer import CareerGapAnalyzer
 from analysis.interview_prep import InterviewPrep
-from services.github_service import GitHubIntegration
+from resume_builder.services.github import GitHubIntegration
 from analysis.evidence_system import EvidenceSystem
 from analysis.project_story import ProjectStoryGenerator
 from analysis.knowledge_graph import KnowledgeGraphRenderer
@@ -269,7 +269,7 @@ _CAREER_CSS = """
 """
 
 
-from components.stats_card import kpi_card_html
+from resume_builder.components.stats_card import kpi_card_html
 
 # ─── Helper Functions ─────────────────────────────────────────────────────────
 def _score_color(score: int, invert: bool = False) -> str:

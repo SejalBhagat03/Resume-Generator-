@@ -11,11 +11,20 @@ from resume_builder.ui.wizard_ui import (
     render_profile_type_cards,
     render_import_cards,
 )
-from components.dialogs import render_pdf_thumbnail
+from resume_builder.components.dialogs import render_pdf_thumbnail
 
 @st.dialog("Create New Resume", width="large")
 def show_create_resume_dialog():
-    import app
+    from resume_builder.templates import TEMPLATES
+    from resume_builder.parser.reader import (
+        extract_txt_text,
+        extract_pdf_layout_and_text,
+        extract_docx_layout_and_text,
+    )
+    from resume_builder.parser.engine import (
+        segment_into_blocks,
+        parse_mapped_blocks_to_json,
+    )
     
     # Reset to step 1 when dialog is freshly opened
     if st.session_state.get("wizard_just_opened", True):
@@ -62,7 +71,7 @@ def show_create_resume_dialog():
                 st.session_state.wizard_github_username = gh_user.strip()
                 if st.button("🔍 Fetch Projects", type="primary", use_container_width=True):
                     with st.spinner("Fetching repositories..."):
-                        from services.github_service import GitHubIntegration
+                        from resume_builder.services.github import GitHubIntegration
                         repos = GitHubIntegration.fetch_repos(gh_user.strip())
                         st.session_state.wizard_github_repos = repos
                 
@@ -106,19 +115,15 @@ def show_create_resume_dialog():
             
             st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
             st.markdown("**Select Template Theme**")
-            tpl_options = list(app.ALL_TEMPLATES.keys())
-            tpl_names = {k: v["name"] for k, v in app.ALL_TEMPLATES.items()}
+            tpl_options = list(TEMPLATES.keys())
+            tpl_names = {k: v["name"] for k, v in TEMPLATES.items()}
             
             sel_tpl = st.selectbox("Template Theme", options=tpl_options, format_func=lambda k: tpl_names[k])
             st.session_state.wizard_template = sel_tpl
             
         with col_right:
             st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E2A44; margin-bottom: 8px;'>Template Preview</div>", unsafe_allow_html=True)
-            pdf_b64 = app.get_pdf_base64_for_template(sel_tpl) if hasattr(app, 'get_pdf_base64_for_template') else None
-            if pdf_b64:
-                render_pdf_thumbnail(pdf_b64, key="preview_thumb")
-            else:
-                st.info("Preview not available.")
+            st.info("Preview not available.")
                 
         st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
         w3_col1, w3_col2 = st.columns(2)
@@ -131,13 +136,14 @@ def show_create_resume_dialog():
                 title = res_title.strip() or f"{st.session_state.wizard_resume_type} Resume"
                 clean_title = re.sub(r"[^a-zA-Z0-9\s_-]", "", title).strip()
                 file_base = clean_title.lower().replace(" ", "_")
-                new_path = os.path.join(app.PROJECT_ROOT, "resume_versions", f"{file_base}.json")
+                PROJECT_ROOT = st.session_state.get("PROJECT_ROOT", os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+                new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{file_base}.json")
                 counter = 1
                 while os.path.exists(new_path):
-                    new_path = os.path.join(app.PROJECT_ROOT, "resume_versions", f"{file_base}_{counter}.json")
+                    new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{file_base}_{counter}.json")
                     counter += 1
                     
-                content = copy.deepcopy(app.DEFAULT)
+                content = copy.deepcopy(st.session_state.DEFAULT_RESUME)
                 
                 # Apply custom summaries based on Wizard Profile Selection
                 if st.session_state.wizard_resume_type == "Fresh Graduate":
@@ -151,7 +157,7 @@ def show_create_resume_dialog():
                 
                 # GitHub Import integration
                 if st.session_state.wizard_import_source == "GitHub" and st.session_state.wizard_selected_repos:
-                    from services.github_service import GitHubIntegration
+                    from resume_builder.services.github import GitHubIntegration
                     gh_analysis = GitHubIntegration.analyze_profile(st.session_state.wizard_github_username)
                     imported_projects = []
                     for rp in gh_analysis.get("suggested_projects", []):
@@ -181,31 +187,31 @@ def show_create_resume_dialog():
                     txt = ""
                     try:
                         if ext == "txt":
-                            txt = app.extract_txt_text(tp)
+                            txt = extract_txt_text(tp)
                         elif ext == "pdf":
-                            txt, runs = app.extract_pdf_layout_and_text(tp)
+                            txt, runs = extract_pdf_layout_and_text(tp)
                         elif ext == "docx":
-                            txt, dd = app.extract_docx_layout_and_text(tp)
+                            txt, dd = extract_docx_layout_and_text(tp)
                     except Exception as ex:
                         st.error(f"Extraction error: {ex}")
                     finally:
                         try: os.remove(tp)
                         except: pass
                     if txt:
-                        blocks = app.segment_into_blocks(txt)
+                        blocks = segment_into_blocks(txt)
                         mapped = []
                         for b in blocks:
                             mapped.append({"header": b["header"], "category": b.get("inferred_category", "ignore"), "lines": b["lines"]})
-                        parsed = app.parse_mapped_blocks_to_json(mapped)
+                        parsed = parse_mapped_blocks_to_json(mapped)
                         content.update(parsed)
                 
                 content["metadata"] = {
                     "title": clean_title,
                     "template": sel_tpl,
-                    "color": app.ACCENT_PRESETS["Indigo"],
+                    "color": "#6366F1",
                     "margins": 20,
                     "fscale": 1.0,
-                    "fitting": app.FITTING_OPTS[0],
+                    "fitting": "Auto Compress",
                     "last_edited": time.time()
                 }
                 
@@ -220,7 +226,7 @@ def show_create_resume_dialog():
                 if "wizard_github_repos" in st.session_state:
                     del st.session_state.wizard_github_repos
                     
-                app.load_active_resume(new_path)
+                st.session_state.load_active_resume_fn(new_path)
                 st.session_state.navigation_page = "workspace"
                 st.session_state.editor_step = 0
                 st.rerun()
