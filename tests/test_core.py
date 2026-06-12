@@ -11,7 +11,7 @@ import pytest
 # Ensure project root is on the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from resume_builder.generators.pdf_generator import build_pdf
+from core.pdf_engine import build_pdf
 from analysis.health_scorer import calculate_health_score
 from resume_builder.templates import TEMPLATES, register_templates, get_template_class
 

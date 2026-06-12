@@ -106,8 +106,8 @@ class KnowledgeGraphRenderer:
               stroke-width: 2px;
             }}
             .node.skill circle {{
-              fill: #6366F1;
-              stroke: #4F46E5;
+              fill: #A86A3D;
+              stroke: #8E5A33;
             }}
             .node.project circle {{
               fill: #10B981;
@@ -140,7 +140,7 @@ class KnowledgeGraphRenderer:
               transition: stroke 0.25s, stroke-width 0.25s;
             }}
             .link.highlight {{
-              stroke: #6366F1;
+              stroke: #A86A3D;
               stroke-width: 3px;
               opacity: 1 !important;
             }}
@@ -153,7 +153,7 @@ class KnowledgeGraphRenderer:
           <svg width="100%" height="{height}px" style="border: 1px solid #E2E8F0; border-radius: 12px; background: #fff;">
             <defs>
               <linearGradient id="link-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#6366F1" stop-opacity="0.6"/>
+                <stop offset="0%" stop-color="#A86A3D" stop-opacity="0.6"/>
                 <stop offset="100%" stop-color="#10B981" stop-opacity="0.6"/>
               </linearGradient>
             </defs>
