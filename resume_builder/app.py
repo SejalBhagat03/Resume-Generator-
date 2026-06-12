@@ -45,6 +45,7 @@ from analysis.gap_analyzer import CareerGapAnalyzer
 from services.github_service import GitHubIntegration
 from resume_builder.ui.wizard_ui import render_wizard_header, render_wizard_stepper, render_profile_type_cards, render_import_cards
 from components.navbar import render_navbar
+from components.sidebar import render_sidebar
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
@@ -1534,30 +1535,10 @@ def show_home():
     )
         
     render_navbar()
+    render_sidebar()
         
     st.markdown(
         """
-
-        <div class="rb-overlay" id="rb-overlay"></div>
-
-        <div class="rb-sidebar" id="rb-sidebar">
-          <button class="rb-sidebar-item active" id="sb-home">
-            <span class="rb-sidebar-icon">&#x1F3E0;</span>
-            <span class="rb-sidebar-label">Home</span>
-          </button>
-          <button class="rb-sidebar-item" id="sb-templates">
-            <span class="rb-sidebar-icon">&#x1F4C4;</span>
-            <span class="rb-sidebar-label">Templates</span>
-          </button>
-          <button class="rb-sidebar-item" id="sb-resumes">
-            <span class="rb-sidebar-icon">&#128194;</span>
-            <span class="rb-sidebar-label">Resumes</span>
-          </button>
-          <button class="rb-sidebar-item" id="sb-profile">
-            <span class="rb-sidebar-icon">&#x1F464;</span>
-            <span class="rb-sidebar-label">Profile</span>
-          </button>
-        </div>
 
         <script>
         (function() {
