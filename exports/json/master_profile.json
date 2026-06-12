@@ -1,0 +1,32 @@
+{
+  "personal": {
+    "name": "Sejal Bhagat",
+    "email": "bhagatsejal08@gmail.com",
+    "phone": "+91 9022644273",
+    "location": "Nagpur, India",
+    "linkedin": {
+      "display": "linkedin/Sejal-Bhagat",
+      "url": "https://linkedin.com/in/Sejal-Bhagat"
+    },
+    "github": {
+      "display": "github.com/SejalBhagat03",
+      "url": "https://github.com/SejalBhagat03"
+    }
+  },
+  "education": [
+    {
+      "degree": "B.E. Computer Science",
+      "institution": "Nagpur University",
+      "details": "GPA: 8.5/10",
+      "period": "2020-2024"
+    }
+  ],
+  "technical_skills": {
+    "Programming": "Python, JavaScript",
+    "Frontend": "React, HTML, CSS",
+    "Backend": "Node.js, MongoDB"
+  },
+  "achievements": [],
+  "certifications": [],
+  "position_of_responsibility": []
+}

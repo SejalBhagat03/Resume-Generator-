@@ -375,7 +375,7 @@ def show_home():
                             st.session_state.editor_step = 0
                             st.rerun()
                     with act_col2:
-                        pdf_file_path = r["path"].replace(".json", ".pdf")
+                        pdf_file_path = os.path.join(PROJECT_ROOT, "exports", "pdf", os.path.splitext(os.path.basename(r["path"]))[0] + ".pdf")
                         if os.path.exists(pdf_file_path):
                             with open(pdf_file_path, "rb") as pf:
                                 pdf_data = pf.read()
@@ -406,10 +406,10 @@ def show_home():
                             # Duplicate option
                             if st.button("&#128101; Duplicate", key=f"btn_dup_pop_{idx}", use_container_width=True):
                                 base_name = os.path.splitext(os.path.basename(r["path"]))[0]
-                                new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy.json")
+                                new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{base_name}_copy.json")
                                 counter = 1
                                 while os.path.exists(new_path):
-                                    new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy_{counter}.json")
+                                    new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{base_name}_copy_{counter}.json")
                                     counter += 1
                                 with open(r["path"], "r", encoding="utf-8") as f:
                                     content = json.load(f)
@@ -422,7 +422,7 @@ def show_home():
                                 st.rerun()
                                 
                             # Delete option
-                            is_root = (os.path.abspath(r["path"]) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")))
+                            is_root = (os.path.abspath(r["path"]) == os.path.abspath(os.path.join(PROJECT_ROOT, "exports", "json", "resume.json")))
                             if st.button("&#x1F5D1;&#65039; Delete", key=f"btn_del_pop_{idx}", use_container_width=True, disabled=is_root):
                                 if os.path.exists(r["path"]):
                                     os.remove(r["path"])
@@ -499,10 +499,10 @@ def show_home():
                         
                     if st.button("&#128101; Duplicate", key=f"mob_btn_dup_pop_{idx}", use_container_width=True):
                         base_name = os.path.splitext(os.path.basename(r["path"]))[0]
-                        new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy.json")
+                        new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{base_name}_copy.json")
                         counter = 1
                         while os.path.exists(new_path):
-                            new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy_{counter}.json")
+                            new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{base_name}_copy_{counter}.json")
                             counter += 1
                         with open(r["path"], "r", encoding="utf-8") as f:
                             content = json.load(f)
@@ -514,11 +514,11 @@ def show_home():
                             json.dump(content, f, indent=2)
                         st.rerun()
                         
-                    is_root = (os.path.abspath(r["path"]) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")))
+                    is_root = (os.path.abspath(r["path"]) == os.path.abspath(os.path.join(PROJECT_ROOT, "exports", "json", "resume.json")))
                     if st.button("&#x1F5D1;&#65039; Delete", key=f"mob_btn_del_pop_{idx}", use_container_width=True, disabled=is_root):
                         if os.path.exists(r["path"]):
                             os.remove(r["path"])
-                        pdf_file_path = r["path"].replace(".json", ".pdf")
+                        pdf_file_path = os.path.join(PROJECT_ROOT, "exports", "pdf", os.path.splitext(os.path.basename(r["path"]))[0] + ".pdf")
                         if os.path.exists(pdf_file_path):
                             os.remove(pdf_file_path)
                         st.rerun()

@@ -21,9 +21,18 @@ def _read_json(path: str) -> dict:
     except Exception:
         return copy.deepcopy(st.session_state.get("DEFAULT_RESUME", {}))
 
+def get_pdf_path_for_json(json_path: str) -> str:
+    base = os.path.basename(json_path)
+    pdf_name = os.path.splitext(base)[0] + ".pdf"
+    pdf_dir = os.path.join(PROJECT_ROOT, "exports", "pdf")
+    os.makedirs(pdf_dir, exist_ok=True)
+    return os.path.join(pdf_dir, pdf_name)
+
 def get_profile_path() -> str:
     if "current_profile_path" not in st.session_state:
-        st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
+        target_dir = os.path.join(PROJECT_ROOT, "exports", "json")
+        os.makedirs(target_dir, exist_ok=True)
+        st.session_state.current_profile_path = os.path.join(target_dir, "resume.json")
     return st.session_state.current_profile_path
 
 def save_to_disk(d: dict):
@@ -45,7 +54,7 @@ def save_to_disk(d: dict):
 
     # Compile PDF on save so the thumbnail is always up to date
     try:
-        pdf_path = get_profile_path().replace(".json", ".pdf")
+        pdf_path = get_pdf_path_for_json(get_profile_path())
         build_pdf(
             data=d,
             template_id=meta["template"],
@@ -75,7 +84,7 @@ def load_active_resume(path: str):
     
     # Ensure title is present
     if not meta.get("title"):
-        if os.path.abspath(path) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")):
+        if os.path.abspath(path) == os.path.abspath(os.path.join(PROJECT_ROOT, "exports", "json", "resume.json")):
             meta["title"] = "Default Resume"
         else:
             base = os.path.splitext(os.path.basename(path))[0]
@@ -102,7 +111,7 @@ def load_active_resume(path: str):
 
 def get_pdf_base64_for_resume(r) -> str:
     path = r["path"]
-    pdf_path = path.replace(".json", ".pdf")
+    pdf_path = get_pdf_path_for_json(path)
     if not os.path.exists(pdf_path):
         try:
             from resume_builder.generators.pdf_generator import build_pdf as local_build_pdf
@@ -126,29 +135,7 @@ def get_pdf_base64_for_resume(r) -> str:
 
 def list_resumes() -> list:
     resumes = []
-    # 1. Check root resume.json
-    root_path = os.path.join(PROJECT_ROOT, "resume.json")
-    if os.path.exists(root_path):
-        try:
-            with open(root_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            meta = data.get("metadata", {})
-            mtime = os.path.getmtime(root_path)
-            last_edited = meta.get("last_edited", mtime)
-            title = meta.get("title") or data.get("personal", {}).get("name") or "Default Resume"
-            template = meta.get("template") or "sejal_original"
-            resumes.append({
-                "title": title,
-                "path": root_path,
-                "last_edited": last_edited,
-                "template": template,
-                "color": meta.get("color", "#6366F1")
-            })
-        except Exception:
-            pass
-            
-    # 2. Check resume_versions/
-    versions_dir = os.path.join(PROJECT_ROOT, "resume_versions")
+    versions_dir = os.path.join(PROJECT_ROOT, "exports", "json")
     if os.path.exists(versions_dir):
         for fname in os.listdir(versions_dir):
             if fname.endswith(".json"):
@@ -159,7 +146,10 @@ def list_resumes() -> list:
                     meta = data.get("metadata", {})
                     mtime = os.path.getmtime(fpath)
                     last_edited = meta.get("last_edited", mtime)
-                    title = meta.get("title") or os.path.splitext(fname)[0].replace("_", " ").title()
+                    if fname == "resume.json":
+                        title = meta.get("title") or "Default Resume"
+                    else:
+                        title = meta.get("title") or os.path.splitext(fname)[0].replace("_", " ").title()
                     template = meta.get("template") or "sejal_original"
                     resumes.append({
                         "title": title,
@@ -232,7 +222,7 @@ def save_checkpoint(path: str, data: dict):
     if not path or not os.path.exists(path):
         return
     base_name = os.path.splitext(os.path.basename(path))[0]
-    history_dir = os.path.join(PROJECT_ROOT, "resume_versions", "history", base_name)
+    history_dir = os.path.join(PROJECT_ROOT, "exports", "json", "history", base_name)
     os.makedirs(history_dir, exist_ok=True)
     
     # List existing checkpoints
@@ -273,7 +263,7 @@ def maybe_compile(d: dict, template_id: str, C: str, M: int, FS: float, FT: str)
     from streamlit.runtime.scriptrunner import get_script_run_ctx
     ctx = get_script_run_ctx()
     session_id = ctx.session_id if ctx else "default"
-    pdf_out = os.path.join(RESUME_BUILDER_DIR, "exports", "pdf", f"live_{session_id}.pdf")
+    pdf_out = os.path.join(PROJECT_ROOT, "exports", "pdf", f"live_{session_id}.pdf")
     os.makedirs(os.path.dirname(pdf_out), exist_ok=True)
     ok, msg = build_pdf(
         data=d, template_id=template_id,

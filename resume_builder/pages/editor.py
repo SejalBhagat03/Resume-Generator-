@@ -447,10 +447,10 @@ def show_editor():
                 # Duplicate action
                 if st.button("Duplicate", key="top_dup_btn", use_container_width=True):
                     base_name = os.path.splitext(os.path.basename(get_profile_path()))[0]
-                    new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy.json")
+                    new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{base_name}_copy.json")
                     counter = 1
                     while os.path.exists(new_path):
-                        new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy_{counter}.json")
+                        new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{base_name}_copy_{counter}.json")
                         counter += 1
                     with open(get_profile_path(), "r", encoding="utf-8") as f:
                         content = json.load(f)
@@ -466,11 +466,11 @@ def show_editor():
                     st.rerun()
                     
                 # Delete action
-                is_root = (os.path.abspath(get_profile_path()) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")))
+                is_root = (os.path.abspath(get_profile_path()) == os.path.abspath(os.path.join(PROJECT_ROOT, "exports", "json", "resume.json")))
                 if st.button("&#x1F5D1;&#65039; Delete", key="top_del_btn", use_container_width=True, disabled=is_root, help="Root resume cannot be deleted"):
                     if os.path.exists(get_profile_path()):
                         os.remove(get_profile_path())
-                    st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
+                    st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "exports", "json", "resume.json")
                     st.session_state.resume = load_from_disk()
                     st.session_state.navigation_page = "home"
                     st.rerun()
@@ -480,7 +480,7 @@ def show_editor():
         
     with c_history:
         base_name = os.path.splitext(os.path.basename(get_profile_path()))[0]
-        history_dir = os.path.join(PROJECT_ROOT, "resume_versions", "history", base_name)
+        history_dir = os.path.join(PROJECT_ROOT, "exports", "json", "history", base_name)
         checkpoints = []
         if os.path.exists(history_dir):
             for f in os.listdir(history_dir):
@@ -1108,8 +1108,8 @@ def show_editor():
                         if st.button("Generate Portfolio HTML", key="port_gen", use_container_width=True):
                             with st.spinner("Generating…"):
                                 hc = pe.generate_portfolio_html(d, C)
-                                os.makedirs(os.path.join("resume_builder","exports","html"), exist_ok=True)
-                                hp = os.path.join("resume_builder","exports","html","index.html")
+                                os.makedirs(os.path.join(PROJECT_ROOT, "exports", "html"), exist_ok=True)
+                                hp = os.path.join(PROJECT_ROOT, "exports", "html", "index.html")
                                 with open(hp,"w",encoding="utf-8") as hf: hf.write(hc)
                                 st.download_button("&#x1F4E5; Download index.html", data=hc.encode(),
                                                    file_name="index.html", mime="text/html",

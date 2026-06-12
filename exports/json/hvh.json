@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "title": "Resume",
-    "last_edited": 1781244833.5331059,
-    "template": "sejal_original",
+    "title": "hvh",
+    "template": "ats",
     "color": "#6366F1",
     "margins": 20,
     "fscale": 1.0,
-    "fitting": "Auto Compress"
+    "fitting": "Auto Compress",
+    "last_edited": 1781243701.002432
   },
   "personal": {
     "name": "SEJAL BHAGAT",
@@ -27,7 +27,7 @@
       "url": ""
     }
   },
-  "summary": "Final-year Computer Science student with full-stack development experience.",
+  "summary": "Seasoned software development professional with a proven track record of engineering scalable platforms.",
   "experience": [],
   "projects": [],
   "technical_skills": {
