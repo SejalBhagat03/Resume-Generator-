@@ -44,6 +44,7 @@ from analysis.achievement_quantifier import AchievementQuantifier
 from analysis.gap_analyzer import CareerGapAnalyzer
 from services.github_service import GitHubIntegration
 from resume_builder.ui.wizard_ui import render_wizard_header, render_wizard_stepper, render_profile_type_cards, render_import_cards
+from components.navbar import render_navbar
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
@@ -1527,22 +1528,15 @@ def show_home():
         @media (min-width: 768px) and (max-width: 1199px) {
           .rb-sidebar { transform: translateX(-100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
           .rb-sidebar.expanded { transform: translateX(0); width: 240px; }
-        }
         </style>
-
-        <div class="rb-main-header">
-          <div class="rb-header-left">
-            <div class="rb-hamburger" id="rb-hamburger">&#9776;</div>
-            <div class="rb-logo">
-              <span>&#x1F4C4;</span>
-              <span class="rb-logo-text">Resume Builder Pro</span>
-            </div>
-          </div>
-          <div class="rb-header-right">
-            <div class="rb-noti">&#128276;</div>
-            <div class="rb-avatar">S</div>
-          </div>
-        </div>
+        """,
+        unsafe_allow_html=True
+    )
+        
+    render_navbar()
+        
+    st.markdown(
+        """
 
         <div class="rb-overlay" id="rb-overlay"></div>
 
