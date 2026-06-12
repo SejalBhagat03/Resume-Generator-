@@ -1,0 +1,18 @@
+html, body {
+    background: #F8F4EE;
+}
+
+.stApp {
+    background: #F8F4EE;
+}
+
+.block-container {
+    padding-top: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1400px;
+}
+
+h1,h2,h3,p,span,div {
+    color: #1E293B;
+}

@@ -1,0 +1,117 @@
+{
+  "sejalbhagat03": [
+    {
+      "name": "resume-generator",
+      "description": "Streamlit Canva-style resume generator with live PDF compilation using ReportLab.",
+      "language": "Python",
+      "stargazers_count": 5,
+      "topics": [
+        "python",
+        "streamlit",
+        "reportlab",
+        "pdf-generator"
+      ],
+      "html_url": "https://github.com/sejalbhagat03/resume-generator"
+    },
+    {
+      "name": "labour-management-app",
+      "description": "Role-based project to manage construction layouts, labor logs, and materials.",
+      "language": "JavaScript",
+      "stargazers_count": 2,
+      "topics": [
+        "react",
+        "nodejs",
+        "mongodb",
+        "express"
+      ],
+      "html_url": "https://github.com/sejalbhagat03/labour-management-app"
+    },
+    {
+      "name": "digital-license-vault",
+      "description": "Digital credential storage and authentication platform using encryption.",
+      "language": "JavaScript",
+      "stargazers_count": 1,
+      "topics": [
+        "nodejs",
+        "react",
+        "cryptography",
+        "mysql"
+      ],
+      "html_url": "https://github.com/sejalbhagat03/digital-license-vault"
+    }
+  ],
+  "octocat": [
+    {
+      "name": "Spoon-Knife",
+      "description": "This repo is for demonstration purposes only.",
+      "language": "HTML",
+      "stargazers_count": 13840,
+      "topics": [],
+      "html_url": "https://github.com/octocat/Spoon-Knife",
+      "updated_at": "2026-06-11T13:36:34Z"
+    },
+    {
+      "name": "Hello-World",
+      "description": "My first repository on GitHub!",
+      "language": null,
+      "stargazers_count": 3618,
+      "topics": [],
+      "html_url": "https://github.com/octocat/Hello-World",
+      "updated_at": "2026-06-11T04:38:56Z"
+    },
+    {
+      "name": "hello-worId",
+      "description": "My first repository on GitHub.",
+      "language": null,
+      "stargazers_count": 754,
+      "topics": [],
+      "html_url": "https://github.com/octocat/hello-worId",
+      "updated_at": "2026-06-10T22:51:49Z"
+    },
+    {
+      "name": "linguist",
+      "description": "Language Savant. If your repository's language is being reported incorrectly, send us a pull request!",
+      "language": "Ruby",
+      "stargazers_count": 723,
+      "topics": [],
+      "html_url": "https://github.com/octocat/linguist",
+      "updated_at": "2026-06-09T20:08:33Z"
+    },
+    {
+      "name": "octocat.github.io",
+      "description": null,
+      "language": "CSS",
+      "stargazers_count": 1113,
+      "topics": [],
+      "html_url": "https://github.com/octocat/octocat.github.io",
+      "updated_at": "2026-06-09T20:08:32Z"
+    },
+    {
+      "name": "git-consortium",
+      "description": "This repo is for demonstration purposes only.",
+      "language": null,
+      "stargazers_count": 578,
+      "topics": [],
+      "html_url": "https://github.com/octocat/git-consortium",
+      "updated_at": "2026-06-09T20:08:31Z"
+    },
+    {
+      "name": "boysenberry-repo-1",
+      "description": "Testing",
+      "language": null,
+      "stargazers_count": 450,
+      "topics": [],
+      "html_url": "https://github.com/octocat/boysenberry-repo-1",
+      "updated_at": "2026-06-09T20:08:30Z"
+    },
+    {
+      "name": "test-repo1",
+      "description": null,
+      "language": null,
+      "stargazers_count": 457,
+      "topics": [],
+      "html_url": "https://github.com/octocat/test-repo1",
+      "updated_at": "2026-06-09T20:08:29Z"
+    }
+  ]
+}

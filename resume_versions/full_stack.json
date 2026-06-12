@@ -1,22 +1,22 @@
 {
   "metadata": {
     "title": "Full stack",
-    "template": "sejal_original",
+    "template": "ats",
     "color": "#6366F1",
     "margins": 20,
     "fscale": 1.0,
     "fitting": "Auto Compress",
-    "last_edited": 1781028517.1975636
+    "last_edited": 1781169008.5391533
   },
   "personal": {
-    "name": "SEJAL BHAGAT",
+    "name": "Sejal Bhagat",
     "title": "",
     "email": "bhagatsejal08@gmail.com",
     "phone": "+91 9022644273",
-    "location": "SEJAL BHAGAT\nNagpur, India",
+    "location": "Sejal Bhagat\nNagpur, India",
     "linkedin": {
-      "display": "linkedin/Sejal-Bhagat",
-      "url": "https://linkedin/Sejal-Bhagat"
+      "display": "linkedin.com/in/Sejal-Bhagat",
+      "url": "https://linkedin.com/in/Sejal-Bhagat"
     },
     "github": {
       "display": "github.com/SejalBhagat03",
@@ -36,7 +36,7 @@
       "period": "",
       "technologies": "",
       "bullets": [
-        "\u007f  Software Developer Intern, Royals Webtech Ltd. Pvt  |  Nagpur, India"
+        "Software Developer Intern , Royals Webtech Ltd. Pvt  |  Nagpur, India"
       ]
     },
     {
@@ -44,7 +44,7 @@
       "company": "",
       "location": "",
       "period": "Dec 2025\u2013Present",
-      "technologies": "React, Node.js, JavaScript, Bootstrap, PostgreSQL",
+      "technologies": "React, Node.js, JavaScript, Bootstrap, PostgreSQL,Firebase",
       "bullets": [
         "\u007f  Engineered responsive user interfaces utilizing React, achieving a 30% enhancement in page load performance through streamlined code and",
         "PostgreSQL. Built blockchain, workforce management, and review platform applications with a strong focus on scalable backend systems, APIs, and",
@@ -55,16 +55,14 @@
   ],
   "projects": [
     {
-      "title": "Project Title",
+      "title": "BlockchainBased Digital License & Registration System",
       "link": "",
       "date": "",
       "tools": "",
-      "bullets": [
-        "\u007f  Blockchain-Based Digital License & Registration System  |  GitHub"
-      ]
+      "bullets": []
     },
     {
-      "title": "Project Title",
+      "title": "Untitled Project",
       "link": "",
       "date": "Jul 2025",
       "tools": "Node.js, React, ExpressJS, Solidity, HardHat, Ethers.js, IPFS, PostgreSQL",
@@ -73,25 +71,25 @@
         "\u007f  Built a blockchain-based licensing system using React, Node.js, and smart contracts.",
         "\u007f  Integrated frontend, backend, and blockchain components for secure verification.",
         "\u007f  Reduced processing time by 40% via automated approval workflows.",
-        "\u007f  Designed a user-friendly interface for digital license registration.",
         "optimized image delivery, directly improving user experience.",
-        "\u007f  Labor Management System  |  GitHub"
+        "\u007f  Designed a user-friendly interface for digital license registration.",
+        "Labor Management System  |  Link"
       ]
     },
     {
-      "title": "Project Title",
+      "title": "Untitled Project",
       "link": "",
       "date": "Jan 2026",
       "tools": "React, Node.js, MongoDB, REST APIs",
       "bullets": [
-        "\u007f  Created a high-impact full-stack system with AI-assisted record management and OCR-based diary scanning to digitize physical work entries,",
-        "\u007f  Designed an efficient supervisor dashboard with native Hindi support, enabling supervisors to manage 50+ labor accounts efficiently with real-time",
-        "\u007f  Integrated secure REST APIs and advanced fraud detection algorithms to enable robust data handling and payroll verification.",
-        "\u007f  Store Review Platform (RateHub)  |  GitHub"
+        "\u007f  Built a full-stack labor management platform with OCR-based diary scanning and AI-assisted data extraction.",
+        "\u007f  Developed supervisor dashboards with Hindi language support and real-time work/payment tracking.",
+        "\u007f  Implemented secure REST APIs and validation checks to identify duplicate records and payment inconsistencies for payroll verification.",
+        "Store Review Platform (RateHub)  |  Link"
       ]
     },
     {
-      "title": "Project Title",
+      "title": "Untitled Project",
       "link": "",
       "date": "Dec 2025",
       "tools": "React, Node.js, Express.js, PostgreSQL",
@@ -99,25 +97,17 @@
         "\u007f  Built a platform for collecting and managing store reviews with secure role-based access and JWT authentication.",
         "\u007f  Implemented custom authorization layers for normal users, store owners, and administrators to ensure robust data privacy."
       ]
-    },
-    {
-      "title": "React",
-      "link": "https://github.com/SejalBhagat03/React",
-      "date": "Present",
-      "tools": "JavaScript",
-      "bullets": [
-        "Designed, built, and maintained the React repository using JavaScript, delivering business value through React learnings"
-      ]
     }
   ],
   "technical_skills": {
-    "\u007f  Programming": "C/C++, Python,JavaScript, TypeScript ,Problem Solving,Debugging,Clean Coding Practice",
-    "Technical Skills": "tracking 100+ daily entries and labor payments., stats.",
-    "\u007f  CS Fundamentals": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
-    "\u007f  Databases & Tools": "MongoDB, PostgreSQL, MySQL, Git/GitHub, VS Code, Postman, Vite ,CI/CD Pipelines, GCP,Azure,Docker,Kubernetes",
-    "\u007f  Web Development": "HTML, CSS, React.js, Tailwind CSS, Bootstrap, Responsive Web Design,Restful API Design, API Integration, OAuth, Agile,",
-    "\u007f  Backend & APIs": "Node.js, Express.js, REST APIs, JWT Authentication",
-    "\u007f  Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts"
+    "\u007f  Programming": "C++, Python, JavaScript, TypeScript",
+    "\u007f  Frontend": "HTML, CSS, React.js, Tailwind CSS, Bootstrap",
+    "\u007f  Backend": "Node.js, Express.js, REST APIs, JWT Authentication",
+    "\u007f  Databases": "MongoDB, PostgreSQL, MySQL",
+    "\u007f  Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
+    "\u007f  Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
+    "\u007f  Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
+    "\u007f  AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
   },
   "achievements": [
     "Academic Excellence: Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",
@@ -127,9 +117,9 @@
   "certifications": [],
   "education": [
     {
-      "degree": "\u007f  B.Tech. in Computer Science Engineering",
+      "degree": "B.Tech. in Computer Science Engineering",
       "institution": "G. H. Raisoni University",
-      "details": "Scrum ,Collaboration",
+      "details": "",
       "period": ""
     },
     {
@@ -139,21 +129,33 @@
       "period": "2026"
     },
     {
-      "degree": "\u007f  12th",
+      "degree": "12th",
       "institution": "Maharashtra HSC State Board",
       "details": "",
+      "period": ""
+    },
+    {
+      "degree": "Degree / Major",
+      "institution": "",
+      "details": "90%",
       "period": "2022"
     },
     {
-      "degree": "\u007f  10th",
+      "degree": "10th",
       "institution": "Maharashtra SSC State Board",
       "details": "",
+      "period": ""
+    },
+    {
+      "degree": "Degree / Major",
+      "institution": "",
+      "details": "87%",
       "period": "2020"
     }
   ],
   "position_of_responsibility": [
     {
-      "role": "\u007f  Technical Secretary College Technical Club",
+      "role": "Technical Secretary College Technical Club",
       "period": "",
       "bullets": [
         "\u007f  Organized and coordinated technical workshops and events for students in the college technical club."

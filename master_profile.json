@@ -15,46 +15,18 @@
   },
   "education": [
     {
-      "degree": "B.Tech. in Computer Science Engineering",
-      "institution": "G. H. Raisoni University",
-      "details": "CGPA: 9.1 / 10",
-      "period": "Expected Graduation: 2026"
-    },
-    {
-      "degree": "12th",
-      "institution": "Maharashtra HSC State Board",
-      "details": "90%",
-      "period": "2022"
-    },
-    {
-      "degree": "10th",
-      "institution": "Maharashtra SSC State Board",
-      "details": "87%",
-      "period": "2020"
+      "degree": "B.E. Computer Science",
+      "institution": "Nagpur University",
+      "details": "GPA: 8.5/10",
+      "period": "2020-2024"
     }
   ],
   "technical_skills": {
-    "Programming": "C++, Python, JavaScript, TypeScript",
-    "Frontend": "HTML, CSS, React.js, Tailwind CSS, Bootstrap",
-    "Backend": "Node.js, Express.js, REST APIs, JWT Authentication",
-    "Databases": "MongoDB, PostgreSQL, MySQL",
-    "Tools": "Git, GitHub, Postman, VS Code, Vite, Docker",
-    "Blockchain": "Solidity, Ethereum, Web3.js, Smart Contracts",
-    "Core CS": "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks",
-    "AI/ML": "Python, OCR, AI-assisted Data Extraction, Machine Learning Fundamentals"
+    "Programming": "Python, JavaScript",
+    "Frontend": "React, HTML, CSS",
+    "Backend": "Node.js, MongoDB"
   },
-  "achievements": [
-    "<b>Academic Excellence:</b> Maintained a stellar academic record with a CGPA of 9.1 / 10 in B.Tech CSE.",
-    "<b>Problem Solving:</b> Completed 300+ Data Structures and Algorithms (DSA) problems across LeetCode and GeeksforGeeks.",
-    "<b>Innovation:</b> Participated in the Smart India Hackathon (SIH), collaborating in a team to build robust technical solutions."
-  ],
-  "position_of_responsibility": [
-    {
-      "role": "Technical Secretary, College Technical Club",
-      "period": "",
-      "bullets": [
-        "Organized and coordinated technical workshops and events for students in the college technical club."
-      ]
-    }
-  ]
+  "achievements": [],
+  "certifications": [],
+  "position_of_responsibility": []
 }

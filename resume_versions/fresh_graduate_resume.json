@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "title": "Default Resume",
-    "last_edited": 1781112045.5112026,
-    "template": "sejal_original",
+    "title": "Fresh Graduate Resume",
+    "template": "ats",
     "color": "#6366F1",
     "margins": 20,
     "fscale": 1.0,
-    "fitting": "Auto Compress"
+    "fitting": "Auto Compress",
+    "last_edited": 1781149991.5287728
   },
   "personal": {
     "name": "SEJAL BHAGAT",
@@ -27,7 +27,7 @@
       "url": ""
     }
   },
-  "summary": "Final-year Computer Science student with full-stack development experience.",
+  "summary": "Motivated graduate looking to apply engineering principles in a growth-oriented role.",
   "experience": [],
   "projects": [],
   "technical_skills": {

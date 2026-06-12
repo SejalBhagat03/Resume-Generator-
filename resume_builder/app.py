@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Resume Builder Pro  –  Canva-style two-panel live editor.
 
@@ -8,9 +9,17 @@ Architecture
 • UNDO/REDO : 30-step history stack in session_state
 • SETTINGS  : contextual explanations shown inline
 """
+import streamlit as st
+import os
+os.environ.setdefault("SCRIPT_RUN_CONTEXT", "1")
+
 
 import streamlit as st
 import json, os, base64, re, time, copy
+# Ensure the top-level 'core' package is importable when running from the
+# resume_builder directory.
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from core.pdf_engine import build_pdf
 from resume_builder.templates import TEMPLATES, register_templates
@@ -34,705 +43,22 @@ from resume_builder.career_dashboard import show_career_center
 from analysis.achievement_quantifier import AchievementQuantifier
 from analysis.gap_analyzer import CareerGapAnalyzer
 from services.github_service import GitHubIntegration
+from resume_builder.ui.wizard_ui import render_wizard_header, render_wizard_stepper, render_profile_type_cards, render_import_cards
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
 # ═══════════════════════════════════════════════════════
 st.set_page_config(
     page_title="Resume Builder Pro",
-    page_icon="📄",
+    page_icon="&#x1F4C4;",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# ═══════════════════════════════════════════════════════
-# GLOBAL CSS  — Canva-style two-panel feel
-# ═══════════════════════════════════════════════════════
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-/* ── Base — force light theme on Streamlit Cloud & local ── */
-html, body, [data-testid="stAppViewContainer"],
-[data-testid="stAppViewContainer"] > section,
-[data-testid="stVerticalBlock"],
-.main .block-container {
-  font-family: 'Inter', sans-serif !important;
-  background: #F0F2F8 !important;
-  color: #1E293B !important;
-}
-
-/* Force all generic text dark so cloud dark-mode doesn't override */
-p, span, div, li, td, th, label,
-h1, h2, h3, h4, h5, h6 {
-  color: #1E293B;
-}
-
-/* Streamlit markdown elements */
-[data-testid="stMarkdownContainer"] p,
-[data-testid="stMarkdownContainer"] span,
-[data-testid="stMarkdownContainer"] li,
-[data-testid="stMarkdownContainer"] h1,
-[data-testid="stMarkdownContainer"] h2,
-[data-testid="stMarkdownContainer"] h3 {
-  color: #1E293B !important;
-}
-
-#MainMenu, footer, [data-testid="stHeader"],
-[data-testid="stDecoration"], [data-testid="stToolbar"] { display: none !important; }
-[data-testid="stSidebar"] { display: none !important; }
-
-/* ── Modern App Padding ── */
-.block-container {
-  padding: 1.5rem 3rem !important;
-  max-width: 1600px !important;
-}
-[data-testid="stAppViewContainer"] > .main { padding: 0 !important; }
-
-/* ── Light Premium Top Bar Toolbar ── */
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-  background: #FFFFFF !important;
-  padding: 14px 20px !important;
-  border-radius: 16px !important;
-  border: 1px solid #E2E8F0 !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
-  margin-bottom: 24px !important;
-  align-items: center !important;
-}
-
-/* Style selectboxes inside the top bar */
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] > div {
-  border-radius: 10px !important;
-  border: 1px solid #E2E8F0 !important;
-  background-color: #F8FAFC !important;
-  height: 38px !important;
-  color: #1E293B !important;
-}
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] span {
-  color: #1E293B !important;
-  font-weight: 500 !important;
-  font-size: 0.82rem !important;
-}
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] svg {
-  fill: #1E293B !important;
-}
-
-/* Style buttons inside the top bar */
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button {
-  background-color: #F8FAFC !important;
-  border: 1px solid #E2E8F0 !important;
-  color: #1E293B !important;
-  border-radius: 10px !important;
-  height: 38px !important;
-  font-size: 0.83rem !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: none !important;
-}
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button:hover:not(:disabled) {
-  background-color: #F1F5F9 !important;
-  border-color: #CBD5E1 !important;
-  color: #1E293B !important;
-}
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button:disabled {
-  opacity: 0.5 !important;
-  color: #94A3B8 !important;
-}
-
-/* Custom styling for color picker block inside top bar */
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="stColorPickerColorBlock"] {
-  border-radius: 8px !important;
-  border: 1px solid #E2E8F0 !important;
-}
-div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stColorPicker > div {
-  margin-top: -6px !important;
-}
-
-/* ── Sticky preview card ── */
-.preview-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,.12);
-  overflow: hidden;
-  min-height: 600px;
-}
-
-/* ── Section headers inside form ── */
-.sec-title {
-  font-size: .78rem; font-weight: 700; color: #6366F1;
-  text-transform: uppercase; letter-spacing: .08em;
-  margin: 16px 0 8px; padding-bottom: 5px;
-  border-bottom: 2px solid #EEF2FF;
-}
-
-/* ── Setting row with explanation ── */
-.setting-row { margin-bottom: 12px; }
-.setting-effect {
-  display: inline-block; margin-top: 2px;
-  font-size: .72rem; padding: 2px 8px;
-  border-radius: 100px; font-weight: 600;
-}
-.eff-balanced { background: #DCFCE7; color: #15803D; }
-.eff-compact  { background: #FEF9C3; color: #854D0E; }
-.eff-spacious { background: #DBEAFE; color: #1D4ED8; }
-.eff-tight    { background: #FEE2E2; color: #B91C1C; }
-.eff-standard { background: #F1F5F9; color: #475569; }
-
-/* ── Undo/Redo pill buttons ── */
-.ur-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border-radius: 8px;
-  background: rgba(255,255,255,.12); color: #fff; font-size: .9rem;
-  cursor: pointer; border: 1px solid rgba(255,255,255,.2);
-  transition: background .15s;
-}
-.ur-btn:hover { background: rgba(255,255,255,.22); }
-.ur-btn.disabled { opacity: .35; cursor: not-allowed; }
-
-/* ── Streamlit widget overrides ── */
-.stButton button {
-  border-radius: 8px !important;
-  font-family: 'Inter', sans-serif !important;
-  font-weight: 600 !important; font-size: .83rem !important;
-  transition: all .12s !important;
-}
-.stButton button[kind="primary"] {
-  background: linear-gradient(135deg,#6366F1,#8B5CF6) !important;
-  border: none !important; box-shadow: 0 2px 8px rgba(99,102,241,.3) !important;
-  color: #fff !important;
-}
-.stButton button[kind="primary"]:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(99,102,241,.4) !important;
-}
-
-/* Ensure secondary buttons and other text blocks are readable */
-.stButton button[kind="secondary"] {
-  color: #1E293B !important;
-  background-color: #F1F5F9 !important;
-  border: 1px solid #CBD5E1 !important;
-}
-.stButton button[kind="secondary"]:hover {
-  background-color: #E2E8F0 !important;
-  border-color: #94A3B8 !important;
-}
-
-.stTextInput input, .stTextArea textarea {
-  border-radius: 7px !important; border-color: #E2E8F0 !important;
-  font-family: 'Inter', sans-serif !important; font-size: .82rem !important;
-  padding: 6px 10px !important;
-  background: #FAFBFF !important;
-  color: #0F172A !important;
-}
-.stTextInput input:focus, .stTextArea textarea:focus {
-  border-color: #6366F1 !important;
-  box-shadow: 0 0 0 3px rgba(99,102,241,.12) !important;
-  background: #fff !important;
-  color: #0F172A !important;
-}
-
-/* Inputs Placeholders Contrast */
-.stTextInput input::placeholder, .stTextArea textarea::placeholder {
-  color: #64748B !important; opacity: 1 !important;
-}
-.stTextInput input::-webkit-input-placeholder, .stTextArea textarea::-webkit-input-placeholder {
-  color: #64748B !important; opacity: 1 !important;
-}
-.stTextInput input::-moz-placeholder, .stTextArea textarea::-moz-placeholder {
-  color: #64748B !important; opacity: 1 !important;
-}
-.stTextInput input:-ms-input-placeholder, .stTextArea textarea:-ms-input-placeholder {
-  color: #64748B !important; opacity: 1 !important;
-}
-
-div[data-testid="stWidgetLabel"] p {
-  font-size: .78rem !important; font-weight: 600 !important;
-  color: #1E293B !important; margin-bottom: 2px !important;
-}
-div[data-testid="element-container"] { margin-bottom: 0.3rem !important; }
-
-.stExpander {
-  border: 1.5px solid #E2E8F0 !important; border-radius: 10px !important;
-  background: #FAFBFF !important; margin-bottom: 5px !important;
-  color: #1E293B !important;
-}
-
-.repo-card {
-  background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 10px 30px rgba(15,23,42,0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.repo-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(15,23,42,0.08);
-}
-.repo-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
-}
-.repo-card-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 8px;
-}
-.repo-card-description {
-  color: #475569;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  margin-bottom: 14px;
-  min-height: 62px;
-}
-.repo-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  margin-bottom: 14px;
-}
-.repo-chip {
-  background: #EEF2FF;
-  color: #312E81;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  padding: 6px 10px;
-  font-weight: 600;
-}
-.repo-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 16px;
-}
-.repo-stat {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: #475569;
-}
-.repo-score-badge {
-  background: #E0E7FF;
-  color: #3730A3;
-  border-radius: 999px;
-  padding: 6px 10px;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-.repo-card a {
-  color: #4338CA;
-  text-decoration: none;
-}
-.repo-card a:hover {
-  text-decoration: underline;
-}
-
-.github-filter-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-.github-filter-row > div {
-  min-width: 180px;
-}
-.stExpander summary {
-  font-size: .82rem !important; font-weight: 600 !important;
-  color: #1E293B !important;
-}
-.stExpander summary:hover {
-  color: #6366F1 !important;
-}
-.stExpander summary svg {
-  fill: #1E293B !important;
-}
-.stExpander [data-testid="stExpanderDetails"] p,
-.stExpander [data-testid="stExpanderDetails"] span,
-.stExpander [data-testid="stExpanderDetails"] div,
-.stExpander [data-testid="stExpanderDetails"] li {
-  color: #1E293B !important;
-}
-
-.stTabs [data-baseweb="tab-list"] {
-  background: #E2E8F0; border-radius: 10px; padding: 3px; gap: 2px;
-}
-.stTabs [data-baseweb="tab"] {
-  border-radius: 7px !important; font-family: 'Inter', sans-serif !important;
-  font-size: .78rem !important; font-weight: 500 !important; padding: 5px 11px !important;
-  color: #475569 !important;
-}
-.stTabs [aria-selected="true"] {
-  background: #fff !important; box-shadow: 0 1px 4px rgba(0,0,0,.08) !important;
-  color: #6366F1 !important; font-weight: 700 !important;
-}
-/* Slider */
-.stSlider { padding: 0 2px !important; }
-div[data-testid="stSlider"] { margin-bottom: 0 !important; }
-div[data-testid="stSlider"] span {
-  color: #1E293B !important;
-}
-
-/* ── Metric pill ── */
-.kpi {
-  background: #fff; border: 1.5px solid #E2E8F0; border-radius: 10px;
-  padding: 10px 12px; text-align: center;
-}
-.kpi-lbl { font-size: .62rem; font-weight: 700; color: #94A3B8;
-  text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1px; }
-.kpi-val { font-size: 1.7rem; font-weight: 800; line-height: 1.1; color: #1E293B !important; }
-.c-green { color: #10B981 !important; } .c-amber { color: #F59E0B !important; } .c-red { color: #EF4444 !important; }
-
-/* ── Import upload zone ── */
-.upload-zone {
-  border: 2px dashed #C7D2FE; border-radius: 12px;
-  padding: 24px 16px; text-align: center; background: #EEF2FF;
-  margin: 8px 0;
-}
-
-/* ── Divider ── */
-.hdiv { border-top: 1.5px solid #E2E8F0; margin: 12px 0; }
-
-/* Scrollbar styling */
-.left-panel::-webkit-scrollbar { width: 5px; }
-.left-panel::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-
-/* General text visibility overrides inside main content area */
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] p,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] span,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] li,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h1,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h2,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h3,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h4,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h5,
-[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h6 {
-  color: #1E293B !important;
-}
-
-/* Standard Streamlit metrics labels and values */
-div[data-testid="stMetricLabel"] {
-  color: #475569 !important;
-}
-div[data-testid="stMetricValue"] {
-  color: #1E293B !important;
-}
-
-/* Standard selectbox contrast */
-.main div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
-  background-color: #FAFBFF !important;
-  border: 1px solid #E2E8F0 !important;
-  color: #1E293B !important;
-}
-.main div[data-testid="stSelectbox"] div[data-baseweb="select"] span {
-  color: #1E293B !important;
-}
-.main div[data-testid="stSelectbox"] div[data-baseweb="select"] svg {
-  fill: #1E293B !important;
-}
-
-/* Radio button text visibility */
-div[data-testid="stRadio"] label span {
-  color: #1E293B !important;
-}
-
-/* Checkbox labels */
-div[data-testid="stCheckbox"] label span {
-  color: #1E293B !important;
-}
-
-/* File uploader contrast */
-div[data-testid="stFileUploader"] section {
-  background-color: #FAFAFB !important;
-  border: 1px dashed #C7D2FE !important;
-}
-div[data-testid="stFileUploader"] section * {
-  color: #1E293B !important;
-}
-
-/* ── Onboarding Banner ─────────────────────────────────── */
-.onboarding-banner {
-  background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
-  border: 1.5px solid #C7D2FE;
-  border-left: 4px solid #6366F1;
-  border-radius: 12px;
-  padding: 12px 18px;
-  font-size: .86rem;
-  color: #3730A3;
-  line-height: 1.5;
-  margin-bottom: 4px;
-}
-.onboarding-banner b { color: #312E81; }
-.onboarding-banner .ob-step {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(99,102,241,.12);
-  border-radius: 100px;
-  padding: 2px 10px;
-  margin: 0 3px;
-  font-weight: 600;
-  font-size: .82rem;
-}
-
-/* ── Tab Hint Chips ────────────────────────────────────── */
-.tab-hint {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-left: 3px solid #6366F1;
-  border-radius: 8px;
-  padding: 8px 13px;
-  font-size: .8rem;
-  color: #475569;
-  margin-bottom: 14px;
-  line-height: 1.45;
-}
-.tab-hint .th-icon { margin-right: 5px; }
-.tab-hint b { color: #1E293B; }
-
-/* Sub-header Progress Card Styling */
-div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-  background: #FFFFFF !important;
-  border-radius: 16px !important;
-  border: 1px solid #E2E8F0 !important;
-  padding: 12px 20px !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
-  margin-bottom: 12px !important;
-  align-items: center !important;
-  position: relative !important;
-}
-div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"]::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 33px !important;
-  left: 42% !important;
-  width: 50% !important;
-  height: 2px !important;
-  background: #F1F5F9 !important;
-  z-index: 0 !important;
-}
-div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(n+3) button {
-  width: 42px !important;
-  height: 42px !important;
-  min-width: 42px !important;
-  border-radius: 50% !important;
-  padding: 0 !important;
-  margin: 0 auto !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 0.95rem !important;
-  font-weight: 700 !important;
-  z-index: 1 !important;
-  position: relative !important;
-}
-div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(n+3) button[kind="primary"] {
-  background: #6366F1 !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2) !important;
-}
-div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(n+3) button[kind="secondary"] {
-  background: #F8FAFC !important;
-  color: #64748B !important;
-  border: 1px solid #E2E8F0 !important;
-}
-.step-label {
-  font-size: 0.72rem !important;
-  font-weight: 600 !important;
-  color: #64748B;
-  text-align: center;
-  margin-top: 6px;
-  white-space: nowrap;
-}
-.step-label.active {
-  color: #6366F1 !important;
-  font-weight: 700 !important;
-}
-
-/* Fixed Bottom Actions Bar */
-div:has(#bottom-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  background: #FFFFFF !important;
-  border-top: 1px solid #E2E8F0 !important;
-  padding: 12px 64px !important;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05) !important;
-  z-index: 999999 !important;
-  margin: 0 !important;
-  align-items: center !important;
-}
-div:has(#bottom-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button {
-  border-radius: 20px !important;
-  height: 38px !important;
-  font-weight: 600 !important;
-  font-size: 0.85rem !important;
-}
-div:has(#bottom-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button[kind="primary"] {
-  background: #6366F1 !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(99,102,241,.3) !important;
-}
-div:has(#bottom-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button[kind="secondary"] {
-  background: #FFFFFF !important;
-  color: #475569 !important;
-  border: 1px solid #E2E8F0 !important;
-}
-
-/* ── Mobile Responsiveness (Viewport width <= 768px) ── */
-@media (max-width: 768px) {
-  /* Reduce page container padding on mobile to maximize space */
-  .block-container {
-    padding: 1rem 1rem !important;
-  }
-
-  /* 1. Header Navigation Columns Wrapping */
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 8px 6px !important;
-    padding: 10px !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"] {
-    min-width: 0 !important;
-    max-width: none !important;
-    width: auto !important;
-    flex-grow: 1 !important;
-    flex-shrink: 1 !important;
-    flex-basis: auto !important;
-  }
-  /* Reorder and sizing on mobile */
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(1) { /* Back button */
-    order: 1 !important; flex-basis: 22% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(2) { /* Title */
-    order: 2 !important; flex-basis: 48% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(3) { /* Saved */
-    order: 3 !important; flex-basis: 24% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(5) { /* Edit button */
-    order: 4 !important; flex-basis: 31% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(6) { /* Preview button */
-    order: 5 !important; flex-basis: 31% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(7) { /* Insights button */
-    order: 6 !important; flex-basis: 31% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(4) { /* History popover */
-    order: 7 !important; flex-basis: 47% !important;
-  }
-  div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(8) { /* Accent color select */
-    order: 8 !important; flex-basis: 47% !important;
-  }
-
-  /* 2. Stepper Widget Wrapping */
-  div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    padding: 8px !important;
-    gap: 6px !important;
-  }
-  div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"] {
-    width: auto !important;
-    min-width: 0 !important;
-    flex-grow: 1 !important;
-    flex-basis: auto !important;
-  }
-  div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(1) { /* Metadata info */
-    flex-basis: 100% !important;
-    margin-bottom: 4px !important;
-  }
-  div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(n+2) { /* Step buttons */
-    flex-basis: 14% !important;
-  }
-  div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"]::before {
-    display: none !important; /* Hide connector line */
-  }
-  .step-label {
-    font-size: 0.6rem !important;
-    text-overflow: ellipsis !important;
-    overflow: hidden !important;
-    white-space: nowrap !important;
-  }
-
-  /* 3. Fixed Bottom Actions Bar */
-  div:has(#bottom-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-    padding: 8px 12px !important;
-    gap: 8px !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-  }
-  div:has(#bottom-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > [data-testid="column"] {
-    width: 50% !important;
-    min-width: 0 !important;
-    flex: 1 1 50% !important;
-  }
-
-  /* 4. Hide sticky preview panel on mobile during Edit view */
-  div[data-testid="column"]:has(#right-panel-anchor) {
-    display: none !important;
-  }
-  
-  /* 5. Continue Last Resume Banner Stack */
-  div[data-testid="stHorizontalBlock"]:has(#btn_continue_latest) {
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-  div[data-testid="stHorizontalBlock"]:has(#btn_continue_latest) > div[data-testid="column"] {
-    width: 100% !important;
-    flex: 1 1 100% !important;
-  }
-  .continue-banner-box {
-    height: auto !important;
-    min-height: 95px !important;
-    padding: 12px 16px !important;
-  }
-}
-
-/* ── Resume Card: style Streamlit's native bordered container ── */
-div[data-testid="stVerticalBlockBorderWrapper"] {
-  background: #FFFFFF !important;
-  border-radius: 16px !important;
-  border: 1px solid #E2E8F0 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease !important;
-  overflow: hidden !important;
-  margin-bottom: 6px !important;
-}
-div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-  box-shadow: 0 10px 24px rgba(99,102,241,0.13) !important;
-  transform: translateY(-3px) !important;
-  border-color: #6366F1 !important;
-}
-
-/* On mobile, stack cards single-column */
-@media (max-width: 768px) {
-  div[data-testid="stHorizontalBlock"]:has(div[data-testid="stVerticalBlockBorderWrapper"]) {
-    flex-direction: column !important;
-    gap: 0 !important;
-  }
-  div[data-testid="stHorizontalBlock"]:has(div[data-testid="stVerticalBlockBorderWrapper"]) > div[data-testid="column"] {
-    width: 100% !important;
-    flex: 1 1 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-  }
-}
-</style>
+# CSS loading moved below after PROJECT_ROOT
 
 
-""", unsafe_allow_html=True)
+
 
 
 # ═══════════════════════════════════════════════════════
@@ -742,6 +68,11 @@ div[data-testid="stVerticalBlockBorderWrapper"]:hover {
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESUME_JSON  = os.path.join(PROJECT_ROOT, "resume.json")
 DEFAULTS_FILE = os.path.join(PROJECT_ROOT, "resume_builder", "config", "defaults.json")
+# Load custom CSS (refactored selectors v8)
+css_path = os.path.join(PROJECT_ROOT, "resume_builder", "assets", "custom.css")
+with open(css_path, encoding="utf-8") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 
 FITTING_OPTS = ["Auto Compress", "Keep Original", "Multi-Page"]
 BUILTIN      = {"sejal_original","ats","modern","creative","minimal","two_column"}
@@ -1348,7 +679,7 @@ def collect_resume() -> dict:
         proj_data.append({"title":ti,"link":lk,"date":dt,"tools":tl,
                           "bullets":[x.strip() for x in bs.split("\n") if x.strip()]})
 
-    # skills — only collect edits to existing rows; new category is added via the ➕ button
+    # skills — only collect edits to existing rows; new category is added via the &#x2795; button
     sk = d.get("technical_skills",{})
     sk_data = {}
     for i, k in enumerate(sk.keys()):
@@ -1501,7 +832,7 @@ if page == "workspace":
     )
     
     with c_back:
-        if st.button("← Resumes", key="btn_back_home", use_container_width=True, help="Back to My Resumes"):
+        if st.button("&#x2190; Resumes", key="btn_back_home", use_container_width=True, help="Back to My Resumes"):
             st.session_state.navigation_page = "home"
             st.rerun()
             
@@ -1521,7 +852,7 @@ if page == "workspace":
                 save_to_disk(d)
                 st.rerun()
         with ct_col2:
-            with st.popover("⚙️", use_container_width=True, help="Resume options"):
+            with st.popover("&#9881;&#65039;", use_container_width=True, help="Resume options"):
                 st.markdown("**Resume Options**")
                 
                 # Duplicate action
@@ -1547,7 +878,7 @@ if page == "workspace":
                     
                 # Delete action
                 is_root = (os.path.abspath(get_profile_path()) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")))
-                if st.button("🗑️ Delete", key="top_del_btn", use_container_width=True, disabled=is_root, help="Root resume cannot be deleted"):
+                if st.button("&#x1F5D1;&#65039; Delete", key="top_del_btn", use_container_width=True, disabled=is_root, help="Root resume cannot be deleted"):
                     if os.path.exists(get_profile_path()):
                         os.remove(get_profile_path())
                     st.session_state.current_profile_path = os.path.join(PROJECT_ROOT, "resume.json")
@@ -1556,7 +887,7 @@ if page == "workspace":
                     st.rerun()
             
     with c_saved:
-        st.markdown('<div style="display: flex; align-items: center; justify-content: center; height: 38px;"><span style="color: #10B981; font-weight: 700; font-size: 0.85rem;">✓ Saved</span></div>', unsafe_allow_html=True)
+        st.markdown('<div style="display: flex; align-items: center; justify-content: center; height: 38px;"><span style="color: #10B981; font-weight: 700; font-size: 0.85rem;">&#10003; Saved</span></div>', unsafe_allow_html=True)
         
     with c_history:
         base_name = os.path.splitext(os.path.basename(get_profile_path()))[0]
@@ -1574,7 +905,7 @@ if page == "workspace":
                     })
             checkpoints.sort(key=lambda x: x["time"], reverse=True)
             
-        with st.popover("📜 History", use_container_width=True, help="View and restore checkpoints"):
+        with st.popover("&#128220; History", use_container_width=True, help="View and restore checkpoints"):
             st.markdown("**Version Checkpoints**")
             if not checkpoints:
                 st.caption("No snapshots saved yet.")
@@ -1595,41 +926,41 @@ if page == "workspace":
                             save_to_disk(restored_data)
                             st.success(f"Restored {cp_name}!")
                             st.rerun()
-            if st.button("📸 Save Checkpoint", key="btn_save_cp_manual", use_container_width=True):
+            if st.button("&#128248; Save Checkpoint", key="btn_save_cp_manual", use_container_width=True):
                 save_checkpoint(get_profile_path(), st.session_state.resume)
                 st.success("Checkpoint saved!")
                 st.rerun()
         
     with c_edit:
         is_active_edit = (st.session_state.workspace_tab == "Edit")
-        if st.button("✏️ Edit", key="btn_wtab_edit", type="primary" if is_active_edit else "secondary", use_container_width=True):
+        if st.button("&#9999;&#65039; Edit", key="btn_wtab_edit", type="primary" if is_active_edit else "secondary", use_container_width=True):
             st.session_state.workspace_tab = "Edit"
             st.session_state.navigation_page = "workspace"
             st.rerun()
             
     with c_prev:
         is_active_prev = (st.session_state.workspace_tab == "Preview")
-        if st.button("👁️ Preview", key="btn_wtab_prev", type="primary" if is_active_prev else "secondary", use_container_width=True):
+        if st.button("&#128065;&#65039; Preview", key="btn_wtab_prev", type="primary" if is_active_prev else "secondary", use_container_width=True):
             st.session_state.workspace_tab = "Preview"
             st.session_state.navigation_page = "workspace"
             st.rerun()
             
     with c_ins:
         is_active_ins = (st.session_state.workspace_tab == "Insights")
-        if st.button("📊 Insights", key="btn_wtab_ins", type="primary" if is_active_ins else "secondary", use_container_width=True):
+        if st.button("&#x1F4CA; Insights", key="btn_wtab_ins", type="primary" if is_active_ins else "secondary", use_container_width=True):
             st.session_state.workspace_tab = "Insights"
             st.session_state.navigation_page = "workspace"
             st.rerun()
             
     with c_accent:
         COLOR_ICONS = {
-            "Indigo": "🔵 Indigo",
-            "Blue": "🔵 Blue",
-            "Emerald": "🟢 Emerald",
-            "Rose": "🔴 Rose",
-            "Violet": "🟣 Violet",
-            "Slate": "⚫ Slate",
-            "Custom": "🎨 Custom"
+            "Indigo": "&#128309; Indigo",
+            "Blue": "&#128309; Blue",
+            "Emerald": "&#128994; Emerald",
+            "Rose": "&#128308; Rose",
+            "Violet": "&#128995; Violet",
+            "Slate": "&#9899; Slate",
+            "Custom": "&#x1F3A8; Custom"
         }
         accent_options = list(ACCENT_PRESETS.keys()) + ["Custom"]
         cur_accent = next((n for n, v in ACCENT_PRESETS.items() if v == C), "Custom")
@@ -1664,7 +995,7 @@ def show_import_dialog():
         do_ext = st.checkbox("Save as reusable template", value=True, key="imp_do_ext")
         tname  = st.text_input("Template name", "my_style", key="imp_tname")
 
-        if uf and st.button("🚀 Extract & Import", type="primary", key="imp_go", use_container_width=True):
+        if uf and st.button("&#x1F680; Extract & Import", type="primary", key="imp_go", use_container_width=True):
             with st.spinner("Analysing…"):
                 tdir = os.path.join("resume_builder","data","temp")
                 os.makedirs(tdir, exist_ok=True)
@@ -1703,11 +1034,11 @@ def show_import_dialog():
 
     elif st.session_state.wiz_step == "wizard":
         st.markdown("**Review extracted sections — adjust categories if needed:**")
-        CATS = {"personal":"👤 Personal","summary":"📝 Summary",
-                "experience":"💼 Experience","projects":"🚀 Projects",
-                "skills":"🛠️ Skills","education":"🎓 Education",
-                "achievements":"🏆 Achievements",
-                "position_of_responsibility":"🤝 Positions","ignore":"❌ Ignore"}
+        CATS = {"personal":"&#x1F464; Personal","summary":"&#128221; Summary",
+                "experience":"&#x1F4BC; Experience","projects":"&#x1F680; Projects",
+                "skills":"&#x1F6E0;&#65039; Skills","education":"&#x1F393; Education",
+                "achievements":"&#127942; Achievements",
+                "position_of_responsibility":"&#x1F91D; Positions","ignore":"&#x274C; Ignore"}
         mapped = []
         for i, b in enumerate(st.session_state.wiz_blk):
             ic = b.get("inferred_category","ignore")
@@ -1721,13 +1052,13 @@ def show_import_dialog():
 
         wz1, wz2 = st.columns(2)
         with wz1:
-            if st.button("❌ Cancel", key="wz_cancel", use_container_width=True):
+            if st.button("&#x274C; Cancel", key="wz_cancel", use_container_width=True):
                 st.session_state.wiz_step = "upload"
                 st.session_state.wiz_blk  = []
                 st.session_state.wiz_lay  = None
                 st.rerun()
         with wz2:
-            if st.button("✅ Confirm & Import", type="primary", key="wz_ok", use_container_width=True):
+            if st.button("&#x2705; Confirm & Import", type="primary", key="wz_ok", use_container_width=True):
                 parsed = parse_mapped_blocks_to_json(mapped)
                 push_undo(st.session_state.resume)
                 st.session_state.resume = parsed
@@ -1747,7 +1078,7 @@ def render_pdf_thumbnail(pdf_b64: str, key: str):
     if not pdf_b64:
         st.markdown(
             '<div style="background: #FAFBFF; border-bottom: 1px solid #F1F5F9; height: 110px; display: flex; align-items: center; justify-content: center;">'
-            '<span style="font-size: 2rem; color: #CBD5E1;">📄</span>'
+            '<span style="font-size: 2rem; color: #CBD5E1;">&#x1F4C4;</span>'
             '</div>',
             unsafe_allow_html=True
         )
@@ -1857,47 +1188,38 @@ def show_create_resume_dialog():
         st.session_state.wizard_template = "sejal_original"
         st.session_state.wizard_just_opened = False
 
-    # Step progress indicator at the top
+    # Step progress indicator and UI rendering
     step = st.session_state.create_wizard_step
-    st.markdown(
-        f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #EEF2FF; padding: 10px 15px; border-radius: 8px; border: 1px solid #C7D2FE;">'
-        f'  <span style="font-weight: 700; color: {"#6366F1" if step==1 else "#64748B"};">Step 1: Profile Type</span>'
-        f'  <span style="color: #CBD5E1;">&rarr;</span>'
-        f'  <span style="font-weight: 700; color: {"#6366F1" if step==2 else "#64748B"};">Step 2: Source / Import</span>'
-        f'  <span style="color: #CBD5E1;">&rarr;</span>'
-        f'  <span style="font-weight: 700; color: {"#6366F1" if step==3 else "#64748B"};">Step 3: Theme & Finish</span>'
-        f'</div>',
-        unsafe_allow_html=True
-    )
+    # Header
+    render_wizard_header()
+    # Stepper
+    render_wizard_stepper(step, ["Profile", "Import", "Theme"])
 
+    # Step specific UI
     if step == 1:
-        st.markdown("### 👤 Step 1: What are you creating?")
-        res_type = st.radio(
-            "Select your profile type:",
-            options=["Fresh Graduate", "Experienced Professional", "Internship Resume", "Academic Resume", "Custom"],
-            key="wizard_res_type_radio"
-        )
-        st.session_state.wizard_resume_type = res_type
+        render_profile_type_cards(st.session_state.wizard_resume_type)
         
-        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-        if st.button("Next ➡️", type="primary", use_container_width=True, key="wiz_next_1"):
-            st.session_state.create_wizard_step = 2
+        st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
+        w1_col1, w1_col2 = st.columns([1, 1])
+        with w1_col1:
+            if st.button("Cancel", use_container_width=True, key="wiz_cancel_1"):
+                st.session_state.wizard_just_opened = True
+                st.rerun()
+        with w1_col2:
+            if st.button("Next &#10145;&#65039;", type="primary", use_container_width=True, key="wiz_next_1"):
+                st.session_state.create_wizard_step = 2
+                st.rerun()
 
     elif step == 2:
-        st.markdown("### 📥 Step 2: Choose your starting point")
-        imp_source = st.radio(
-            "Import details or start from scratch:",
-            options=["Start Empty", "Existing Resume", "LinkedIn PDF", "GitHub"],
-            key="wizard_imp_source_radio"
-        )
-        st.session_state.wizard_import_source = imp_source
+        render_import_cards(st.session_state.wizard_import_source)
         
-        if imp_source == "GitHub":
+        if st.session_state.wizard_import_source == "GitHub":
+            st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
             st.markdown("**Enter GitHub Username to fetch projects:**")
             gh_user = st.text_input("GitHub Username", value=st.session_state.get("wizard_github_username", ""), placeholder="e.g. SejalBhagat03")
             if gh_user.strip():
                 st.session_state.wizard_github_username = gh_user.strip()
-                if st.button("🔍 Fetch Projects", type="primary", use_container_width=True):
+                if st.button("&#128269; Fetch Projects", type="primary", use_container_width=True):
                     with st.spinner("Fetching repositories..."):
                         from services.github_service import GitHubIntegration
                         repos = GitHubIntegration.fetch_repos(gh_user.strip())
@@ -1912,40 +1234,59 @@ def show_create_resume_dialog():
                 elif "wizard_github_repos" in st.session_state:
                     st.warning("No public repositories found for this username.")
                     
-        elif imp_source in ("Existing Resume", "LinkedIn PDF"):
+        elif st.session_state.wizard_import_source in ("Existing Resume", "LinkedIn PDF"):
+            st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
             st.markdown("**Upload your resume file (PDF, DOCX, TXT):**")
             uploaded_file = st.file_uploader("Upload resume file:", type=["pdf", "docx", "txt"], key="wizard_upload")
             if uploaded_file:
                 st.session_state.wizard_uploaded_file = uploaded_file
                 
-        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
         w2_col1, w2_col2 = st.columns(2)
         with w2_col1:
-            if st.button("⬅️ Back", use_container_width=True, key="wiz_back_2"):
+            if st.button("&#11013;&#65039; Back", use_container_width=True, key="wiz_back_2"):
                 st.session_state.create_wizard_step = 1
+                st.rerun()
         with w2_col2:
-            if st.button("Next ➡️", type="primary", use_container_width=True, key="wiz_next_2"):
+            if st.button("Next &#10145;&#65039;", type="primary", use_container_width=True, key="wiz_next_2"):
                 st.session_state.create_wizard_step = 3
+                st.rerun()
 
     elif step == 3:
-        st.markdown("### 🎨 Step 3: Choose template and title")
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
         
-        res_title = st.text_input("Resume Title", value=st.session_state.get("wizard_resume_title", ""), placeholder="e.g. Frontend Developer Resume")
+        # Two column layout: inputs on left, preview on right
+        col_left, col_right = st.columns([1.1, 0.9])
         
-        st.markdown("**Select Template Theme**")
-        tpl_options = list(ALL_TEMPLATES.keys())
-        tpl_names = {k: v["name"] for k, v in ALL_TEMPLATES.items()}
-        
-        sel_tpl = st.selectbox("Template Theme", options=tpl_options, format_func=lambda k: tpl_names[k])
-        st.session_state.wizard_template = sel_tpl
-        
-        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+        with col_left:
+            st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #1E2A44; margin-bottom: 12px;'>Choose template and title</div>", unsafe_allow_html=True)
+            res_title = st.text_input("Resume Title", value=st.session_state.get("wizard_resume_title", ""), placeholder="e.g. Frontend Developer Resume")
+            st.session_state.wizard_resume_title = res_title
+            
+            st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+            st.markdown("**Select Template Theme**")
+            tpl_options = list(ALL_TEMPLATES.keys())
+            tpl_names = {k: v["name"] for k, v in ALL_TEMPLATES.items()}
+            
+            sel_tpl = st.selectbox("Template Theme", options=tpl_options, format_func=lambda k: tpl_names[k])
+            st.session_state.wizard_template = sel_tpl
+            
+        with col_right:
+            st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E2A44; margin-bottom: 8px;'>Template Preview</div>", unsafe_allow_html=True)
+            pdf_b64 = get_pdf_base64_for_template(sel_tpl) if 'get_pdf_base64_for_template' in globals() else None
+            if pdf_b64:
+                render_pdf_thumbnail(pdf_b64, key="preview_thumb")
+            else:
+                st.info("Preview not available.")
+                
+        st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
         w3_col1, w3_col2 = st.columns(2)
         with w3_col1:
-            if st.button("⬅️ Back", use_container_width=True, key="wiz_back_3"):
+            if st.button("&#11013;&#65039; Back", use_container_width=True, key="wiz_back_3"):
                 st.session_state.create_wizard_step = 2
+                st.rerun()
         with w3_col2:
-            if st.button("🚀 Create Resume", type="primary", use_container_width=True):
+            if st.button("&#x1F680; Create Resume", type="primary", use_container_width=True):
                 title = res_title.strip() or f"{st.session_state.wizard_resume_type} Resume"
                 clean_title = re.sub(r"[^a-zA-Z0-9\s_-]", "", title).strip()
                 file_base = clean_title.lower().replace(" ", "_")
@@ -2032,6 +1373,7 @@ def show_create_resume_dialog():
                     
                 st.session_state.create_wizard_step = 1
                 st.session_state.wizard_just_opened = True  # Reset for next open
+                st.session_state.show_create_dialog = False
                 if "wizard_uploaded_file" in st.session_state:
                     del st.session_state.wizard_uploaded_file
                 if "wizard_github_repos" in st.session_state:
@@ -2044,137 +1386,538 @@ def show_create_resume_dialog():
 
 def show_home():
     """Phase 1: My Resumes Dashboard containing Recent Resumes card grid."""
-    # Card hover effect is handled in global CSS for [data-testid="stVerticalBlockBorderWrapper"]
-
-    # Header Row
+    import html
+    
+    # 1. Hidden marker for CSS targeting
+    st.markdown('<div id="dashboard-marker"></div>', unsafe_allow_html=True)
+    
+    # 2. Top Navigation Bar & Left Sidebar
+    # NOTE: st.markdown() renders inside a Streamlit iframe, so CSS from custom.css
+    # does NOT reach these elements. We embed a <style> block here for the sidebar/header
+    # styles. The JS talks to window.parent to update --sidebar-w on the parent document.
     st.markdown(
-        '<div style="margin: 20px 0 16px;">'
-        '<h1 style="font-size: 2.2rem; font-weight: 800; color: #1E293B; margin: 0; letter-spacing: -0.03em;">My Resumes</h1>'
-        '<p style="color: #64748B; font-size: 0.95rem; margin: 6px 0 0;">Create, duplicate, and design your resume documents.</p>'
-        '</div>',
-        unsafe_allow_html=True,
+        """
+        <style>
+        /* === Self-contained sidebar & header styles (inside Streamlit iframe) === */
+        :host, body { margin: 0; padding: 0; }
+
+        .rb-main-header {
+          position: fixed;
+          top: 0; left: 0; right: 0;
+          height: 72px;
+          background: #FFFFFF;
+          border-bottom: 1px solid #E7DED4;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 24px;
+          z-index: 1000;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+          font-family: 'Inter', sans-serif;
+          box-sizing: border-box;
+        }
+        .rb-header-left { display: flex; align-items: center; gap: 16px; }
+        .rb-header-right { display: flex; align-items: center; gap: 16px; }
+        .rb-hamburger {
+          font-size: 1.4rem; color: #1E293B; cursor: pointer;
+          padding: 6px 8px; border-radius: 6px; transition: background 0.2s;
+          user-select: none; line-height: 1;
+        }
+        .rb-hamburger:hover { background: #F8F5EF; }
+        .rb-logo { display: flex; align-items: center; gap: 8px; }
+        .rb-logo-text { font-weight: 700; font-size: 1.15rem; color: #1E293B; letter-spacing: -0.02em; }
+        .rb-noti { font-size: 1.3rem; cursor: pointer; padding: 6px; border-radius: 50%; color: #1E293B; }
+        .rb-avatar {
+          width: 36px; height: 36px; background: #A47148; color: #fff;
+          border-radius: 50%; display: flex; align-items: center;
+          justify-content: center; font-weight: 700; font-size: 0.9rem;
+          border: 2px solid #E7DED4;
+        }
+
+        .rb-sidebar {
+          position: fixed;
+          top: 72px; left: 0; bottom: 0;
+          width: 64px;
+          background: #FFFFFF;
+          border-right: 1px solid #E7DED4;
+          z-index: 999;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 16px 0;
+          transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          overflow: hidden;
+          font-family: 'Inter', sans-serif;
+        }
+        .rb-sidebar.expanded {
+          width: 240px;
+          align-items: flex-start;
+          padding: 16px 12px;
+        }
+        /* Hover-to-expand sidebar (no media query needed - mobile hides sidebar via parent CSS) */
+        .rb-sidebar:hover { width: 240px !important; align-items: flex-start !important; padding: 16px 12px !important; }
+        .rb-sidebar:hover .rb-sidebar-item { justify-content: flex-start !important; }
+        .rb-sidebar:hover .rb-sidebar-label { opacity: 1 !important; width: auto !important; }
+        .rb-sidebar-item {
+          width: 100%; display: flex; align-items: center;
+          justify-content: center; padding: 12px; border-radius: 12px;
+          color: #1E293B; cursor: pointer; transition: all 0.2s;
+          margin-bottom: 8px; gap: 12px; border: none; background: transparent;
+          min-height: 48px; white-space: nowrap; box-sizing: border-box;
+          font-family: 'Inter', sans-serif;
+        }
+        .rb-sidebar.expanded .rb-sidebar-item { justify-content: flex-start; }
+        .rb-sidebar-item:hover { background: #F8F5EF; color: #A47148; }
+        .rb-sidebar-item.active { background: #F8F5EF; color: #A47148; font-weight: 700; }
+        .rb-sidebar-icon { font-size: 1.3rem; min-width: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .rb-sidebar-label {
+          font-size: 0.9rem; font-weight: 600;
+          opacity: 0; width: 0; overflow: hidden;
+          transition: opacity 0.2s, width 0.2s;
+          white-space: nowrap;
+        }
+        .rb-sidebar.expanded .rb-sidebar-label { opacity: 1; width: auto; }
+
+        .rb-overlay {
+          display: none; position: fixed; inset: 0;
+          background: rgba(0,0,0,0.3); z-index: 998; cursor: pointer;
+        }
+        .rb-overlay.visible { display: block; }
+
+        /* Mobile & Tablet Drawer Overrides */
+        @media (max-width: 767px) {
+          .rb-main-header {
+            height: 64px !important;
+            padding: 0 16px !important;
+          }
+          .rb-header-left {
+            display: contents;
+          }
+          .rb-logo {
+            position: absolute !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+          }
+          .rb-hamburger {
+            order: -1 !important;
+            margin-right: auto !important;
+          }
+          .rb-header-right {
+            margin-left: auto !important;
+            gap: 12px !important;
+          }
+          .rb-sidebar {
+            top: 0 !important;
+            bottom: 0 !important;
+            width: 240px !important;
+            transform: translateX(-100%);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1005;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+          }
+          .rb-sidebar.expanded {
+            transform: translateX(0) !important;
+            width: 240px !important;
+            align-items: flex-start !important;
+            padding: 16px 12px !important;
+          }
+          .rb-sidebar.expanded .rb-sidebar-item { justify-content: flex-start !important; }
+          .rb-sidebar.expanded .rb-sidebar-label { opacity: 1 !important; width: auto !important; }
+        }
+        @media (min-width: 768px) and (max-width: 1199px) {
+          .rb-sidebar { transform: translateX(-100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
+          .rb-sidebar.expanded { transform: translateX(0); width: 240px; }
+        }
+        </style>
+
+        <div class="rb-main-header">
+          <div class="rb-header-left">
+            <div class="rb-hamburger" id="rb-hamburger">&#9776;</div>
+            <div class="rb-logo">
+              <span>&#x1F4C4;</span>
+              <span class="rb-logo-text">Resume Builder Pro</span>
+            </div>
+          </div>
+          <div class="rb-header-right">
+            <div class="rb-noti">&#128276;</div>
+            <div class="rb-avatar">S</div>
+          </div>
+        </div>
+
+        <div class="rb-overlay" id="rb-overlay"></div>
+
+        <div class="rb-sidebar" id="rb-sidebar">
+          <button class="rb-sidebar-item active" id="sb-home">
+            <span class="rb-sidebar-icon">&#x1F3E0;</span>
+            <span class="rb-sidebar-label">Home</span>
+          </button>
+          <button class="rb-sidebar-item" id="sb-templates">
+            <span class="rb-sidebar-icon">&#x1F4C4;</span>
+            <span class="rb-sidebar-label">Templates</span>
+          </button>
+          <button class="rb-sidebar-item" id="sb-resumes">
+            <span class="rb-sidebar-icon">&#128194;</span>
+            <span class="rb-sidebar-label">Resumes</span>
+          </button>
+          <button class="rb-sidebar-item" id="sb-profile">
+            <span class="rb-sidebar-icon">&#x1F464;</span>
+            <span class="rb-sidebar-label">Profile</span>
+          </button>
+        </div>
+
+        <script>
+        (function() {
+          var COLLAPSED = '64px';
+          var EXPANDED  = '240px';
+
+          function getViewportWidth() {
+            try { return window.parent.innerWidth || window.innerWidth; }
+            catch(e) { return window.innerWidth; }
+          }
+          function isDesktop()  { return getViewportWidth() >= 1200; }
+          function isTablet()   { return getViewportWidth() >= 768 && getViewportWidth() < 1200; }
+
+          function syncParentPadding(w) {
+            try {
+              window.parent.document.documentElement.style.setProperty('--sidebar-w', w);
+            } catch(e) {}
+          }
+
+          var sidebar = document.getElementById('rb-sidebar');
+          var overlay = document.getElementById('rb-overlay');
+          var hamburger = document.getElementById('rb-hamburger');
+
+          if (sidebar) {
+            sidebar.addEventListener('mouseenter', function() {
+              if (isDesktop()) {
+                sidebar.classList.add('expanded');
+                syncParentPadding(EXPANDED);
+              }
+            });
+            sidebar.addEventListener('mouseleave', function() {
+              if (isDesktop()) {
+                sidebar.classList.remove('expanded');
+                syncParentPadding(COLLAPSED);
+              }
+            });
+          }
+
+          if (hamburger) {
+            hamburger.addEventListener('click', function() {
+              if (!isDesktop()) {
+                sidebar.classList.toggle('expanded');
+                if (overlay) {
+                  overlay.classList.toggle('active', sidebar.classList.contains('expanded'));
+                }
+              } else {
+                var isExpanded = sidebar.classList.contains('expanded');
+                sidebar.classList.toggle('expanded');
+                syncParentPadding(isExpanded ? COLLAPSED : EXPANDED);
+              }
+            });
+          }
+
+          if (overlay) {
+            overlay.addEventListener('click', function() {
+              sidebar.classList.remove('expanded');
+              overlay.classList.remove('active');
+            });
+          }
+        })();
+        </script>
+        """,
+        unsafe_allow_html=True
     )
 
     resumes = list_resumes()
+    
+    # Sync search query states
+    search_query = st.session_state.get("search_query_state", "")
+    if "search_resumes_val" in st.session_state and st.session_state.search_resumes_val != search_query:
+        st.session_state.search_query_state = st.session_state.search_resumes_val
+        search_query = st.session_state.search_resumes_val
+    elif "mob_search_resumes_val" in st.session_state and st.session_state.mob_search_resumes_val != search_query:
+        st.session_state.search_query_state = st.session_state.mob_search_resumes_val
+        search_query = st.session_state.mob_search_resumes_val
+    
+    # 3. Hero Section (Desktop)
+    st.markdown('<div id="hero-marker"></div>', unsafe_allow_html=True)
+    h_col1, h_col2 = st.columns([1, 1])
+    with h_col1:
+        st.markdown('<div class="hero-headline">Create Professional,<br><span class="hero-highlight">ATS-Friendly</span> Resumes</div>', unsafe_allow_html=True)
+        st.markdown('<div class="hero-subtext">Build, customize and export resumes that help you get hired.</div>', unsafe_allow_html=True)
+        
+        # Primary Action
+        if st.button("&#x2795; Create Resume", key="hero_create_btn", use_container_width=True):
+            st.session_state.wizard_just_opened = True
+            st.session_state.show_create_dialog = True
+            st.rerun()
+            
+        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+        
+        # Secondary Action
+        if st.button("&#x1F4E5; Import Resume", key="hero_import_btn", use_container_width=True):
+            st.session_state.wizard_just_opened = True
+            st.session_state.wizard_import_source = "Existing Resume"
+            st.session_state.show_create_dialog = True
+            st.rerun()
+            
+    with h_col2:
+        st.markdown(
+            """
+            <div class="hero-resume-illustration">
+              <div class="illus-avatar"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#A47148"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="#A47148" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="illus-title">CONTACTS</div>
+              <div class="illus-line short"></div>
+              <div class="illus-line"></div>
+              <div class="illus-title">EXPERIENCE</div>
+              <div class="illus-line"></div>
+              <div class="illus-line short"></div>
+              <div class="illus-score-badge">
+                <div class="score-number">95</div>
+                <div class="score-text">ATS Score</div>
+                <div class="score-desc">Excellent</div>
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    # Continue Last Resume Banner
-    if resumes:
-        latest = resumes[0]
-        rel_time = format_relative_time(latest["last_edited"])
-        b_col1, b_col2 = st.columns([7.5, 2.5])
-        with b_col1:
-            st.markdown(
-                f'<div class="continue-banner-box" style="background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%); '
-                f'border: 1px solid #C7D2FE; border-left: 5px solid #6366F1; border-radius: 12px; '
-                f'padding: 16px 20px; height: 95px; display: flex; flex-direction: column; justify-content: center; line-height: 1.35;">'
-                f'  <span style="font-size: 0.72rem; font-weight: 700; color: #6366F1; text-transform: uppercase; letter-spacing: 0.08em;">Continue Editing</span>'
-                f'  <span style="font-size: 1.15rem; font-weight: 800; color: #1E293B; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{latest["title"]}</span>'
-                f'  <span style="font-size: 0.8rem; color: #64748B; margin-top: 2px;">Last edited {rel_time} &middot; Theme: {latest["template"].replace("_", " ").title()}</span>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-        with b_col2:
-            st.markdown('<div style="height: 12px;"></div>', unsafe_allow_html=True)
-            if st.button("⚡ Continue", key="btn_continue_latest", use_container_width=True, type="primary", help="Continue editing your most recent resume"):
-                load_active_resume(latest["path"])
-                st.session_state.navigation_page = "workspace"
-                st.session_state.editor_step = 0
-                st.rerun()
-        st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
+    # 3. Hero Section (Mobile)
+    st.markdown('<div id="mob-hero-marker"></div>', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="mob-hero-card">
+          <div class="mob-hero-text">
+            <h1 class="mob-hero-title">Create Professional ATS-Friendly Resumes</h1>
+            <p class="mob-hero-subtitle">Build resumes that get interviews.</p>
+            <div class="mob-hero-actions-placeholder"></div>
+          </div>
+          <div class="mob-hero-illustration">
+            <div class="mob-illus-resume">
+              <div class="mob-illus-avatar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#A47148"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="#A47148" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="mob-illus-title">CONTACTS</div>
+              <div class="mob-illus-line short"></div>
+              <div class="mob-illus-line"></div>
+              <div class="mob-illus-title">EXPERIENCE</div>
+              <div class="mob-illus-line"></div>
+              <div class="mob-illus-line short"></div>
+              <div class="mob-illus-score-badge">
+                <div class="mob-score-number">95</div>
+                <div class="mob-score-text">ATS Score</div>
+                <div class="mob-score-desc">Excellent</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    mob_h_col1, mob_h_col2 = st.columns([1, 1])
+    with mob_h_col1:
+        if st.button("&#x2795; Create Resume", key="mob_hero_create_btn", use_container_width=True):
+            st.session_state.wizard_just_opened = True
+            st.session_state.show_create_dialog = True
+            st.rerun()
+    with mob_h_col2:
+        if st.button("&#x1F4E5; Import Resume", key="mob_hero_import_btn", use_container_width=True):
+            st.session_state.wizard_just_opened = True
+            st.session_state.wizard_import_source = "Existing Resume"
+            st.session_state.show_create_dialog = True
+            st.rerun()
 
-    # Quick Search Box
-    search_query = st.text_input("🔍 Search Resume", placeholder="Search by resume title or template...", key="home_search_input", label_visibility="collapsed")
+    # 4. Search & Filter Section (Desktop)
+    st.markdown("<div id='search-section-marker'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='search-row-container'>", unsafe_allow_html=True)
+    col_s1, col_s2 = st.columns([4.2, 0.8])
+    with col_s1:
+        st.markdown("<div class='search-input-box'>", unsafe_allow_html=True)
+        st.text_input(
+            "Search resumes",
+            value=search_query,
+            placeholder="Search resumes...",
+            label_visibility="collapsed",
+            key="search_resumes_val"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+    with col_s2:
+        st.markdown("<div class='filter-btn-box'>", unsafe_allow_html=True)
+        st.button("&#127899;&#65039;", key="home_filter_btn", use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # 4. Search & Filter Section (Mobile)
+    st.markdown('<div id="mob-search-marker"></div>', unsafe_allow_html=True)
+    st.markdown("<div class='mob-search-row-container'>", unsafe_allow_html=True)
+    mob_col_s1, mob_col_s2 = st.columns([4.2, 0.8])
+    with mob_col_s1:
+        st.markdown("<div class='mob-search-input-box'>", unsafe_allow_html=True)
+        st.text_input(
+            "Search resumes mobile",
+            value=search_query,
+            placeholder="Search your resumes...",
+            label_visibility="collapsed",
+            key="mob_search_resumes_val"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+    with mob_col_s2:
+        st.markdown("<div class='mob-filter-btn-box'>", unsafe_allow_html=True)
+        st.button("&#127899;&#65039;", key="mob_filter_btn", use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Filter matching resumes (shared logic)
     if search_query:
         search_query_clean = search_query.strip().lower()
         resumes = [r for r in resumes if search_query_clean in r["title"].lower() or search_query_clean in r["template"].lower()]
 
-    st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
+    # 5. Continue Editing (Desktop)
+    if resumes:
+        latest = resumes[0]
+        rel_time = format_relative_time(latest["last_edited"])
+        
+        st.markdown('<div class="section-header-row"><span class="section-title">Continue Editing</span></div>', unsafe_allow_html=True)
+        st.markdown('<div id="continue-card-marker"></div>', unsafe_allow_html=True)
+        
+        c_col1, c_col2 = st.columns([4.2, 0.8])
+        with c_col1:
+            st.markdown(
+                f"""
+                <div class="continue-card-content">
+                    <div class="continue-card-thumb">
+                        <div style="font-size: 2.2rem; display: flex; align-items: center; justify-content: center; height: 100%;">&#x1F4C4;</div>
+                    </div>
+                    <div class="continue-card-info">
+                        <div class="continue-card-title">{html.escape(latest["title"])}</div>
+                        <div>
+                            <span class="theme-badge">{latest["template"].replace("_", " ").title()}</span>
+                        </div>
+                        <div class="continue-card-date">Last edited {rel_time}</div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        with c_col2:
+            st.markdown('<div class="continue-edit-btn-wrapper">', unsafe_allow_html=True)
+            if st.button("&#9999;&#65039;", key="btn_continue_icon", use_container_width=True):
+                load_active_resume(latest["path"])
+                st.session_state.navigation_page = "workspace"
+                st.session_state.editor_step = 0
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
-    # Grid construction: chunk resumes into rows of 3 (ensures chronological order on mobile)
-    # List of all cards to render
-    cards = [{"type": "create_new"}] + [{"type": "resume", "data": r, "res_idx": i} for i, r in enumerate(resumes)]
+    # 5. Continue Editing (Mobile)
+    if resumes:
+        latest = resumes[0]
+        rel_time = format_relative_time(latest["last_edited"])
+        tpl_disp = ALL_TEMPLATES.get(latest["template"], {}).get("name", latest["template"])
+        
+        st.markdown('<div class="mob-section-header-row mob-continue-section-marker"><span class="mob-section-title">Continue Editing</span></div>', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="mob-continue-card">
+                <div class="mob-continue-left">
+                    <div class="mob-continue-thumb">&#x1F4C4;</div>
+                    <div class="mob-continue-info">
+                        <div class="mob-continue-title">{html.escape(latest["title"])}</div>
+                        <div class="mob-continue-meta">
+                            <span class="mob-continue-badge">{tpl_disp}</span>
+                            <span class="mob-continue-time">Edited {rel_time}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mob-continue-right-placeholder"></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        if st.button("&#9999;&#65039;", key="mob_btn_continue_icon", use_container_width=True):
+            load_active_resume(latest["path"])
+            st.session_state.navigation_page = "workspace"
+            st.session_state.editor_step = 0
+            st.rerun()
+
+    # 6. My Resumes Grid Section (Desktop)
+    st.markdown('<div class="section-header-row resumes-section-marker"><span class="section-title">My Resumes</span></div>', unsafe_allow_html=True)
     
-    # Render cards in rows of 3 columns
-    for i in range(0, len(cards), 3):
-        chunk = cards[i:i+3]
-        cols = st.columns(3, gap="medium")
-        for idx_c, card in enumerate(chunk):
-            with cols[idx_c]:
-                if card["type"] == "create_new":
-                    with st.container(border=True):
-                        st.markdown(
-                            '<div style="text-align: center; padding: 24px 8px 16px;">'
-                            '<div style="font-size: 2.8rem; color: #A5B4FC; margin-bottom: 10px;">➕</div>'
-                            '<div style="font-weight: 700; color: #475569; font-size: 1.05rem; margin-bottom: 4px;">Create New Resume</div>'
-                            '<div style="font-size: 0.82rem; color: #94A3B8;">Start from a fresh template</div>'
-                            '</div>',
-                            unsafe_allow_html=True
-                        )
-                        if st.button("✨ Create New", key="btn_create_new_dashboard", use_container_width=True, type="primary"):
-                            st.session_state.wizard_just_opened = True
-                            show_create_resume_dialog()
-                else:
-                    # Existing resume card rendering
-                    r = card["data"]
-                    idx = card["res_idx"]
+    if not resumes:
+        st.info("No resumes found.")
+        with st.container():
+            st.markdown('<div id="my-resumes-grid-marker"></div>', unsafe_allow_html=True)
+            st.markdown(
+                """
+                <div class="dashed-create-card" id="btn-dashed-create-card-trigger">
+                    <div class="dashed-create-icon">&#x2795;</div>
+                    <div class="dashed-create-text">Create New Resume</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    else:
+        with st.container():
+            st.markdown('<div id="my-resumes-grid-marker"></div>', unsafe_allow_html=True)
+            for idx, r in enumerate(resumes):
+                tpl_disp = ALL_TEMPLATES.get(r["template"], {}).get("name", r["template"])
+                rel_time = format_relative_time(r["last_edited"])
+                
+                with st.container():
+                    st.markdown(
+                        f"""
+                        <div class="resume-grid-card">
+                            <div class="resume-grid-thumb">
+                                <div style="font-size: 2.5rem; display: flex; align-items: center; justify-content: center; height: 100%;">&#x1F4C4;</div>
+                            </div>
+                            <div class="resume-grid-info">
+                                <div class="resume-grid-title">{html.escape(r["title"])}</div>
+                                <div class="resume-grid-badge-row">
+                                    <span class="theme-badge">{tpl_disp}</span>
+                                </div>
+                                <div class="resume-grid-date">Updated {rel_time}</div>
+                            </div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
                     
-                    tpl_disp = ALL_TEMPLATES.get(r["template"], {}).get("name", r["template"])
-                    rel_time = format_relative_time(r["last_edited"])
-                    
-                    # Fetch compiled PDF base64 for real preview thumbnail
-                    pdf_b64 = get_pdf_base64_for_resume(r)
-                    
-                    with st.container(border=True):
-                        # Render Thumbnail component
-                        render_pdf_thumbnail(pdf_b64, key=f"thumb_{idx}")
-                        
-                        # Editable title input directly on the card
-                        new_title = st.text_input(
-                            "Rename",
-                            value=r["title"],
-                            key=f"ren_input_{idx}",
-                            label_visibility="collapsed",
-                            placeholder="Resume Title"
-                        )
-                        if new_title.strip() and new_title.strip() != r["title"]:
-                            with open(r["path"], "r", encoding="utf-8") as f:
-                                data = json.load(f)
-                            if "metadata" not in data:
-                                data["metadata"] = {}
-                            data["metadata"]["title"] = new_title.strip()
-                            with open(r["path"], "w", encoding="utf-8") as f:
-                                json.dump(data, f, indent=2)
-                            _read_json.clear()
+                    act_col1, act_col2, act_col3 = st.columns([1.2, 1.2, 0.8])
+                    with act_col1:
+                        if st.button("Edit", key=f"grid_edit_{idx}", use_container_width=True):
+                            load_active_resume(r["path"])
+                            st.session_state.navigation_page = "workspace"
+                            st.session_state.editor_step = 0
                             st.rerun()
-                            
-                        st.markdown(f'<div style="font-size: 0.72rem; color: #64748B; margin-top: -8px; margin-bottom: 8px;">Theme: {tpl_disp} &middot; Edited {rel_time}</div>', unsafe_allow_html=True)
-                        
-                        # Action Row directly visible
-                        c_edit, c_dl, c_dup, c_del = st.columns([3.0, 3.2, 1.4, 1.4])
-                        with c_edit:
-                            if st.button("✏️ Edit", key=f"btn_edit_res_{idx}", use_container_width=True, type="primary"):
-                                load_active_resume(r["path"])
-                                st.session_state.navigation_page = "workspace"
-                                st.session_state.editor_step = 0
+                    with act_col2:
+                        pdf_file_path = r["path"].replace(".json", ".pdf")
+                        if os.path.exists(pdf_file_path):
+                            with open(pdf_file_path, "rb") as pf:
+                                pdf_data = pf.read()
+                            safe_title = re.sub(r"[^a-zA-Z0-9]", "_", r["title"])
+                            st.download_button(
+                                "PDF",
+                                data=pdf_data,
+                                file_name=f"{safe_title}_Resume.pdf",
+                                mime="application/pdf",
+                                key=f"grid_dl_pdf_{idx}",
+                                use_container_width=True
+                            )
+                        else:
+                            st.button("PDF", key=f"grid_dl_pdf_disabled_{idx}", disabled=True, use_container_width=True)
+                    with act_col3:
+                        with st.popover("⋮", key=f"grid_options_{idx}", use_container_width=True):
+                            # Rename input
+                            new_title = st.text_input("Rename:", value=r["title"], key=f"rename_input_{idx}")
+                            if new_title.strip() != r["title"]:
+                                with open(r["path"], "r", encoding="utf-8") as f:
+                                    content = json.load(f)
+                                content.setdefault("metadata", {})["title"] = new_title.strip()
+                                content["metadata"]["last_edited"] = time.time()
+                                with open(r["path"], "w", encoding="utf-8") as f:
+                                    json.dump(content, f, indent=2)
                                 st.rerun()
-                        with c_dl:
-                            pdf_path = r["path"].replace(".json", ".pdf")
-                            if os.path.exists(pdf_path):
-                                with open(pdf_path, "rb") as pf:
-                                    pdf_data = pf.read()
-                                safe_title = re.sub(r"[^a-zA-Z0-9]", "_", r["title"])
-                                st.download_button(
-                                    "📥 PDF",
-                                    data=pdf_data,
-                                    file_name=f"{safe_title}_Resume.pdf",
-                                    mime="application/pdf",
-                                    key=f"btn_dl_res_{idx}",
-                                    use_container_width=True
-                                )
-                            else:
-                                st.button("📥 PDF", key=f"btn_dl_res_disabled_{idx}", disabled=True, use_container_width=True)
-                        with c_dup:
-                            if st.button("👥", key=f"btn_dup_res_{idx}", help="Duplicate Resume", use_container_width=True):
+                                
+                            # Duplicate option
+                            if st.button("&#128101; Duplicate", key=f"btn_dup_pop_{idx}", use_container_width=True):
                                 base_name = os.path.splitext(os.path.basename(r["path"]))[0]
                                 new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy.json")
                                 counter = 1
@@ -2190,15 +1933,364 @@ def show_home():
                                 with open(new_path, "w", encoding="utf-8") as f:
                                     json.dump(content, f, indent=2)
                                 st.rerun()
-                        with c_del:
+                                
+                            # Delete option
                             is_root = (os.path.abspath(r["path"]) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")))
-                            if st.button("🗑️", key=f"btn_del_res_{idx}", help="Delete Resume", disabled=is_root, use_container_width=True):
+                            if st.button("&#x1F5D1;&#65039; Delete", key=f"btn_del_pop_{idx}", use_container_width=True, disabled=is_root):
                                 if os.path.exists(r["path"]):
                                     os.remove(r["path"])
-                                pdf_file_path = r["path"].replace(".json", ".pdf")
                                 if os.path.exists(pdf_file_path):
                                     os.remove(pdf_file_path)
                                 st.rerun()
+            
+            # Dashed Create Card appended at the end of loop
+            st.markdown(
+                """
+                <div class="dashed-create-card" id="btn-dashed-create-card-trigger">
+                    <div class="dashed-create-icon">&#x2795;</div>
+                    <div class="dashed-create-text">Create New Resume</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    # 6. My Resumes Section (Mobile)
+    st.markdown('<div class="mob-section-header-row mob-resumes-section-marker"><span class="mob-section-title">My Resumes</span></div>', unsafe_allow_html=True)
+    
+    if not resumes:
+        st.markdown(
+            """
+            <div class="mob-dashed-create-card" id="mob-btn-dashed-create-card-trigger">
+                <div class="mob-dashed-create-icon">&#x2795;</div>
+                <div class="mob-dashed-create-text">Create New Resume</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        for idx, r in enumerate(resumes):
+            tpl_disp = ALL_TEMPLATES.get(r["template"], {}).get("name", r["template"])
+            rel_time = format_relative_time(r["last_edited"])
+            
+            st.markdown(
+                f"""
+                <div class="mob-resume-card-container">
+                    <div class="mob-resume-card-left">
+                        <div class="mob-resume-card-thumb">&#x1F4C4;</div>
+                        <div class="mob-resume-card-info">
+                            <div class="mob-resume-card-title">{html.escape(r["title"])}</div>
+                            <div class="mob-resume-card-meta">
+                                <span class="mob-resume-card-badge">{tpl_disp}</span>
+                                <span class="mob-resume-card-time">Updated {rel_time}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mob-resume-card-right-placeholder"></div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            mob_act_col1, mob_act_col2 = st.columns([3, 1])
+            with mob_act_col1:
+                if st.button("Edit", key=f"mob_grid_edit_{idx}", use_container_width=True):
+                    load_active_resume(r["path"])
+                    st.session_state.navigation_page = "workspace"
+                    st.session_state.editor_step = 0
+                    st.rerun()
+            with mob_act_col2:
+                with st.popover("⋮", key=f"mob_grid_options_{idx}", use_container_width=True):
+                    new_title = st.text_input("Rename:", value=r["title"], key=f"mob_rename_input_{idx}")
+                    if new_title.strip() != r["title"]:
+                        with open(r["path"], "r", encoding="utf-8") as f:
+                            content = json.load(f)
+                        content.setdefault("metadata", {})["title"] = new_title.strip()
+                        content["metadata"]["last_edited"] = time.time()
+                        with open(r["path"], "w", encoding="utf-8") as f:
+                            json.dump(content, f, indent=2)
+                        st.rerun()
+                        
+                    if st.button("&#128101; Duplicate", key=f"mob_btn_dup_pop_{idx}", use_container_width=True):
+                        base_name = os.path.splitext(os.path.basename(r["path"]))[0]
+                        new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy.json")
+                        counter = 1
+                        while os.path.exists(new_path):
+                            new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{base_name}_copy_{counter}.json")
+                            counter += 1
+                        with open(r["path"], "r", encoding="utf-8") as f:
+                            content = json.load(f)
+                        if "metadata" not in content:
+                            content["metadata"] = {}
+                        content["metadata"]["title"] = f"{r['title']} Copy"
+                        content["metadata"]["last_edited"] = time.time()
+                        with open(new_path, "w", encoding="utf-8") as f:
+                            json.dump(content, f, indent=2)
+                        st.rerun()
+                        
+                    is_root = (os.path.abspath(r["path"]) == os.path.abspath(os.path.join(PROJECT_ROOT, "resume.json")))
+                    if st.button("&#x1F5D1;&#65039; Delete", key=f"mob_btn_del_pop_{idx}", use_container_width=True, disabled=is_root):
+                        if os.path.exists(r["path"]):
+                            os.remove(r["path"])
+                        pdf_file_path = r["path"].replace(".json", ".pdf")
+                        if os.path.exists(pdf_file_path):
+                            os.remove(pdf_file_path)
+                        st.rerun()
+        
+        st.markdown(
+            """
+            <div class="mob-dashed-create-card" id="mob-btn-dashed-create-card-trigger">
+                <div class="mob-dashed-create-icon">&#x2795;</div>
+                <div class="mob-dashed-create-text">Create New Resume</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # 7. Popular Templates Section (Canva scrollable row)
+    st.markdown('<div class="section-header-row template-section-marker"><span class="section-title">Popular Templates</span></div>', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="template-scroll-container">
+          <div class="template-scroll-card" id="tpl-ats">
+            <div class="template-scroll-thumb">&#x1F4BC;</div>
+            <div class="template-scroll-name">ATS</div>
+          </div>
+          <div class="template-scroll-card" id="tpl-modern">
+            <div class="template-scroll-thumb">&#x1F3A8;</div>
+            <div class="template-scroll-name">Modern</div>
+          </div>
+          <div class="template-scroll-card" id="tpl-minimal">
+            <div class="template-scroll-thumb">&#x2728;</div>
+            <div class="template-scroll-name">Minimal</div>
+          </div>
+          <div class="template-scroll-card" id="tpl-creative">
+            <div class="template-scroll-thumb">&#x1F680;</div>
+            <div class="template-scroll-name">Creative</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    # Bottom Navigation Bar Sticky using marker and columns (hidden on desktop, active on mobile)
+    st.markdown("<div id='bottom-nav-marker'></div>", unsafe_allow_html=True)
+    b_col1, b_col2, b_col3, b_col4 = st.columns(4)
+    with b_col1:
+        st.button("&#x1F3E0;\nHome", key="nav_home_btn", use_container_width=True)
+    with b_col2:
+        st.button("&#x1F4C4;\nTemplates", key="nav_templates_btn", use_container_width=True)
+    with b_col3:
+        st.button("&#128194;\nResumes", key="nav_resumes_btn", use_container_width=True)
+    with b_col4:
+        st.button("&#x1F464;\nProfile", key="nav_profile_btn", use_container_width=True)
+
+    # Render wizard dialog if active
+    if st.session_state.get("show_create_dialog", False):
+        show_create_resume_dialog()
+
+    # Hidden create button trigger mapping
+    st.markdown('<div style="display:none;">', unsafe_allow_html=True)
+    if st.button("", key="btn_dashed_create_arrow"):
+        st.session_state.wizard_just_opened = True
+        st.session_state.show_create_dialog = True
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # FAB (Mobile Only)
+    st.markdown('<div class="mob-fab" id="mob-fab-trigger">＋</div>', unsafe_allow_html=True)
+
+    # Bottom Navigation (Mobile Only)
+    st.markdown(
+        """
+        <div class="mob-bottom-nav">
+          <div class="mob-nav-item active" id="mob-nav-home">
+            <span class="mob-nav-icon">&#x1F3E0;</span>
+            <span class="mob-nav-label">Home</span>
+          </div>
+          <div class="mob-nav-item" id="mob-nav-templates">
+            <span class="mob-nav-icon">&#x1F4C4;</span>
+            <span class="mob-nav-label">Templates</span>
+          </div>
+          <div class="mob-nav-item" id="mob-nav-resumes">
+            <span class="mob-nav-icon">&#128194;</span>
+            <span class="mob-nav-label">Resumes</span>
+          </div>
+          <div class="mob-nav-item" id="mob-nav-profile">
+            <span class="mob-nav-icon">&#x1F464;</span>
+            <span class="mob-nav-label">Profile</span>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # JavaScript navigation event mapping (Desktop sidebar & Mobile bottom nav)
+    st.markdown(
+        """
+        <script>
+        const parentDoc = window.parent.document;
+        
+        function setupNavigation() {
+          const sbHome = parentDoc.getElementById('sb-home');
+          if (sbHome && !sbHome.dataset.navSetup) {
+            sbHome.dataset.navSetup = "true";
+            sbHome.addEventListener('click', () => {
+              parentDoc.querySelector('.main .block-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
+          
+          const sbTemplates = parentDoc.getElementById('sb-templates');
+          if (sbTemplates && !sbTemplates.dataset.navSetup) {
+            sbTemplates.dataset.navSetup = "true";
+            sbTemplates.addEventListener('click', () => {
+              parentDoc.querySelector('.template-section-marker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
+        
+          const sbResumes = parentDoc.getElementById('sb-resumes');
+          if (sbResumes && !sbResumes.dataset.navSetup) {
+            sbResumes.dataset.navSetup = "true";
+            sbResumes.addEventListener('click', () => {
+              parentDoc.querySelector('.resumes-section-marker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          }
+          
+          const sbProfile = parentDoc.getElementById('sb-profile');
+          if (sbProfile && !sbProfile.dataset.navSetup) {
+            sbProfile.dataset.navSetup = "true";
+            sbProfile.addEventListener('click', () => {
+              const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+              if (createBtn) createBtn.click();
+            });
+          }
+        
+          const bottomNavButtons = parentDoc.querySelectorAll('div:has(#bottom-nav-marker) + div button');
+          if (bottomNavButtons && bottomNavButtons.length >= 4) {
+            if (!bottomNavButtons[0].dataset.navSetup) {
+              bottomNavButtons[0].dataset.navSetup = "true";
+              bottomNavButtons[0].addEventListener('click', (e) => {
+                parentDoc.querySelector('.main .block-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }
+            if (!bottomNavButtons[1].dataset.navSetup) {
+              bottomNavButtons[1].dataset.navSetup = "true";
+              bottomNavButtons[1].addEventListener('click', (e) => {
+                parentDoc.querySelector('.template-section-marker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }
+            if (!bottomNavButtons[2].dataset.navSetup) {
+              bottomNavButtons[2].dataset.navSetup = "true";
+              bottomNavButtons[2].addEventListener('click', (e) => {
+                parentDoc.querySelector('.resumes-section-marker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }
+            if (!bottomNavButtons[3].dataset.navSetup) {
+              bottomNavButtons[3].dataset.navSetup = "true";
+              bottomNavButtons[3].addEventListener('click', (e) => {
+                const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+                if (createBtn) createBtn.click();
+              });
+            }
+          }
+        
+          ['tpl-ats', 'tpl-modern', 'tpl-minimal', 'tpl-creative'].forEach(id => {
+            const card = parentDoc.getElementById(id);
+            if (card && !card.dataset.navSetup) {
+              card.dataset.navSetup = "true";
+              card.addEventListener('click', () => {
+                const btn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+                if (btn) btn.click();
+              });
+            }
+          });
+          
+          const dashedCreate = parentDoc.getElementById('btn-dashed-create-card-trigger');
+          if (dashedCreate && !dashedCreate.dataset.clickSetup) {
+            dashedCreate.dataset.clickSetup = "true";
+            dashedCreate.addEventListener('click', () => {
+              const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+              if (createBtn) createBtn.click();
+            });
+          }
+
+          // Mobile FAB setup
+          const mobFab = parentDoc.getElementById('mob-fab-trigger');
+          if (mobFab && !mobFab.dataset.clickSetup) {
+            mobFab.dataset.clickSetup = "true";
+            mobFab.addEventListener('click', () => {
+              const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+              if (createBtn) createBtn.click();
+            });
+          }
+
+          // Mobile Dashed Create Card triggers
+          const mobDashedCreates = parentDoc.querySelectorAll('.mob-dashed-create-card');
+          mobDashedCreates.forEach(el => {
+            if (el && !el.dataset.clickSetup) {
+              el.dataset.clickSetup = "true";
+              el.addEventListener('click', () => {
+                const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+                if (createBtn) createBtn.click();
+              });
+            }
+          });
+
+          // Mobile Bottom Nav items setup
+          const mobNavHome = parentDoc.getElementById('mob-nav-home');
+          if (mobNavHome && !mobNavHome.dataset.clickSetup) {
+            mobNavHome.dataset.clickSetup = "true";
+            mobNavHome.addEventListener('click', () => {
+              parentDoc.querySelector('.main .block-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              setActiveMobTab('mob-nav-home');
+            });
+          }
+
+          const mobNavTemplates = parentDoc.getElementById('mob-nav-templates');
+          if (mobNavTemplates && !mobNavTemplates.dataset.clickSetup) {
+            mobNavTemplates.dataset.clickSetup = "true";
+            mobNavTemplates.addEventListener('click', () => {
+              const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+              if (createBtn) createBtn.click();
+              setActiveMobTab('mob-nav-templates');
+            });
+          }
+
+          const mobNavResumes = parentDoc.getElementById('mob-nav-resumes');
+          if (mobNavResumes && !mobNavResumes.dataset.clickSetup) {
+            mobNavResumes.dataset.clickSetup = "true";
+            mobNavResumes.addEventListener('click', () => {
+              parentDoc.querySelector('.mob-resumes-section-marker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              setActiveMobTab('mob-nav-resumes');
+            });
+          }
+
+          const mobNavProfile = parentDoc.getElementById('mob-nav-profile');
+          if (mobNavProfile && !mobNavProfile.dataset.clickSetup) {
+            mobNavProfile.dataset.clickSetup = "true";
+            mobNavProfile.addEventListener('click', () => {
+              const createBtn = parentDoc.querySelector('button[key="btn_dashed_create_arrow"]');
+              if (createBtn) createBtn.click();
+              setActiveMobTab('mob-nav-profile');
+            });
+          }
+
+          function setActiveMobTab(id) {
+            ['mob-nav-home', 'mob-nav-templates', 'mob-nav-resumes', 'mob-nav-profile'].forEach(tid => {
+              const el = parentDoc.getElementById(tid);
+              if (el) {
+                el.classList.toggle('active', tid === id);
+              }
+            });
+          }
+        }
+        
+        setupNavigation();
+        const observer = new MutationObserver(setupNavigation);
+        observer.observe(parentDoc.body, { childList: true, subtree: true });
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 
@@ -2290,7 +2382,7 @@ def build_repo_card_html(repo: dict) -> str:
         f'  <div class="repo-card-meta">'
         f'    <span class="repo-chip">{language}</span>'
         f'    <span class="repo-chip">Updated {updated}</span>'
-        f'    <span class="repo-chip">⭐ {repo.get("stars", 0)}</span>'
+        f'    <span class="repo-chip">&#x2B50; {repo.get("stars", 0)}</span>'
         f'  </div>'
         f'  <div class="repo-card-description">{description}</div>'
         f'  <div class="repo-card-meta">{topic_html}</div>'
@@ -2306,12 +2398,12 @@ comp_score, comp_status = calculate_completion_status(st.session_state.resume)
 current_step = st.session_state.get("editor_step", 0)
 
 WIZARD_STEPS = [
-    ("👤", "Personal"),
-    ("🎓", "Education"),
-    ("💼", "Experience"),
-    ("🚀", "Projects"),
-    ("🛠️", "Skills"),
-    ("✅", "Review"),
+    ("&#x1F464;", "Personal"),
+    ("&#x1F393;", "Education"),
+    ("&#x1F4BC;", "Experience"),
+    ("&#x1F680;", "Projects"),
+    ("&#x1F6E0;&#65039;", "Skills"),
+    ("&#x2705;", "Review"),
 ]
 
 STEP_SUBTITLES = [
@@ -2442,13 +2534,13 @@ if left_col:
                 st.markdown('<div class="sec-title">Academic History</div>', unsafe_allow_html=True)
                 ec1, ec2 = st.columns(2)
                 with ec1:
-                    if st.button("➕ Add Education", key="add_edu", use_container_width=True):
+                    if st.button("&#x2795; Add Education", key="add_edu", use_container_width=True):
                         push_undo(d)
                         d.setdefault("education",[]).append(
                             {"degree":"","institution":"","details":"","period":""})
                         save_to_disk(d); st.session_state.resume = d; st.rerun()
                 with ec2:
-                    if d.get("education") and st.button("🗑 Remove Last", key="rm_edu", use_container_width=True):
+                    if d.get("education") and st.button("&#x1F5D1; Remove Last", key="rm_edu", use_container_width=True):
                         push_undo(d)
                         d["education"].pop()
                         save_to_disk(d); st.session_state.resume = d; st.rerun()
@@ -2458,7 +2550,7 @@ if left_col:
                 for i, edu in enumerate(d.get("education",[])):
                     dg = edu.get("degree","") or "Degree"
                     sc = edu.get("institution","") or "Institution"
-                    with st.expander(f"🎓 {dg} — {sc}", expanded=(i==0)):
+                    with st.expander(f"&#x1F393; {dg} — {sc}", expanded=(i==0)):
                         r1, r2 = st.columns(2)
                         with r1:
                             st.text_input("Degree",     edu.get("degree",""),      key=f"f_ed{i}")
@@ -2470,19 +2562,19 @@ if left_col:
                 st.markdown('<div class="sec-title">Positions of Responsibility</div>', unsafe_allow_html=True)
                 pr1, pr2 = st.columns(2)
                 with pr1:
-                    if st.button("➕ Add Position", key="add_por", use_container_width=True):
+                    if st.button("&#x2795; Add Position", key="add_por", use_container_width=True):
                         push_undo(d)
                         d.setdefault("position_of_responsibility",[]).append(
                             {"role":"","period":"","bullets":[]})
                         save_to_disk(d); st.session_state.resume = d; st.rerun()
                 with pr2:
-                    if d.get("position_of_responsibility") and st.button("🗑 Remove Last", key="rm_por", use_container_width=True):
+                    if d.get("position_of_responsibility") and st.button("&#x1F5D1; Remove Last", key="rm_por", use_container_width=True):
                         push_undo(d)
                         d["position_of_responsibility"].pop()
                         save_to_disk(d); st.session_state.resume = d; st.rerun()
                 for i, por in enumerate(d.get("position_of_responsibility",[])):
                     role = por.get("role","") or "Position"
-                    with st.expander(f"🤝 {role}", expanded=(i==0)):
+                    with st.expander(f"&#x1F91D; {role}", expanded=(i==0)):
                         r1, r2 = st.columns([.7,.3])
                         with r1: st.text_input("Role & Organisation", por.get("role",""),   key=f"f_prr{i}")
                         with r2: st.text_input("Period",              por.get("period",""), key=f"f_prp{i}")
@@ -2493,23 +2585,23 @@ if left_col:
                 st.markdown('<div class="sec-title">Work Experience</div>', unsafe_allow_html=True)
                 ec1, ec2 = st.columns(2)
                 with ec1:
-                    if st.button("➕ Add Job", key="add_exp", use_container_width=True):
+                    if st.button("&#x2795; Add Job", key="add_exp", use_container_width=True):
                         push_undo(d)
                         d.setdefault("experience",[]).append(
                             {"role":"","company":"","location":"","period":"","technologies":"","bullets":[]})
                         save_to_disk(d); st.session_state.resume = d; st.session_state.last_hash = ""; st.rerun()
                 with ec2:
-                    if d.get("experience") and st.button("🗑 Remove Last", key="rm_exp", use_container_width=True):
+                    if d.get("experience") and st.button("&#x1F5D1; Remove Last", key="rm_exp", use_container_width=True):
                         push_undo(d)
                         d["experience"].pop()
                         save_to_disk(d); st.session_state.resume = d; st.session_state.last_hash = ""; st.rerun()
 
                 if not d.get("experience"):
-                    st.info("No experience added yet. Click **➕ Add Job** above.")
+                    st.info("No experience added yet. Click **&#x2795; Add Job** above.")
                 for i, exp in enumerate(d.get("experience",[])):
                     title   = exp.get("role","") or "New Role"
                     company = exp.get("company","") or "Company"
-                    with st.expander(f"💼 {title} @ {company}", expanded=(i==0)):
+                    with st.expander(f"&#x1F4BC; {title} @ {company}", expanded=(i==0)):
                         r1, r2 = st.columns(2)
                         with r1:
                             st.text_input("Job Title",   exp.get("role",""),         key=f"f_er{i}")
@@ -2536,7 +2628,7 @@ if left_col:
                             if sug:
                                 st.markdown(
                                     f'<div style="background:#FFFBEB; border-left:4px solid #F59E0B; padding:10px; border-radius:6px; margin: 10px 0;">'
-                                    f'<div style="font-weight:700; color:#B45309; font-size:0.85rem;">💡 Make This Stronger</div>'
+                                    f'<div style="font-weight:700; color:#B45309; font-size:0.85rem;">&#x1F4A1; Make This Stronger</div>'
                                     f'<div style="font-size:0.8rem; color:#78350F; margin-top:2px;"><b>Original:</b> "{first_weak}"</div>'
                                     f'<div style="font-size:0.8rem; color:#78350F; margin-top:2px;"><b>Suggestion:</b> "{sug["improved"]}"</div>'
                                     f'<div style="font-size:0.75rem; color:#92400E; margin-top:4px; font-style:italic;">{sug["reason"]}</div>'
@@ -2552,19 +2644,19 @@ if left_col:
                 st.markdown('<div class="sec-title">Projects</div>', unsafe_allow_html=True)
                 pc1, pc2 = st.columns(2)
                 with pc1:
-                    if st.button("➕ Add Project", key="add_proj", use_container_width=True):
+                    if st.button("&#x2795; Add Project", key="add_proj", use_container_width=True):
                         push_undo(d)
                         d.setdefault("projects",[]).append(
                             {"title":"","link":"","date":"","tools":"","bullets":[]})
                         save_to_disk(d); st.session_state.resume = d; st.session_state.last_hash = ""; st.rerun()
                 with pc2:
-                    if d.get("projects") and st.button("🗑 Remove Last", key="rm_proj", use_container_width=True):
+                    if d.get("projects") and st.button("&#x1F5D1; Remove Last", key="rm_proj", use_container_width=True):
                         push_undo(d)
                         d["projects"].pop()
                         save_to_disk(d); st.session_state.resume = d; st.session_state.last_hash = ""; st.rerun()
 
                 # Inline GitHub Import (Phase 3)
-                with st.expander("🐙 Import from GitHub", expanded=True):
+                with st.expander("&#x1F419; Import from GitHub", expanded=True):
                     if not st.session_state.get("github_username"):
                         st.write("Connect your GitHub account to import repositories directly.")
                         user_in = st.text_input("GitHub Username", key="inline_gh_user_input")
@@ -2679,7 +2771,7 @@ if left_col:
                                                 save_to_disk(d)
                                                 st.session_state.resume = d
                                                 st.session_state.last_hash = ""
-                                                st.success(f"✅ Added {repo['name']} to your resume")
+                                                st.success(f"&#x2705; Added {repo['name']} to your resume")
 
                             if other_repos:
                                 st.markdown("<div style='font-weight:700; font-size:0.95rem; margin:18px 0 6px;'>Other Repositories</div>", unsafe_allow_html=True)
@@ -2707,16 +2799,16 @@ if left_col:
                                                 save_to_disk(d)
                                                 st.session_state.resume = d
                                                 st.session_state.last_hash = ""
-                                                st.success(f"✅ Added {repo['name']} to your resume")
+                                                st.success(f"&#x2705; Added {repo['name']} to your resume")
 
                         else:
                             st.warning("No public repositories found.")
 
                 if not d.get("projects"):
-                    st.info("No projects added yet. Click **➕ Add Project** above.")
+                    st.info("No projects added yet. Click **&#x2795; Add Project** above.")
                 for i, pr in enumerate(d.get("projects",[])):
                     title = pr.get("title","") or "New Project"
-                    with st.expander(f"🚀 {title}", expanded=(i==0)):
+                    with st.expander(f"&#x1F680; {title}", expanded=(i==0)):
                         r1, r2 = st.columns(2)
                         with r1:
                             st.text_input("Title",  pr.get("title",""), key=f"f_pt{i}")
@@ -2742,7 +2834,7 @@ if left_col:
                             if sug:
                                 st.markdown(
                                     f'<div style="background:#FFFBEB; border-left:4px solid #F59E0B; padding:10px; border-radius:6px; margin: 10px 0;">'
-                                    f'<div style="font-weight:700; color:#B45309; font-size:0.85rem;">💡 Make This Stronger</div>'
+                                    f'<div style="font-weight:700; color:#B45309; font-size:0.85rem;">&#x1F4A1; Make This Stronger</div>'
                                     f'<div style="font-size:0.8rem; color:#78350F; margin-top:2px;"><b>Original:</b> "{first_weak}"</div>'
                                     f'<div style="font-size:0.8rem; color:#78350F; margin-top:2px;"><b>Suggestion:</b> "{sug["improved"]}"</div>'
                                     f'<div style="font-size:0.75rem; color:#92400E; margin-top:4px; font-style:italic;">{sug["reason"]}</div>'
@@ -2765,7 +2857,7 @@ if left_col:
                     with sc2: nv = st.text_input("Skills",   sk[k], key=f"f_sv{i}")
                     with sc3:
                         st.markdown('<div style="margin-top:28px"></div>', unsafe_allow_html=True)
-                        if st.button("🗑", key=f"rm_sk{i}", help="Remove this skill category"):
+                        if st.button("&#x1F5D1;", key=f"rm_sk{i}", help="Remove this skill category"):
                             push_undo(d)
                             new_sk_after_del = {kk: vv for j,(kk,vv) in enumerate(sk.items()) if j != i}
                             d["technical_skills"] = new_sk_after_del
@@ -2774,13 +2866,13 @@ if left_col:
                         new_sk[nk] = nv
 
                 st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
-                st.markdown("**➕ Add new skill category:**")
+                st.markdown("**&#x2795; Add new skill category:**")
                 nc1, nc2, nc3 = st.columns([.30, .60, .10])
                 with nc1: st.text_input("New Category", "", placeholder="e.g. Databases", key="f_ncat")
                 with nc2: st.text_input("Skills",       "", placeholder="e.g. MySQL, MongoDB", key="f_nval")
                 with nc3:
                     st.markdown('<div style="margin-top:28px"></div>', unsafe_allow_html=True)
-                    if st.button("➕", key="add_sk_btn", help="Add this skill category"):
+                    if st.button("&#x2795;", key="add_sk_btn", help="Add this skill category"):
                         ncat = st.session_state.get("f_ncat","").strip()
                         nval = st.session_state.get("f_nval","").strip()
                         if ncat:
@@ -2802,7 +2894,7 @@ if left_col:
                 gap_res = CareerGapAnalyzer.analyze(d, target_role)
                 missing_skills = gap_res.get("missing", [])
                 if missing_skills:
-                    st.markdown("##### 💡 Recommended Skills to Add")
+                    st.markdown("##### &#x1F4A1; Recommended Skills to Add")
                     st.caption(f"Based on target role: **{target_role}** (Configure in Insights tab)")
                     selected_missing = st.multiselect("Select skills to append:", options=missing_skills, key="missing_skills_multiselect")
                     if selected_missing and st.button("Add Selected Skills", key="add_missing_skills_btn", type="primary", use_container_width=True):
@@ -2821,7 +2913,7 @@ if left_col:
                         save_to_disk(d)
                         st.session_state.resume = d
                         st.session_state.last_hash = ""
-                        st.success(f"✅ Added {', '.join(selected_missing)} to {first_cat}!")
+                        st.success(f"&#x2705; Added {', '.join(selected_missing)} to {first_cat}!")
                         st.rerun()
 
                 st.markdown('<div class="sec-title">Certifications</div>', unsafe_allow_html=True)
@@ -2836,12 +2928,12 @@ if left_col:
                 st.caption("Choose a curated template style. The live preview updates instantly.")
 
                 TPL_INFOS = {
-                    "sejal_original": {"name": "Modern Accent", "desc": "Clean typography with subtle color accents.", "icon": "🎨", "color": "#6366F1"},
-                    "ats":            {"name": "ATS Professional", "desc": "Industry-standard, highly scannable layout.", "icon": "💼", "color": "#1E293B"},
-                    "modern":         {"name": "Elegant Modern", "desc": "Stylish sans-serif theme with modern headings.", "icon": "✨", "color": "#0F766E"},
-                    "creative":       {"name": "Creative Bold", "desc": "Vibrant design to stand out in creative roles.", "icon": "🚀", "color": "#E11D48"},
-                    "minimal":        {"name": "Minimalist Clean", "desc": "Simple, elegant spacing focusing on content.", "icon": "📄", "color": "#475569"},
-                    "two_column":     {"name": "Two Column Splitted", "desc": "Balanced two-column split layout.", "icon": "📊", "color": "#7C3AED"}
+                    "sejal_original": {"name": "Modern Accent", "desc": "Clean typography with subtle color accents.", "icon": "&#x1F3A8;", "color": "#6366F1"},
+                    "ats":            {"name": "ATS Professional", "desc": "Industry-standard, highly scannable layout.", "icon": "&#x1F4BC;", "color": "#1E293B"},
+                    "modern":         {"name": "Elegant Modern", "desc": "Stylish sans-serif theme with modern headings.", "icon": "&#x2728;", "color": "#0F766E"},
+                    "creative":       {"name": "Creative Bold", "desc": "Vibrant design to stand out in creative roles.", "icon": "&#x1F680;", "color": "#E11D48"},
+                    "minimal":        {"name": "Minimalist Clean", "desc": "Simple, elegant spacing focusing on content.", "icon": "&#x1F4C4;", "color": "#475569"},
+                    "two_column":     {"name": "Two Column Splitted", "desc": "Balanced two-column split layout.", "icon": "&#x1F4CA;", "color": "#7C3AED"}
                 }
 
                 g_cols = st.columns(3, gap="small")
@@ -2914,7 +3006,7 @@ if left_col:
                             os.makedirs(os.path.join("resume_builder","exports","html"), exist_ok=True)
                             hp = os.path.join("resume_builder","exports","html","index.html")
                             with open(hp,"w",encoding="utf-8") as hf: hf.write(hc)
-                            st.download_button("📥 Download index.html", data=hc.encode(),
+                            st.download_button("&#x1F4E5; Download index.html", data=hc.encode(),
                                                file_name="index.html", mime="text/html",
                                                use_container_width=True, key="dl_port")
                 except Exception as ex:
@@ -2935,18 +3027,18 @@ if left_col:
 
                 st.markdown(
                     f'<div style="background:#ECFDF5; border-left:4px solid #10B981; padding:12px 14px; border-radius:8px; margin: 15px 0 8px;">'
-                    f'<span style="font-weight:700; color:#065F46; font-size:0.88rem;">✅ {step_title} Section Completed</span>'
+                    f'<span style="font-weight:700; color:#065F46; font-size:0.88rem;">&#x2705; {step_title} Section Completed</span>'
                     f'</div>',
                     unsafe_allow_html=True
                 )
                 if _tips:
-                    with st.expander("💡 Tips to improve this section", expanded=False):
+                    with st.expander("&#x1F4A1; Tips to improve this section", expanded=False):
                         for tip in _tips:
                             st.markdown(f"- {tip}")
                 
                 improve_col, quality_col = st.columns(2)
                 with quality_col:
-                    if st.button("📊 Check Resume Quality", key="step_check_quality_btn", use_container_width=True):
+                    if st.button("&#x1F4CA; Check Resume Quality", key="step_check_quality_btn", use_container_width=True):
                         st.session_state.workspace_tab = "Insights"
                         st.rerun()
 
@@ -2955,17 +3047,17 @@ if left_col:
             btn_l, btn_r = st.columns([1, 1])
             with btn_l:
                 prev_disabled = (current_step == 0)
-                if st.button("← Previous", key="wz_prev_btn", disabled=prev_disabled, use_container_width=True):
+                if st.button("&#x2190; Previous", key="wz_prev_btn", disabled=prev_disabled, use_container_width=True):
                     st.session_state.editor_step = current_step - 1
                     st.rerun()
             with btn_r:
                 if current_step < len(WIZARD_STEPS) - 1:
                     next_label = WIZARD_STEPS[current_step + 1][1]
-                    if st.button(f"Next: {next_label} →", key="wz_next_btn", use_container_width=True, type="primary"):
+                    if st.button(f"Next: {next_label} &#x2192;", key="wz_next_btn", use_container_width=True, type="primary"):
                         st.session_state.editor_step = current_step + 1
                         st.rerun()
                 else:
-                    if st.button("🏠 Go Home", key="wz_finish_btn", use_container_width=True, type="primary"):
+                    if st.button("&#x1F3E0; Go Home", key="wz_finish_btn", use_container_width=True, type="primary"):
                         st.session_state.navigation_page = "home"
                         st.rerun()
 
@@ -2992,12 +3084,12 @@ if right_col:
         hs = calculate_health_score(d)
         score = hs["score"]
 
-        # 🤖 Resume Coach Card
+        # &#x1F916; Resume Coach Card
         st.markdown(
             f'<div style="background: #FFFFFF; border: 1.5px solid {"#E2E8F0" if score >= 80 else "#FEF3C7"}; '
             f'border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">'
             f'<div style="display: flex; align-items: center; gap: 8px;">'
-            f'<span style="font-size: 1.3rem;">🤖</span>'
+            f'<span style="font-size: 1.3rem;">&#x1F916;</span>'
             f'<span style="font-weight: 800; font-size: 1.05rem; color: #1E293B;">Resume Coach</span>'
             f'</div>'
             f'<div style="margin-top: 8px; font-size: 0.85rem; color: #64748B;">'
@@ -3008,7 +3100,7 @@ if right_col:
         )
 
         if score < 80:
-            st.markdown("##### ⚠️ Suggestions to improve:")
+            st.markdown("##### &#x26A0;&#65039; Suggestions to improve:")
             sugs = hs.get("suggestions", [])[:3]
             if not sugs:
                 st.write("No suggestions found.")
@@ -3036,13 +3128,13 @@ if right_col:
             # Milestone banner
             st.markdown(
                 f'<div style="background:#ECFDF5; border-left:4px solid #10B981; padding:12px; border-radius:8px; margin-bottom:12px;">'
-                f'<span style="font-weight:700; color:#065F46; font-size:0.9rem;">🎉 Resume {score}% Complete!</span><br/>'
+                f'<span style="font-weight:700; color:#065F46; font-size:0.9rem;">&#x1F389; Resume {score}% Complete!</span><br/>'
                 f'<span style="color:#047857; font-size:0.78rem;">You have unlocked the Career Assistant tools.</span>'
                 f'</div>',
                 unsafe_allow_html=True
             )
             
-            st.markdown("##### 📋 Recommended Final Checks")
+            st.markdown("##### &#x1F4CB; Recommended Final Checks")
             fc1, fc2, fc3 = st.columns(3)
             with fc1:
                 if st.button("ATS Check", key=f"fc_ats", use_container_width=True, help="Run ATS Check"):
@@ -3060,23 +3152,23 @@ if right_col:
                     st.session_state.career_active_tool = "interview_prep"
                     st.rerun()
             
-            st.markdown("##### 🚀 Guided Career Assistant")
+            st.markdown("##### &#x1F680; Guided Career Assistant")
             gc_col1, gc_col2 = st.columns(2)
             with gc_col1:
-                if st.button("🚀 Improve Resume", key="ca_improve_res", use_container_width=True):
+                if st.button("&#x1F680; Improve Resume", key="ca_improve_res", use_container_width=True):
                     st.session_state.workspace_tab = "Insights"
                     st.session_state.career_active_tool = "consistency"
                     st.rerun()
-                if st.button("📈 Analyze Skill Gaps", key="ca_skill_gaps", use_container_width=True):
+                if st.button("&#x1F4C8; Analyze Skill Gaps", key="ca_skill_gaps", use_container_width=True):
                     st.session_state.workspace_tab = "Insights"
                     st.session_state.career_active_tool = "gap_analyzer"
                     st.rerun()
             with gc_col2:
-                if st.button("💼 Prep Interviews", key="ca_prep_int", use_container_width=True):
+                if st.button("&#x1F4BC; Prep Interviews", key="ca_prep_int", use_container_width=True):
                     st.session_state.workspace_tab = "Insights"
                     st.session_state.career_active_tool = "interview_prep"
                     st.rerun()
-                if st.button("🐙 Verify GitHub Evidence", key="ca_github_ev", use_container_width=True):
+                if st.button("&#x1F419; Verify GitHub Evidence", key="ca_github_ev", use_container_width=True):
                     st.session_state.workspace_tab = "Insights"
                     st.session_state.career_active_tool = "github"
                     st.rerun()
@@ -3101,16 +3193,16 @@ if right_col:
                 st.selectbox("Zoom", options=zoom_options, key="preview_zoom", label_visibility="collapsed")
             with lh_sub2:
                 is_desk = (st.session_state.get("device_view", "desktop") == "desktop")
-                if st.button("💻", key="btn_view_desk", type="primary" if is_desk else "secondary", help="Desktop view"):
+                if st.button("&#x1F4BB;", key="btn_view_desk", type="primary" if is_desk else "secondary", help="Desktop view"):
                     st.session_state.device_view = "desktop"
                     st.rerun()
             with lh_sub3:
                 is_mob = (st.session_state.get("device_view", "desktop") == "mobile")
-                if st.button("📱", key="btn_view_mob", type="primary" if is_mob else "secondary", help="Mobile view"):
+                if st.button("&#x1F4F1;", key="btn_view_mob", type="primary" if is_mob else "secondary", help="Mobile view"):
                     st.session_state.device_view = "mobile"
                     st.rerun()
 
-        with st.spinner("🔄 Updating preview…"):
+        with st.spinner("&#x1F504; Updating preview…"):
             try:
                 maybe_compile(d, TID, C, M, FS, FT)
             except Exception as compile_err:
@@ -3118,7 +3210,7 @@ if right_col:
                 st.session_state.cmsg = f"Compilation error: {compile_err}"
 
         if st.session_state.cmsg:
-            st.warning(f"⚠️ {st.session_state.cmsg}")
+            st.warning(f"&#x26A0;&#65039; {st.session_state.cmsg}")
 
         if st.session_state.cok and st.session_state.pdf_b64:
             is_mobile_view = (st.session_state.get("device_view", "desktop") == "mobile")
@@ -3275,14 +3367,14 @@ setTimeout(sendHeight, 100);
 
     # Suggestions
     if hs.get("suggestions"):
-        with st.expander("💡 Improvement Tips", expanded=False):
+        with st.expander("&#x1F4A1; Improvement Tips", expanded=False):
             for s in hs["suggestions"][:5]:
                 st.markdown(f"- {s}")
 else:
     st.markdown("""
     <div class="preview-card" style="display:flex;flex-direction:column;
       align-items:center;justify-content:center;min-height:480px;gap:12px;">
-      <div style="font-size:3.5rem;">📄</div>
+      <div style="font-size:3.5rem;">&#x1F4C4;</div>
       <div style="font-size:.95rem;color:#64748B;font-weight:500;text-align:center;">
         Your live resume preview will appear here.<br>
         <span style="font-size:.8rem;color:#94A3B8;">
@@ -3290,7 +3382,7 @@ else:
       </div>
     </div>""", unsafe_allow_html=True)
     if st.session_state.cmsg:
-        st.error(f"❌ {st.session_state.cmsg}")
+        st.error(f"&#x274C; {st.session_state.cmsg}")
 
 # ═══════════════════════════════════════════════════════
 # KEYBOARD SHORTCUTS (Ctrl+Z / Ctrl+Y / Ctrl+S)
@@ -3345,21 +3437,21 @@ if st.session_state.navigation_page == "workspace":
     bf_tools, bf_dl = st.columns([1, 1])
     
     with bf_tools:
-        with st.popover("✨ More Actions", use_container_width=True):
+        with st.popover("&#x2728; More Actions", use_container_width=True):
             st.markdown("### Resume Utilities")
-            if st.button("📥 Import Resume", key="fbar_import", use_container_width=True):
+            if st.button("&#x1F4E5; Import Resume", key="fbar_import", use_container_width=True):
                 st.session_state.show_import = True
                 st.rerun()
-            if st.button("📊 Open Insights", key="fbar_open_ins", use_container_width=True):
+            if st.button("&#x1F4CA; Open Insights", key="fbar_open_ins", use_container_width=True):
                 st.session_state.workspace_tab = "Insights"
                 st.session_state.navigation_page = "workspace"
                 st.rerun()
-            if st.button("📥 Demo Resume", key="fbar_demo", use_container_width=True):
+            if st.button("&#x1F4E5; Demo Resume", key="fbar_demo", use_container_width=True):
                 st.session_state.resume = copy.deepcopy(DEMO_RESUME)
                 st.session_state.last_hash = ""
                 save_to_disk(st.session_state.resume)
                 st.rerun()
-            if st.button("🔄 Reset Form", key="fbar_reset", use_container_width=True):
+            if st.button("&#x1F504; Reset Form", key="fbar_reset", use_container_width=True):
                 st.session_state.resume = copy.deepcopy(DEFAULT)
                 st.session_state.last_hash = ""
                 save_to_disk(st.session_state.resume)
@@ -3370,7 +3462,7 @@ if st.session_state.navigation_page == "workspace":
         safe_name = re.sub(r"[^a-zA-Z0-9]","_",pname).strip("_") or "Resume"
         if st.session_state.pdf_raw:
             st.download_button(
-                "📥 Download PDF",
+                "&#x1F4E5; Download PDF",
                 data=st.session_state.pdf_raw,
                 file_name=f"{safe_name}_Resume.pdf",
                 mime="application/pdf",
@@ -3379,4 +3471,4 @@ if st.session_state.navigation_page == "workspace":
                 key="fbar_dl_pdf"
             )
         else:
-            st.button("📥 Download PDF", key="fbar_dl_pdf_disabled", disabled=True, use_container_width=True)
+            st.button("&#x1F4E5; Download PDF", key="fbar_dl_pdf_disabled", disabled=True, use_container_width=True)
