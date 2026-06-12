@@ -1,0 +1,18 @@
+/* ═══════════════════════════════════════════════════════
+   CANVA-STYLE RESPONSIVE LAYOUT SYSTEM
+   Architecture: fixed sidebar + CSS-var-based content shift
+   DO NOT use margin-left or padding-left with hardcoded px.
+   Use --sidebar-w custom property (updated by JS on toggle).
+   ═══════════════════════════════════════════════════════ */
+
+/* --- CSS Custom Properties (tokens) --- */
+:root {
+  --sidebar-collapsed-w: 64px;
+  --sidebar-expanded-w: 240px;
+  --sidebar-w: 64px;          /* default = collapsed, JS updates this */
+  --header-h: 72px;
+  --header-h-mobile: 56px;
+  --content-gap: 24px;        /* gap between sidebar edge and content */
+  --content-max-w: 1280px;
+}
+

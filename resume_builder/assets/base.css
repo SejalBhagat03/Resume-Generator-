@@ -1,0 +1,39 @@
+/* ── Base — force light theme on Streamlit Cloud & local ── */
+html, body, [data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > section,
+[data-testid="stVerticalBlock"],
+.main .block-container {
+  font-family: 'Inter', sans-serif !important;
+  background: #F8F4EE !important; /* Update background to beige/cream */
+  color: #1E293B !important;
+}
+
+/* Force all generic text dark so cloud dark-mode doesn't override */
+p, span, div, li, td, th, label,
+h1, h2, h3, h4, h5, h6 {
+  color: #1E293B;
+}
+
+/* Streamlit markdown elements */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] span,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+  color: #1E293B !important;
+}
+
+#MainMenu, footer, [data-testid="stHeader"],
+[data-testid="stDecoration"], [data-testid="stToolbar"] { display: none !important; }
+
+/* ── Modern App Padding ── */
+/* IMPORTANT: Do NOT put padding or max-width here.
+   All sizing is handled by the layout system below (via CSS variables).
+   This rule only sets box-sizing to ensure padding is included in width calc. */
+.block-container {
+  box-sizing: border-box !important;
+}
+[data-testid="stAppViewContainer"] > .main { padding: 0 !important; }
+
+

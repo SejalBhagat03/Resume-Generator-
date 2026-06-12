@@ -1,0 +1,588 @@
+/* 9. Mobile Sticky Bottom Nav */
+@media (max-width: 767px) {
+  body div:has(#bottom-nav-marker) + div[data-testid="element-container"] {
+    position: fixed !important;
+    bottom: 0px !important;
+    left: 0px !important;
+    right: 0px !important;
+    width: 100vw !important;
+    background: #FFFFFF !important;
+    border-top: 1px solid #E7DED4 !important;
+    padding: 8px 12px 14px 12px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.03) !important;
+  }
+}
+
+div:has(#bottom-nav-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-around !important;
+}
+
+div:has(#bottom-nav-marker) + div[data-testid="element-container"] button {
+  background: transparent !important;
+  border: none !important;
+  color: #94A3B8 !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 48px !important;
+  box-shadow: none !important;
+}
+
+
+div:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-testid="column"]:first-child button {
+  color: #A47148 !important; /* Active item color (Home) */
+}
+
+/* ═══════════════════════════════════════════════════════
+   10. MOBILE HOMEPAGE REDESIGN (max-width: 767px)
+   ═══════════════════════════════════════════════════════ */
+
+/* Mobile viewport container adjustments */
+@media (max-width: 767px) {
+  /* Hide all desktop widgets by content and keys */
+  div:has(#hero-marker),
+  div:has(#search-section-marker),
+  div:has(#continue-card-marker),
+  div:has(#my-resumes-grid-marker),
+  div:has(#bottom-nav-marker),
+  .section-header-row,
+  .resume-grid-card,
+  .template-scroll-container,
+  .dashed-create-card,
+  div[data-testid="element-container"]:has(button[key="hero_create_btn"]),
+  div[data-testid="element-container"]:has(button[key="hero_import_btn"]),
+  div[data-testid="element-container"]:has(.hero-resume-illustration),
+  div[data-testid="element-container"]:has(.search-input-box),
+  div[data-testid="element-container"]:has(button[key="home_filter_btn"]),
+  div[data-testid="element-container"]:has(.continue-card-content),
+  div[data-testid="element-container"]:has(button[key="btn_continue_icon"]),
+  div[data-testid="element-container"]:has(.resume-grid-card),
+  div[data-testid="element-container"]:has(button[key^="grid_edit_"]),
+  div[data-testid="element-container"]:has(button[key^="grid_dl_pdf_"]),
+  div[data-testid="element-container"]:has(button[key^="grid_options_"]),
+  div[data-testid="element-container"]:has(.dashed-create-card),
+  div[data-testid="element-container"]:has(.template-scroll-container),
+  div[data-testid="element-container"]:has(button[key="nav_home_btn"]),
+  div[data-testid="element-container"]:has(button[key="nav_templates_btn"]),
+  div[data-testid="element-container"]:has(button[key="nav_resumes_btn"]),
+  div[data-testid="element-container"]:has(button[key="nav_profile_btn"]) {
+    display: none !important;
+  }
+
+  /* Adjust block-container padding for mobile */
+  .main .block-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 80px !important; /* 64px navbar + 16px gap */
+    padding-bottom: 96px !important; /* 72px bottom nav + 24px gap */
+    background-color: #F8F4EE !important;
+  }
+
+  /* Spacing system and headings */
+  .mob-section-header-row {
+    margin-top: 24px !important;
+    margin-bottom: 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mob-section-title {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #1E293B !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  /* Search & Filter Row */
+  .mob-search-row-container {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    margin-top: 16px !important;
+    margin-bottom: 24px !important;
+  }
+  div:has(.mob-search-input-box) {
+    width: 100% !important;
+  }
+  div:has(.mob-search-input-box) input {
+    height: 56px !important;
+    border-radius: 18px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    padding-left: 20px !important;
+    font-size: 15px !important;
+    color: #1E293B !important;
+  }
+  div:has(.mob-search-input-box) input:focus {
+    border-color: #A47148 !important;
+    box-shadow: 0 0 0 3px rgba(164, 113, 72, 0.1) !important;
+  }
+  div:has(button[key="mob_filter_btn"]) button {
+    height: 56px !important;
+    width: 56px !important;
+    border-radius: 18px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    font-size: 18px !important;
+    padding: 0 !important;
+  }
+  div:has(button[key="mob_filter_btn"]) button:hover {
+    border-color: #A47148 !important;
+    background: #F8F5EF !important;
+  }
+
+  /* Mobile Hero Card */
+  .mob-hero-card {
+    background: #FFF8F1 !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 24px !important;
+    padding: 24px 24px 96px 24px !important; /* bottom padding fits buttons */
+    position: relative !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 8px 30px rgba(164, 113, 72, 0.04) !important;
+  }
+  .mob-hero-text {
+    flex: 1 !important;
+    padding-right: 12px !important;
+  }
+  .mob-hero-title {
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color: #1E293B !important;
+    line-height: 1.25 !important;
+    margin: 0 0 8px 0 !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .mob-hero-subtitle {
+    font-size: 15px !important;
+    color: #64748B !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+  }
+  .mob-hero-illustration {
+    width: 100px !important;
+    flex-shrink: 0 !important;
+  }
+  .mob-illus-resume {
+    background: #FFFFFF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 12px !important;
+    padding: 8px 8px 16px 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .mob-illus-avatar {
+    font-size: 12px !important;
+  }
+  .mob-illus-title {
+    font-size: 6px !important;
+    font-weight: 800 !important;
+    color: #A47148 !important;
+    margin-top: 2px !important;
+  }
+  .mob-illus-line {
+    height: 2px !important;
+    background: #F8F5EF !important;
+    border-radius: 1px !important;
+    width: 100% !important;
+  }
+  .mob-illus-line.short {
+    width: 60% !important;
+  }
+  .mob-illus-score-badge {
+    position: absolute !important;
+    bottom: -6px !important;
+    right: -10px !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #A47148 !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(164,113,72,0.15) !important;
+    z-index: 5 !important;
+  }
+  .mob-score-number {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #A47148 !important;
+    line-height: 1 !important;
+  }
+  .mob-score-text {
+    font-size: 3px !important;
+    font-weight: 700 !important;
+    color: #64748B !important;
+    text-transform: uppercase !important;
+    margin-top: 1px !important;
+  }
+  .mob-score-desc {
+    font-size: 3px !important;
+    font-weight: 800 !important;
+    color: #A47148 !important;
+  }
+
+  /* Hero buttons positioning inside card */
+  div:has(#mob-hero-marker) + div[data-testid="element-container"] + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+    position: absolute !important;
+    bottom: 24px !important;
+    left: 24px !important;
+    right: 24px !important;
+    margin: 0 !important;
+    width: calc(100% - 48px) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    z-index: 10 !important;
+  }
+  div:has(#mob-hero-marker) + div[data-testid="element-container"] + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+    flex: 1 !important;
+    width: 50% !important;
+    max-width: 50% !important;
+  }
+  div:has(button[key="mob_hero_create_btn"]) button {
+    background: #A47148 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 14px !important;
+    height: 52px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px rgba(164,113,72,0.2) !important;
+  }
+  div:has(button[key="mob_hero_import_btn"]) button {
+    background: #FFFFFF !important;
+    color: #A47148 !important;
+    border: 1.5px solid #E7DED4 !important;
+    border-radius: 14px !important;
+    height: 52px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+  }
+
+  /* Continue Editing Mobile Card */
+  .mob-continue-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E7DED4 !important;
+    border-left: 4px solid #A47148 !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    position: relative !important;
+  }
+  .mob-continue-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex: 1 !important;
+    padding-right: 60px !important; /* space for absolute button */
+  }
+  .mob-continue-thumb {
+    width: 48px !important;
+    height: 48px !important;
+    background: #F8F5EF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 24px !important;
+  }
+  .mob-continue-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .mob-continue-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1E293B !important;
+  }
+  .mob-continue-meta {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  .mob-continue-badge {
+    background: #F5EDE0 !important;
+    color: #A47148 !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 2px 8px !important;
+  }
+  .mob-continue-time {
+    font-size: 12px !important;
+    color: #64748B !important;
+  }
+
+  /* Overlay the edit button on continue card */
+  div:has(button[key="mob_btn_continue_icon"]) {
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 42px !important;
+    z-index: 10 !important;
+  }
+  div:has(button[key="mob_btn_continue_icon"]) button {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    color: #A47148 !important;
+    font-size: 16px !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* My Resumes Stacked Cards */
+  .mob-resume-card-container {
+    background: #FFFFFF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    height: 120px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+  }
+  .mob-resume-card-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex: 1 !important;
+    padding-right: 110px !important; /* space for edit & options buttons */
+  }
+  .mob-resume-card-thumb {
+    width: 56px !important;
+    height: 72px !important;
+    background: #F8F5EF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 28px !important;
+  }
+  .mob-resume-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .mob-resume-card-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1E293B !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 150px !important;
+  }
+  .mob-resume-card-meta {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  .mob-resume-card-badge {
+    background: #F5EDE0 !important;
+    color: #A47148 !important;
+    border-radius: 999px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 2px 8px !important;
+  }
+  .mob-resume-card-time {
+    font-size: 11px !important;
+    color: #64748B !important;
+  }
+
+  /* Absolute position Streamlit action columns overlaying the card actions placeholder */
+  div:has(.mob-resume-card-container) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 100px !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+  }
+  div:has(.mob-resume-card-container) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:first-child {
+    width: 60px !important;
+    max-width: 60px !important;
+    flex: 0 0 60px !important;
+  }
+  div:has(.mob-resume-card-container) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child {
+    width: 34px !important;
+    max-width: 34px !important;
+    flex: 0 0 34px !important;
+  }
+  div:has(button[key^="mob_grid_edit_"]) button {
+    height: 36px !important;
+    border-radius: 10px !important;
+    background: #A47148 !important;
+    color: #FFFFFF !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  div:has(button[key^="mob_grid_options_"]) button {
+    height: 36px !important;
+    width: 34px !important;
+    border-radius: 10px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Mobile Dashed Create Card */
+  .mob-dashed-create-card {
+    background: #FFFFFF !important;
+    border: 2px dashed #D9C2A6 !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 24px 16px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 120px !important;
+    margin-bottom: 24px !important;
+  }
+  .mob-dashed-create-icon {
+    font-size: 24px !important;
+    color: #A47148 !important;
+  }
+  .mob-dashed-create-text {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #A47148 !important;
+  }
+
+  /* FAB */
+  .mob-fab {
+    position: fixed !important;
+    bottom: 96px !important;
+    right: 24px !important;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    background: #A47148 !important;
+    color: #FFFFFF !important;
+    font-size: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 16px rgba(164, 113, 72, 0.4) !important;
+    z-index: 999 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    transition: transform 0.2s !important;
+  }
+
+  /* Bottom Nav Glassmorphism */
+  .mob-bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 72px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-top: 1px solid #E7DED4 !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    z-index: 1000 !important;
+    padding-bottom: 12px !important;
+    box-sizing: border-box !important;
+  }
+  .mob-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #94A3B8 !important;
+    cursor: pointer !important;
+    transition: color 0.2s !important;
+    flex: 1 !important;
+  }
+  .mob-nav-item.active {
+    color: #A47148 !important;
+  }
+  .mob-nav-icon {
+    font-size: 24px !important;
+  }
+  .mob-nav-label {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    margin-top: 4px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Hide all mobile layout elements on desktop */
+  div:has(#mob-hero-marker),
+  .mob-hero-card,
+  div[data-testid="element-container"]:has(button[key="mob_hero_create_btn"]),
+  div[data-testid="element-container"]:has(button[key="mob_hero_import_btn"]),
+  div:has(#mob-search-marker),
+  div:has(.mob-search-row-container),
+  div[data-testid="element-container"]:has(.mob-search-input-box),
+  div[data-testid="element-container"]:has(button[key="mob_filter_btn"]),
+  div:has(.mob-continue-card),
+  div[data-testid="element-container"]:has(button[key="mob_btn_continue_icon"]),
+  div:has(.mob-resume-card-container),
+  div:has(.mob-dashed-create-card),
+  div[data-testid="element-container"]:has(button[key^="mob_grid_edit_"]),
+  div[data-testid="element-container"]:has(button[key^="mob_grid_options_"]),
+  .mob-fab,
+  .mob-bottom-nav,
+  div:has(.mob-section-header-row) {
+    display: none !important;
+  }
+}

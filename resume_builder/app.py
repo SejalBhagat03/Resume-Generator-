@@ -76,10 +76,13 @@ st.set_page_config(
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESUME_JSON  = os.path.join(PROJECT_ROOT, "resume.json")
 DEFAULTS_FILE = os.path.join(PROJECT_ROOT, "resume_builder", "config", "defaults.json")
-# Load custom CSS (refactored selectors v8)
-css_path = os.path.join(PROJECT_ROOT, "resume_builder", "assets", "custom.css")
-with open(css_path, encoding="utf-8") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# Load custom CSS (refactored split styling)
+css_files = ["variables.css", "base.css", "layout.css", "components.css", "responsive.css"]
+for css_file in css_files:
+    css_path = os.path.join(PROJECT_ROOT, "resume_builder", "assets", css_file)
+    if os.path.exists(css_path):
+        with open(css_path, encoding="utf-8") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
 FITTING_OPTS = ["Auto Compress", "Keep Original", "Multi-Page"]
