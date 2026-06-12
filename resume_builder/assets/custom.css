@@ -1,18 +1,2081 @@
-html, body {
-    background: #F8F4EE;
+/* ── Base — force light theme on Streamlit Cloud & local ── */
+html, body, [data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > section,
+[data-testid="stVerticalBlock"],
+.main .block-container {
+  font-family: 'Inter', sans-serif !important;
+  background: #F8F4EE !important; /* Update background to beige/cream */
+  color: #1E293B !important;
 }
 
-.stApp {
-    background: #F8F4EE;
+/* Force all generic text dark so cloud dark-mode doesn't override */
+p, span, div, li, td, th, label,
+h1, h2, h3, h4, h5, h6 {
+  color: #1E293B;
 }
 
+/* Streamlit markdown elements */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] span,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+  color: #1E293B !important;
+}
+
+#MainMenu, footer, [data-testid="stHeader"],
+[data-testid="stDecoration"], [data-testid="stToolbar"] { display: none !important; }
+
+/* ── Modern App Padding ── */
+/* IMPORTANT: Do NOT put padding or max-width here.
+   All sizing is handled by the layout system below (via CSS variables).
+   This rule only sets box-sizing to ensure padding is included in width calc. */
 .block-container {
-    padding-top: 2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    max-width: 1400px;
+  box-sizing: border-box !important;
+}
+[data-testid="stAppViewContainer"] > .main { padding: 0 !important; }
+
+
+/* ── Light Premium Top Bar Toolbar ── */
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  background: #FFFFFF !important;
+  padding: 14px 20px !important;
+  border-radius: 16px !important;
+  border: 1px solid #D9C2A9 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  margin-bottom: 24px !important;
+  align-items: center !important;
 }
 
-h1,h2,h3,p,span,div {
-    color: #1E293B;
+/* Style selectboxes inside the top bar */
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] > div {
+  border-radius: 10px !important;
+  border: 1px solid #E2E8F0 !important;
+  background-color: #F8FAFC !important;
+  height: 38px !important;
+  color: #1E293B !important;
+}
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] span {
+  color: #1E293B !important;
+  font-weight: 500 !important;
+  font-size: 0.82rem !important;
+}
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] svg {
+  fill: #1E293B !important;
+}
+
+/* Style buttons inside the top bar */
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button {
+  background-color: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  color: #1E293B !important;
+  border-radius: 10px !important;
+  height: 38px !important;
+  font-size: 0.83rem !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+}
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button:hover:not(:disabled) {
+  background-color: #F1F5F9 !important;
+  border-color: #CBD5E1 !important;
+  color: #1E293B !important;
+}
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button:disabled {
+  opacity: 0.5 !important;
+  color: #94A3B8 !important;
+}
+
+/* Custom styling for color picker block inside top bar */
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="stColorPickerColorBlock"] {
+  border-radius: 8px !important;
+  border: 1px solid #E2E8F0 !important;
+}
+div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stColorPicker > div {
+  margin-top: -6px !important;
+}
+
+/* ── Sticky preview card ── */
+.preview-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12);
+  overflow: hidden;
+  min-height: 600px;
+}
+
+/* ── Section headers inside form ── */
+.sec-title {
+  font-size: .78rem; font-weight: 700; color: #8B5E3C;
+  text-transform: uppercase; letter-spacing: .08em;
+  margin: 16px 0 8px; padding-bottom: 5px;
+  border-bottom: 2px solid #EDE5D9;
+}
+
+/* ── Setting row with explanation ── */
+.setting-row { margin-bottom: 12px; }
+.setting-effect {
+  display: inline-block; margin-top: 2px;
+  font-size: .72rem; padding: 2px 8px;
+  border-radius: 100px; font-weight: 600;
+}
+  .eff-balanced { background: #E8E0D1; color: #6B4F2F; }
+  .eff-compact  { background: #F5EFE6; color: #8B5E3C; }
+  .eff-spacious { background: #E8E0D1; color: #6B4F2F; }
+  .eff-tight    { background: #F5EFE6; color: #8B5E3C; }
+  .eff-standard { background: #EDE5D9; color: #6B4F2F; }
+
+/* ── Undo/Redo pill buttons ── */
+.ur-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,.12); color: #fff; font-size: .9rem;
+  cursor: pointer; border: 1px solid rgba(255,255,255,.2);
+  transition: background .15s;
+}
+.ur-btn:hover { background: rgba(255,255,255,.22); }
+.ur-btn.disabled { opacity: .35; cursor: not-allowed; }
+
+/* ── Streamlit widget overrides ── */
+.stButton button {
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important; font-size: .83rem !important;
+  transition: all .12s !important;
+}
+.stButton button[kind="primary"] {
+  background: linear-gradient(135deg,#8B5E3C,#A67A5F) !important;
+  border: none !important; box-shadow: 0 2px 8px rgba(139,94,60,.3) !important;
+  color: #fff !important;
+}
+.stButton button[kind="primary"]:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(99,102,241,.4) !important;
+}
+
+/* Ensure secondary buttons and other text blocks are readable */
+.stButton button[kind="secondary"] {
+  color: #1E293B !important;
+  background-color: #EDE5D9 !important;
+  border: 1px solid #C4A78C !important;
+}
+.stButton button[kind="secondary"]:hover {
+  background-color: #D9C2A9 !important;
+  border-color: #A67A5F !important;
+}
+
+.stTextInput input, .stTextArea textarea {
+  border-radius: 7px !important; border-color: #E2E8F0 !important;
+  font-family: 'Inter', sans-serif !important; font-size: .82rem !important;
+  padding: 6px 10px !important;
+  background: #FAFBFF !important;
+  color: #0F172A !important;
+}
+.stTextInput input:focus, .stTextArea textarea:focus {
+  border-color: #8B5E3C !important;
+  box-shadow: 0 0 0 3px rgba(139,94,60,.12) !important;
+  background: #fff !important;
+  color: #0F172A !important;
+}
+
+/* Inputs Placeholders Contrast */
+.stTextInput input::placeholder, .stTextArea textarea::placeholder {
+  color: #64748B !important; opacity: 1 !important;
+}
+.stTextInput input::-webkit-input-placeholder, .stTextArea textarea::-webkit-input-placeholder {
+  color: #64748B !important; opacity: 1 !important;
+}
+.stTextInput input::-moz-placeholder, .stTextArea textarea::-moz-placeholder {
+  color: #64748B !important; opacity: 1 !important;
+}
+.stTextInput input:-ms-input-placeholder, .stTextArea textarea:-ms-input-placeholder {
+  color: #64748B !important; opacity: 1 !important;
+}
+
+div[data-testid="stWidgetLabel"] p {
+  font-size: .78rem !important; font-weight: 600 !important;
+  color: #1E293B !important; margin-bottom: 2px !important;
+}
+
+div[data-testid="element-container"] { margin-bottom: 0.3rem !important; }
+
+.stExpander {
+  border: 1.5px solid #E2E8F0 !important; border-radius: 10px !important;
+  background: #FAFBFF !important; margin-bottom: 5px !important;
+  color: #1E293B !important;
+}
+
+.repo-card {
+  background: #FFFFFF;
+  border: 1px solid #D9C2A9;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(15,23,42,0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.repo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(15,23,42,0.08);
+}
+.repo-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+.repo-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6B4F2F;
+  margin-bottom: 8px;
+}
+.repo-card-description {
+  color: #6B4F2F;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  min-height: 62px;
+}
+.repo-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-bottom: 14px;
+}
+.repo-chip {
+  background: #EDE5D9;
+  color: #8B5E3C;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  font-weight: 600;
+}
+.repo-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+.repo-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #475569;
+}
+.repo-score-badge {
+  background: #D5C7B2;
+  color: #6B4F2F;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 7 0;
+}
+.repo-card a {
+  color: #8B5E3C;
+  text-decoration: none;
+}
+.repo-card a:hover {
+  text-decoration: underline;
+}
+
+.github-filter-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.github-filter-row > div {
+  min-width: 180px;
+}
+.stExpander summary {
+  font-size: .82rem !important; font-weight: 600 !important;
+  color: #1E293B !important;
+}
+.stExpander summary:hover {
+  color: #6366F1 !important;
+}
+.stExpander summary svg {
+  fill: #1E293B !important;
+}
+.stExpander [data-testid="stExpanderDetails"] p,
+.stExpander [data-testid="stExpanderDetails"] span,
+.stExpander [data-testid="stExpanderDetails"] div,
+.stExpander [data-testid="stExpanderDetails"] li {
+  color: #1E293B !important;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+  background: #D9C2A9; border-radius: 10px; padding: 3px; gap: 2px;
+}
+.stTabs [data-baseweb="tab"] {
+  border-radius: 7px !important; font-family: 'Inter', sans-serif !important;
+  font-size: .78rem !important; font-weight: 500 !important; padding: 5px 11px !important;
+  color: #6B4F2F !important;
+}
+.stTabs [aria-selected="true"] {
+  background: #fff !important; box-shadow: 0 1px 4px rgba(0,0,0,.08) !important;
+  color: #8B5E3C !important; font-weight: 700 !important;
+}
+/* Slider */
+.stSlider { padding: 0 2px !important; }
+div[data-testid="stSlider"] { margin-bottom: 0 !important; }
+div[data-testid="stSlider"] span {
+  color: #1E293B !important;
+}
+
+/* ── Metric pill ── */
+.kpi {
+  background: #fff; border: 1.5px solid #D9C2A9; border-radius: 10px;
+  padding: 10px 12px; text-align: center;
+}
+.kpi-lbl { font-size: .62rem; font-weight: 700; color: #94A3B8;
+  text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1px; }
+.kpi-val { font-size: 1.7rem; font-weight: 800; line-height: 1.1; color: #1E293B !important; } .c-green { color: #8B5E3C !important; } .c-amber { color: #A67A5F !important; } .c-red { color: #B0532F !important; }
+
+/* ── Import upload zone ── */
+.upload-zone {
+  border: 2px dashed #C4A78C; border-radius: 12px;
+  padding: 24px 16px; text-align: center; background: #EDE5D9;
+  margin: 8px 0;
+}
+
+/* ── Divider ── */
+.hdiv { border-top: 1.5px solid #E2E8F0; margin: 12px 0; }
+
+/* Scrollbar styling */
+.left-panel::-webkit-scrollbar { width: 5px; } .left-panel::-webkit-scrollbar-thumb { background: #C4A78C; border-radius: 10px; }
+
+/* General text visibility overrides inside main content area */
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] p,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] span,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] li,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h1,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h2,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h3,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h4,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h5,
+[data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h6 {
+  color: #1E293B !important;
+}
+
+/* Standard Streamlit metrics labels and values */
+div[data-testid="stMetricLabel"] {
+  color: #475569 !important;
+}
+div[data-testid="stMetricValue"] {
+  color: #1E293B !important;
+}
+
+/* Standard selectbox contrast */
+.main div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+  background-color: #FAFBFF !important;
+  border: 1px solid #E2E8F0 !important;
+  color: #1E293B !important;
+}
+.main div[data-testid="stSelectbox"] div[data-baseweb="select"] span {
+  color: #1E293B !important;
+}
+.main div[data-testid="stSelectbox"] div[data-baseweb="select"] svg {
+  fill: #1E293B !important;
+}
+
+/* Radio button text visibility */
+div[data-testid="stRadio"] label span {
+  color: #1E293B !important;
+}
+
+/* Checkbox labels */
+div[data-testid="stCheckbox"] label span {
+  color: #1E293B !important;
+}
+
+/* File uploader contrast */
+div[data-testid="stFileUploader"] section {
+  background-color: #FAFAFB !important;
+  border: 1px dashed #C7D2FE !important;
+}
+div[data-testid="stFileUploader"] section * {
+  color: #1E293B !important;
+}
+
+/* ── Onboarding Banner ─────────────────────────────────── */
+.onboarding-banner {
+  background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+  border: 1.5px solid #C7D2FE;
+  border-left: 4px solid #6366F1;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: .86rem;
+  color: #3730A3;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.onboarding-banner b { color: #312E81; }
+.onboarding-banner .ob-step {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(99,102,241,.12);
+  border-radius: 100px;
+  padding: 2px 10px;
+  margin: 0 3px;
+  font-weight: 600;
+  font-size: .82rem;
+}
+
+/* ── Tab Hint Chips ────────────────────────────────────── */
+.tab-hint {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-left: 3px solid #6366F1;
+  border-radius: 8px;
+  padding: 8px 13px;
+  font-size: .8rem;
+  color: #475569;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+.tab-hint .th-icon { margin-right: 5px; }
+.tab-hint b { color: #1E293B; }
+
+/* Sub-header Progress Card Styling */
+div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  background: #FFFFFF !important;
+  border-radius: 16px !important;
+  border: 1px solid #E2E8F0 !important;
+  padding: 12px 20px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  margin-bottom: 12px !important;
+  align-items: center !important;
+  position: relative !important;
+}
+div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"]::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 33px !important;
+  left: 42% !important;
+  width: 50% !important;
+  height: 2px !important;
+  background: #F1F5F9 !important;
+  z-index: 0 !important;
+}
+
+/* ── Create Resume Wizard Design System ── */
+
+/* Style Streamlit Dialog container itself */
+div[data-testid="stDialog"] div[role="dialog"] {
+  max-width: 1100px !important;
+  width: 90% !important;
+  border-radius: 16px !important;
+  border: 1px solid #E8DED2 !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Wizard Header */
+.wizard-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid #E8DED2 !important;
+  margin-bottom: 20px !important;
+  position: relative !important;
+}
+.wizard-header .icon {
+  font-size: 1.8rem !important;
+  background: #F8F5EF !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  color: #A47148 !important;
+}
+.wizard-title {
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: #1E2A44 !important;
+  line-height: 1.2 !important;
+}
+.wizard-subtitle {
+  font-size: 0.85rem !important;
+  color: #64748B !important;
+  margin-top: 2px !important;
+}
+
+/* Circular Stepper Container */
+.wizard-stepper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 20px auto 10px !important;
+  max-width: 550px !important;
+  padding: 0 20px !important;
+}
+.wizard-step {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #FFFFFF !important;
+  border: 2px solid #D8CFC2 !important;
+  color: #64748B !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+.wizard-step.active {
+  border-color: #A47148 !important;
+  background: #A47148 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 0 4px rgba(164, 113, 72, 0.15) !important;
+}
+.wizard-step.completed {
+  border-color: #A47148 !important;
+  background: #F8F5EF !important;
+  color: #A47148 !important;
+}
+.wizard-stepper-connector {
+  flex: 1 !important;
+  height: 2px !important;
+  background: #D8CFC2 !important;
+  margin: 0 10px !important;
+  transition: background-color 0.2s ease !important;
+}
+.wizard-stepper-connector.completed {
+  background: #A47148 !important;
+}
+
+/* Stepper Labels below circles */
+.wizard-stepper-labels {
+  display: flex !important;
+  justify-content: space-between !important;
+  max-width: 590px !important;
+  margin: 0 auto 24px !important;
+  padding: 0 10px !important;
+}
+.wizard-stepper-label {
+  flex: 1 !important;
+  text-align: center !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  color: #64748B !important;
+}
+.wizard-stepper-label.active {
+  color: #1E2A44 !important;
+  font-weight: 700 !important;
+}
+.wizard-stepper-label.completed {
+  color: #A47148 !important;
+}
+
+/* Target card horizontal grid blocks via marker */
+div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  display: flex !important;
+  gap: 16px !important;
+  margin-top: 10px !important;
+}
+
+/* Card Column */
+div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"] {
+  background: #FFFFFF !important;
+  border: 1.5px solid #E8DED2 !important;
+  border-radius: 14px !important;
+  padding: 20px 16px !important;
+  text-align: center !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.01) !important;
+  min-height: 190px !important;
+}
+
+/* Selected/Highlighted Card Column (contains a disabled Select button) */
+div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"]:has(button[disabled]) {
+  border-color: #A47148 !important;
+  background-color: #F8F5EF !important;
+  box-shadow: 0 8px 20px rgba(164, 113, 72, 0.08) !important;
+}
+
+/* Hover style for Card Column */
+div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"]:hover:not(:has(button[disabled])) {
+  transform: translateY(-2px) !important;
+  border-color: #A47148 !important;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.03) !important;
+}
+
+/* Customize selection buttons inside cards */
+div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"] button {
+  font-size: 0.8rem !important;
+  height: 32px !important;
+  padding: 0 16px !important;
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CANVA-STYLE RESPONSIVE LAYOUT SYSTEM
+   Architecture: fixed sidebar + CSS-var-based content shift
+   DO NOT use margin-left or padding-left with hardcoded px.
+   Use --sidebar-w custom property (updated by JS on toggle).
+   ═══════════════════════════════════════════════════════ */
+
+/* --- CSS Custom Properties (tokens) --- */
+:root {
+  --sidebar-collapsed-w: 64px;
+  --sidebar-expanded-w: 240px;
+  --sidebar-w: 64px;          /* default = collapsed, JS updates this */
+  --header-h: 72px;
+  --header-h-mobile: 56px;
+  --content-gap: 24px;        /* gap between sidebar edge and content */
+  --content-max-w: 1280px;
+}
+
+/* 1. Global Background */
+body {
+  background-color: #F8F4EE !important;
+}
+
+/* ─── 2. STREAMLIT APP SHELL ─────────────────────────────
+   Streamlit renders:  .stApp > section.main > div.block-container
+   We need the main area to sit to the right of the fixed sidebar.
+   The ONLY safe way that scales at any zoom: padding-left = sidebar width.
+   We set this via the CSS variable --sidebar-w.
+   ────────────────────────────────────────────────────── */
+
+/* Desktop ≥768px: sidebar is visible, content shifts right */
+@media (min-width: 768px) {
+  .main .block-container {
+    /* Push content right by exactly the sidebar width */
+    padding-left: calc(var(--sidebar-w) + var(--content-gap)) !important;
+    padding-right: var(--content-gap) !important;
+    padding-top: calc(var(--header-h) + var(--content-gap)) !important;
+    padding-bottom: 80px !important;
+    /* Centering: max-width applies to the whole shifted block */
+    max-width: calc(var(--content-max-w) + var(--sidebar-w)) !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Tablet 768–1199px: sidebar hidden (drawer), content full width */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .main .block-container {
+    padding-left: var(--content-gap) !important;
+    padding-right: var(--content-gap) !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Mobile <768px: no sidebar, full width */
+@media (max-width: 767px) {
+  .main .block-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: calc(var(--header-h-mobile) + 16px) !important;
+    padding-bottom: 80px !important; /* space for bottom nav */
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* 2. Top Sticky Header */
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid #E7DED4 !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburger-menu {
+  font-size: 1.4rem;
+  color: #1E293B;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hamburger-menu:hover {
+  background-color: #F8F5EF;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-icon {
+  font-size: 1.5rem;
+}
+.logo-text {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #1E293B;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.header-center {
+  flex: 1;
+  max-width: 450px;
+  margin: 0 24px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.noti-btn {
+  font-size: 1.3rem;
+  color: #1E293B;
+  position: relative;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.noti-btn:hover {
+  background-color: #F8F5EF;
+}
+.noti-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background-color: #A47148;
+  border-radius: 50%;
+  border: 1.5px solid #FFFFFF;
+}
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #A47148;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 2px solid #E7DED4;
+}
+
+/* Adapt Header for Mobile */
+@media (max-width: 767px) {
+  .main-header {
+    height: 56px;
+    padding: 0 16px;
+  }
+  .header-center {
+    display: none !important; /* hide search on mobile header */
+  }
+  .logo-text {
+    font-size: 1rem;
+  }
+  .profile-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ─── 3. LEFT CANVA-STYLE SIDEBAR ───────────────────────
+   Collapsed by default (64px, icons only).
+   Expands to 240px only when .expanded class is toggled by JS.
+   NEVER expands on hover — that was the bug.
+   ────────────────────────────────────────────────────── */
+.canva-sidebar {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-collapsed-w);
+  background-color: #FFFFFF !important;
+  border-right: 1px solid #E7DED4 !important;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Critical: never steal space from the content flow */
+  flex-shrink: 0;
+}
+
+/* Expanded state — toggled by JS click on hamburger */
+.canva-sidebar.expanded {
+  width: var(--sidebar-expanded-w) !important;
+  align-items: flex-start !important;
+  padding: 16px 12px !important;
+}
+
+/* Tablet 768–1199px: sidebar hidden, drawer opens on click */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .canva-sidebar {
+    /* Slide in from left as a drawer */
+    transform: translateX(-100%);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.08);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .canva-sidebar.expanded {
+    transform: translateX(0);
+    width: var(--sidebar-expanded-w) !important;
+  }
+}
+
+/* Mobile <768px: sidebar hidden */
+@media (max-width: 767px) {
+  .canva-sidebar {
+    display: none !important;
+  }
+}
+
+/* Sidebar overlay backdrop (tablet) */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 998;
+  cursor: pointer;
+}
+.sidebar-overlay.visible {
+  display: block;
+}
+
+.sidebar-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 12px;
+  color: #1E293B !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+  gap: 16px;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  min-height: 48px;
+  white-space: nowrap;
+}
+
+/* When expanded, items left-align */
+.canva-sidebar.expanded .sidebar-item {
+  justify-content: flex-start;
+}
+
+.sidebar-item:hover {
+  background-color: #F8F5EF;
+  color: #A47148 !important;
+}
+
+.sidebar-item.active {
+  background-color: #F8F5EF;
+  color: #A47148 !important;
+  font-weight: 700;
+}
+
+.sidebar-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: inherit;
+  /* Hidden by default (collapsed state) */
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease, width 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Labels visible only when expanded */
+.canva-sidebar.expanded .sidebar-label {
+  opacity: 1;
+  width: auto;
+}
+
+.sidebar-icon {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  flex-shrink: 0;
+}
+
+/* 4. Hero Section Card styling */
+div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  background: linear-gradient(135deg, #FFFDF9 0%, #F5EDE0 100%) !important;
+  border: 1px solid #E7DED4 !important;
+  border-radius: 24px !important;
+  padding: 32px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06) !important;
+  margin-bottom: 24px !important;
+  /* Flexbox hero: text left, illustration right */
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 48px !important;
+}
+
+/* Desktop hero: enforce 2-column side-by-side */
+@media (min-width: 1200px) {
+  div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+    min-height: 320px !important;
+  }
+  /* Text column — flex:1, min-width:0 prevents clipping */
+  div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:first-child {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  /* Illustration column — fixed width, no shrink */
+  div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child {
+    flex: 0 0 320px !important;
+    min-width: 0 !important;
+    max-width: 320px !important;
+  }
+}
+
+.hero-headline {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  color: #1E293B !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 12px !important;
+}
+
+.hero-subtext {
+  font-size: 0.95rem !important;
+  color: #64748B !important;
+  line-height: 1.5 !important;
+  margin-bottom: 20px !important;
+}
+
+.hero-resume-illustration {
+  background: #FFFFFF !important;
+  border: 1px solid #E7DED4 !important;
+  border-radius: 16px !important;
+  padding: 16px 16px 32px 16px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04) !important;
+  position: relative !important;
+  min-height: 180px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.illus-avatar {
+  width: 28px !important;
+  height: 28px !important;
+  background: #F8F5EF !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.9rem !important;
+}
+.illus-title {
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  color: #A47148 !important;
+  letter-spacing: 0.05em !important;
+  margin-top: 4px !important;
+}
+.illus-line {
+  height: 4px !important;
+  background: #F8F5EF !important;
+  border-radius: 2px !important;
+  width: 100% !important;
+}
+.illus-line.short {
+  width: 60% !important;
+}
+.illus-score-badge {
+  position: absolute !important;
+  bottom: 16px !important;
+  right: -12px !important;
+  background: #FFFFFF !important;
+  border: 2px solid #A47148 !important;
+  border-radius: 50% !important;
+  width: 56px !important;
+  height: 56px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 8px 20px rgba(164, 113, 72, 0.15) !important;
+  z-index: 10 !important;
+}
+.score-number {
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  color: #A47148 !important;
+  line-height: 1 !important;
+}
+.score-text {
+  font-size: 0.35rem !important;
+  font-weight: 700 !important;
+  color: #64748B !important;
+  text-transform: uppercase !important;
+  margin-top: 2px !important;
+}
+.score-desc {
+  font-size: 0.38rem !important;
+  font-weight: 800 !important;
+  color: #A47148 !important;
+}
+
+/* Hero responsive overrides */
+@media (max-width: 1199px) {
+  div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+    flex-direction: column !important;
+    gap: 24px !important;
+    height: auto !important;
+    min-height: unset !important;
+  }
+  div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Global: Streamlit columns must never overflow their container.
+   min-width:0 prevents text from clipping (flex child min-width bug).
+   overflow:visible (default) is kept so dropdowns/popovers are not clipped. */
+[data-testid="stHorizontalBlock"] > [data-testid="column"],
+[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+  min-width: 0 !important;
+}
+
+
+/* 5. Search Row styling */
+.search-row-container {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  margin-bottom: 24px !important;
+}
+div:has(.search-input-box) input {
+  border-radius: 12px !important;
+  border: 1px solid #E7DED4 !important;
+  background: #FFFFFF !important;
+  height: 46px !important;
+  padding-left: 16px !important;
+  font-size: 0.9rem !important;
+  color: #1E293B !important;
+}
+div:has(.search-input-box) input:focus {
+  border-color: #A47148 !important;
+  box-shadow: 0 0 0 3px rgba(164, 113, 72, 0.1) !important;
+}
+div:has(button[key="home_filter_btn"]) button {
+  height: 46px !important;
+  border-radius: 12px !important;
+  border: 1px solid #E7DED4 !important;
+  background: #FFFFFF !important;
+  color: #1E293B !important;
+}
+div:has(button[key="home_filter_btn"]) button:hover {
+  border-color: #A47148 !important;
+  background: #F8F5EF !important;
+  color: #A47148 !important;
+}
+
+
+/* 6. Continue Editing Section — see refactored styles at end of file */
+
+
+
+/* 7. My Resumes CSS Grid System */
+div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) {
+  display: grid !important;
+  grid-gap: 20px !important;
+  width: 100% !important;
+}
+
+/* Hide the marker container entirely */
+div[data-testid="element-container"]:has(#my-resumes-grid-marker),
+div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) > div[data-testid="element-container"]:first-child {
+  display: none !important;
+}
+
+/* Responsive columns breakpoints */
+@media (min-width: 1440px) {
+  div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1439px) {
+  div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 767px) {
+  div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
+/* 7.5 Desktop Header Search Centering & Mobile below-hero search */
+@media (min-width: 768px) {
+  /* Search input layout fixed into top header center */
+  div.stHorizontalBlock:has(.search-input-box) {
+    position: fixed !important;
+    top: 13px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 450px !important;
+    z-index: 1001 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* Hide the filter button column on desktop */
+  div.stColumn:has(.filter-btn-box) {
+    display: none !important;
+  }
+  /* Make search column take full width of header slot */
+  div.stHorizontalBlock:has(.search-input-box) div.stColumn:first-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+  }
+  /* Adjust search text input margins to center vertically */
+  div.stHorizontalBlock:has(.search-input-box) .stTextInput {
+    margin-top: -22px !important;
+  }
+  div.stHorizontalBlock:has(.search-input-box) div[data-testid="element-container"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  /* Hide search row container label/decorations below hero */
+  div[data-testid="element-container"]:has(#search-section-marker),
+  div[data-testid="element-container"]:has(.search-row-container) {
+    display: none !important;
+  }
+}
+
+/* Single Resume Grid Card */
+.resume-grid-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E7DED4 !important;
+  border-radius: 20px !important;
+  padding: 16px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.02) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  transition: all 0.2s ease !important;
+  height: 100% !important;
+  min-height: 260px !important;
+}
+.resume-grid-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 40px rgba(164,113,72,0.06) !important;
+  border-color: #D9C2A6 !important;
+}
+
+.resume-grid-thumb {
+  height: 130px !important;
+  background: #F8F5EF !important;
+  border: 1px solid #E7DED4 !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.resume-grid-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  flex: 1 !important;
+}
+
+.resume-grid-title {
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  color: #1E293B !important;
+  margin-top: 4px !important;
+}
+
+.resume-grid-badge-row {
+  display: flex !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-top: 2px !important;
+}
+
+.resume-grid-date {
+  font-size: 0.72rem !important;
+  color: #64748B !important;
+  margin-top: auto !important;
+}
+
+/* Card Button Action Bar overrides */
+div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[data-testid="stVerticalBlock"] #my-resumes-grid-marker)) [data-testid="stHorizontalBlock"] button {
+  font-size: 0.78rem !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  padding: 0 8px !important;
+}
+
+/* 8. Popular Templates Section (Horizontal Scroll Carousel) */
+.template-scroll-container {
+  display: flex !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  padding: 10px 4px 20px 4px !important;
+  scrollbar-width: thin;
+  scrollbar-color: #D9C2A6 transparent;
+}
+.template-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+.template-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #D9C2A6;
+  border-radius: 10px;
+}
+
+.template-scroll-card {
+  min-width: 140px !important;
+  max-width: 140px !important;
+  background: #FFFFFF !important;
+  border: 1px solid #E7DED4 !important;
+  border-radius: 16px !important;
+  padding: 12px !important;
+  text-align: center !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.01) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+.template-scroll-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: #A47148 !important;
+  box-shadow: 0 8px 20px rgba(164,113,72,0.06) !important;
+}
+.template-scroll-thumb {
+  height: 100px !important;
+  background: #F8F5EF !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 2.2rem !important;
+  margin-bottom: 8px !important;
+  border: 1px solid #E7DED4 !important;
+}
+.template-scroll-name {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #1E293B !important;
+}
+
+/* 9. Mobile Sticky Bottom Nav */
+@media (max-width: 767px) {
+  body div:has(#bottom-nav-marker) + div[data-testid="element-container"] {
+    position: fixed !important;
+    bottom: 0px !important;
+    left: 0px !important;
+    right: 0px !important;
+    width: 100vw !important;
+    background: #FFFFFF !important;
+    border-top: 1px solid #E7DED4 !important;
+    padding: 8px 12px 14px 12px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.03) !important;
+  }
+}
+
+div:has(#bottom-nav-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-around !important;
+}
+
+div:has(#bottom-nav-marker) + div[data-testid="element-container"] button {
+  background: transparent !important;
+  border: none !important;
+  color: #94A3B8 !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 48px !important;
+  box-shadow: none !important;
+}
+
+
+div:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-testid="column"]:first-child button {
+  color: #A47148 !important; /* Active item color (Home) */
+}
+
+/* ── Section Header Row ── */
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1E293B;
+  letter-spacing: -0.01em;
+}
+
+/* ── Theme Badge ── */
+.theme-badge {
+  display: inline-block;
+  background: #F5EDE0;
+  color: #A47148;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Continue Editing Card (refactored) ── */
+/* Outer container: styled as a horizontal card */
+div:has(#continue-card-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+  background: #FFFFFF !important;
+  border: 1px solid #E7DED4 !important;
+  border-left: 4px solid #A47148 !important;
+  border-radius: 20px !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.02) !important;
+  margin-bottom: 24px !important;
+  align-items: center !important;
+  min-height: 96px !important;
+}
+
+/* .continue-card-content: inner flex row for thumb + info */
+.continue-card-content {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+.continue-card-thumb {
+  width: 56px !important;
+  min-width: 56px !important;
+  height: 72px !important;
+  border: 1px solid #E7DED4 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #F8F5EF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+.continue-card-info {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+.continue-card-title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #1E293B !important;
+}
+.continue-card-date {
+  font-size: 0.75rem !important;
+  color: #64748B !important;
+}
+
+/* Continue edit button wrapper aligns the button vertically in the column */
+.continue-edit-btn-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  height: 100% !important;
+}
+
+div:has(button[key="btn_continue_icon"]) button {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 12px !important;
+  border: 1px solid #E7DED4 !important;
+  background: #FFFFFF !important;
+  color: #A47148 !important;
+  font-size: 1rem !important;
+  box-shadow: none !important;
+}
+div:has(button[key="btn_continue_icon"]) button:hover {
+  border-color: #A47148 !important;
+  background: #F8F5EF !important;
+}
+
+/* ── Dashed Create Card ── */
+.dashed-create-card {
+  background: #FFFFFF !important;
+  border: 2px dashed #D9C2A6 !important;
+  border-radius: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  padding: 32px 16px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-height: 160px !important;
+}
+.dashed-create-card:hover {
+  border-color: #A47148 !important;
+  background: #FFFBF7 !important;
+  box-shadow: 0 8px 24px rgba(164,113,72,0.06) !important;
+  transform: translateY(-2px) !important;
+}
+.dashed-create-icon {
+  font-size: 2rem !important;
+  color: #A47148 !important;
+}
+.dashed-create-text {
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  color: #A47148 !important;
+}
+
+/* ── Hero CTA Buttons override ── */
+div:has(button[key="hero_create_btn"]) button {
+  background: linear-gradient(135deg, #A47148, #C0895E) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 12px !important;
+  height: 48px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(164,113,72,0.3) !important;
+}
+div:has(button[key="hero_create_btn"]) button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(164,113,72,0.4) !important;
+}
+div:has(button[key="hero_import_btn"]) button {
+  background: #FFFFFF !important;
+  color: #A47148 !important;
+  border: 1.5px solid #A47148 !important;
+  border-radius: 12px !important;
+  height: 48px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+div:has(button[key="hero_import_btn"]) button:hover {
+  background: #F5EDE0 !important;
+}
+
+/* ── Hero highlight span ── */
+.hero-highlight {
+  color: #A47148 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   10. MOBILE HOMEPAGE REDESIGN (max-width: 767px)
+   ═══════════════════════════════════════════════════════ */
+
+/* Mobile viewport container adjustments */
+@media (max-width: 767px) {
+  /* Hide all desktop widgets by content and keys */
+  div:has(#hero-marker),
+  div:has(#search-section-marker),
+  div:has(#continue-card-marker),
+  div:has(#my-resumes-grid-marker),
+  div:has(#bottom-nav-marker),
+  .section-header-row,
+  .resume-grid-card,
+  .template-scroll-container,
+  .dashed-create-card,
+  div[data-testid="element-container"]:has(button[key="hero_create_btn"]),
+  div[data-testid="element-container"]:has(button[key="hero_import_btn"]),
+  div[data-testid="element-container"]:has(.hero-resume-illustration),
+  div[data-testid="element-container"]:has(.search-input-box),
+  div[data-testid="element-container"]:has(button[key="home_filter_btn"]),
+  div[data-testid="element-container"]:has(.continue-card-content),
+  div[data-testid="element-container"]:has(button[key="btn_continue_icon"]),
+  div[data-testid="element-container"]:has(.resume-grid-card),
+  div[data-testid="element-container"]:has(button[key^="grid_edit_"]),
+  div[data-testid="element-container"]:has(button[key^="grid_dl_pdf_"]),
+  div[data-testid="element-container"]:has(button[key^="grid_options_"]),
+  div[data-testid="element-container"]:has(.dashed-create-card),
+  div[data-testid="element-container"]:has(.template-scroll-container),
+  div[data-testid="element-container"]:has(button[key="nav_home_btn"]),
+  div[data-testid="element-container"]:has(button[key="nav_templates_btn"]),
+  div[data-testid="element-container"]:has(button[key="nav_resumes_btn"]),
+  div[data-testid="element-container"]:has(button[key="nav_profile_btn"]) {
+    display: none !important;
+  }
+
+  /* Adjust block-container padding for mobile */
+  .main .block-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 80px !important; /* 64px navbar + 16px gap */
+    padding-bottom: 96px !important; /* 72px bottom nav + 24px gap */
+    background-color: #F8F4EE !important;
+  }
+
+  /* Spacing system and headings */
+  .mob-section-header-row {
+    margin-top: 24px !important;
+    margin-bottom: 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mob-section-title {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #1E293B !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  /* Search & Filter Row */
+  .mob-search-row-container {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    margin-top: 16px !important;
+    margin-bottom: 24px !important;
+  }
+  div:has(.mob-search-input-box) {
+    width: 100% !important;
+  }
+  div:has(.mob-search-input-box) input {
+    height: 56px !important;
+    border-radius: 18px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    padding-left: 20px !important;
+    font-size: 15px !important;
+    color: #1E293B !important;
+  }
+  div:has(.mob-search-input-box) input:focus {
+    border-color: #A47148 !important;
+    box-shadow: 0 0 0 3px rgba(164, 113, 72, 0.1) !important;
+  }
+  div:has(button[key="mob_filter_btn"]) button {
+    height: 56px !important;
+    width: 56px !important;
+    border-radius: 18px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    font-size: 18px !important;
+    padding: 0 !important;
+  }
+  div:has(button[key="mob_filter_btn"]) button:hover {
+    border-color: #A47148 !important;
+    background: #F8F5EF !important;
+  }
+
+  /* Mobile Hero Card */
+  .mob-hero-card {
+    background: #FFF8F1 !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 24px !important;
+    padding: 24px 24px 96px 24px !important; /* bottom padding fits buttons */
+    position: relative !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 8px 30px rgba(164, 113, 72, 0.04) !important;
+  }
+  .mob-hero-text {
+    flex: 1 !important;
+    padding-right: 12px !important;
+  }
+  .mob-hero-title {
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color: #1E293B !important;
+    line-height: 1.25 !important;
+    margin: 0 0 8px 0 !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .mob-hero-subtitle {
+    font-size: 15px !important;
+    color: #64748B !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+  }
+  .mob-hero-illustration {
+    width: 100px !important;
+    flex-shrink: 0 !important;
+  }
+  .mob-illus-resume {
+    background: #FFFFFF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 12px !important;
+    padding: 8px 8px 16px 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .mob-illus-avatar {
+    font-size: 12px !important;
+  }
+  .mob-illus-title {
+    font-size: 6px !important;
+    font-weight: 800 !important;
+    color: #A47148 !important;
+    margin-top: 2px !important;
+  }
+  .mob-illus-line {
+    height: 2px !important;
+    background: #F8F5EF !important;
+    border-radius: 1px !important;
+    width: 100% !important;
+  }
+  .mob-illus-line.short {
+    width: 60% !important;
+  }
+  .mob-illus-score-badge {
+    position: absolute !important;
+    bottom: -6px !important;
+    right: -10px !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #A47148 !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(164,113,72,0.15) !important;
+    z-index: 5 !important;
+  }
+  .mob-score-number {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #A47148 !important;
+    line-height: 1 !important;
+  }
+  .mob-score-text {
+    font-size: 3px !important;
+    font-weight: 700 !important;
+    color: #64748B !important;
+    text-transform: uppercase !important;
+    margin-top: 1px !important;
+  }
+  .mob-score-desc {
+    font-size: 3px !important;
+    font-weight: 800 !important;
+    color: #A47148 !important;
+  }
+
+  /* Hero buttons positioning inside card */
+  div:has(#mob-hero-marker) + div[data-testid="element-container"] + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+    position: absolute !important;
+    bottom: 24px !important;
+    left: 24px !important;
+    right: 24px !important;
+    margin: 0 !important;
+    width: calc(100% - 48px) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    z-index: 10 !important;
+  }
+  div:has(#mob-hero-marker) + div[data-testid="element-container"] + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+    flex: 1 !important;
+    width: 50% !important;
+    max-width: 50% !important;
+  }
+  div:has(button[key="mob_hero_create_btn"]) button {
+    background: #A47148 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 14px !important;
+    height: 52px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px rgba(164,113,72,0.2) !important;
+  }
+  div:has(button[key="mob_hero_import_btn"]) button {
+    background: #FFFFFF !important;
+    color: #A47148 !important;
+    border: 1.5px solid #E7DED4 !important;
+    border-radius: 14px !important;
+    height: 52px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+  }
+
+  /* Continue Editing Mobile Card */
+  .mob-continue-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E7DED4 !important;
+    border-left: 4px solid #A47148 !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    position: relative !important;
+  }
+  .mob-continue-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex: 1 !important;
+    padding-right: 60px !important; /* space for absolute button */
+  }
+  .mob-continue-thumb {
+    width: 48px !important;
+    height: 48px !important;
+    background: #F8F5EF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 24px !important;
+  }
+  .mob-continue-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .mob-continue-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1E293B !important;
+  }
+  .mob-continue-meta {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  .mob-continue-badge {
+    background: #F5EDE0 !important;
+    color: #A47148 !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 2px 8px !important;
+  }
+  .mob-continue-time {
+    font-size: 12px !important;
+    color: #64748B !important;
+  }
+
+  /* Overlay the edit button on continue card */
+  div:has(button[key="mob_btn_continue_icon"]) {
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 42px !important;
+    z-index: 10 !important;
+  }
+  div:has(button[key="mob_btn_continue_icon"]) button {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    color: #A47148 !important;
+    font-size: 16px !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* My Resumes Stacked Cards */
+  .mob-resume-card-container {
+    background: #FFFFFF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    height: 120px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+  }
+  .mob-resume-card-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex: 1 !important;
+    padding-right: 110px !important; /* space for edit & options buttons */
+  }
+  .mob-resume-card-thumb {
+    width: 56px !important;
+    height: 72px !important;
+    background: #F8F5EF !important;
+    border: 1px solid #E7DED4 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 28px !important;
+  }
+  .mob-resume-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .mob-resume-card-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1E293B !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 150px !important;
+  }
+  .mob-resume-card-meta {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  .mob-resume-card-badge {
+    background: #F5EDE0 !important;
+    color: #A47148 !important;
+    border-radius: 999px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 2px 8px !important;
+  }
+  .mob-resume-card-time {
+    font-size: 11px !important;
+    color: #64748B !important;
+  }
+
+  /* Absolute position Streamlit action columns overlaying the card actions placeholder */
+  div:has(.mob-resume-card-container) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 100px !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+  }
+  div:has(.mob-resume-card-container) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:first-child {
+    width: 60px !important;
+    max-width: 60px !important;
+    flex: 0 0 60px !important;
+  }
+  div:has(.mob-resume-card-container) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child {
+    width: 34px !important;
+    max-width: 34px !important;
+    flex: 0 0 34px !important;
+  }
+  div:has(button[key^="mob_grid_edit_"]) button {
+    height: 36px !important;
+    border-radius: 10px !important;
+    background: #A47148 !important;
+    color: #FFFFFF !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  div:has(button[key^="mob_grid_options_"]) button {
+    height: 36px !important;
+    width: 34px !important;
+    border-radius: 10px !important;
+    border: 1px solid #E7DED4 !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Mobile Dashed Create Card */
+  .mob-dashed-create-card {
+    background: #FFFFFF !important;
+    border: 2px dashed #D9C2A6 !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 24px 16px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 120px !important;
+    margin-bottom: 24px !important;
+  }
+  .mob-dashed-create-icon {
+    font-size: 24px !important;
+    color: #A47148 !important;
+  }
+  .mob-dashed-create-text {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #A47148 !important;
+  }
+
+  /* FAB */
+  .mob-fab {
+    position: fixed !important;
+    bottom: 96px !important;
+    right: 24px !important;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    background: #A47148 !important;
+    color: #FFFFFF !important;
+    font-size: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 16px rgba(164, 113, 72, 0.4) !important;
+    z-index: 999 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    transition: transform 0.2s !important;
+  }
+
+  /* Bottom Nav Glassmorphism */
+  .mob-bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 72px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-top: 1px solid #E7DED4 !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    z-index: 1000 !important;
+    padding-bottom: 12px !important;
+    box-sizing: border-box !important;
+  }
+  .mob-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #94A3B8 !important;
+    cursor: pointer !important;
+    transition: color 0.2s !important;
+    flex: 1 !important;
+  }
+  .mob-nav-item.active {
+    color: #A47148 !important;
+  }
+  .mob-nav-icon {
+    font-size: 24px !important;
+  }
+  .mob-nav-label {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    margin-top: 4px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Hide all mobile layout elements on desktop */
+  div:has(#mob-hero-marker),
+  .mob-hero-card,
+  div[data-testid="element-container"]:has(button[key="mob_hero_create_btn"]),
+  div[data-testid="element-container"]:has(button[key="mob_hero_import_btn"]),
+  div:has(#mob-search-marker),
+  div:has(.mob-search-row-container),
+  div[data-testid="element-container"]:has(.mob-search-input-box),
+  div[data-testid="element-container"]:has(button[key="mob_filter_btn"]),
+  div:has(.mob-continue-card),
+  div[data-testid="element-container"]:has(button[key="mob_btn_continue_icon"]),
+  div:has(.mob-resume-card-container),
+  div:has(.mob-dashed-create-card),
+  div[data-testid="element-container"]:has(button[key^="mob_grid_edit_"]),
+  div[data-testid="element-container"]:has(button[key^="mob_grid_options_"]),
+  .mob-fab,
+  .mob-bottom-nav,
+  div:has(.mob-section-header-row) {
+    display: none !important;
+  }
 }

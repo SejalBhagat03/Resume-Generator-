@@ -47,6 +47,7 @@ from resume_builder.ui.wizard_ui import render_wizard_header, render_wizard_step
 from components.navbar import render_navbar
 from components.sidebar import render_sidebar
 from components.hero import render_hero
+from components.resume_card import render_resume_grid_card, render_continue_card_desktop, render_continue_card_mobile
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
@@ -1673,23 +1674,7 @@ def show_home():
         
         c_col1, c_col2 = st.columns([4.2, 0.8])
         with c_col1:
-            st.markdown(
-                f"""
-                <div class="continue-card-content">
-                    <div class="continue-card-thumb">
-                        <div style="font-size: 2.2rem; display: flex; align-items: center; justify-content: center; height: 100%;">&#x1F4C4;</div>
-                    </div>
-                    <div class="continue-card-info">
-                        <div class="continue-card-title">{html.escape(latest["title"])}</div>
-                        <div>
-                            <span class="theme-badge">{latest["template"].replace("_", " ").title()}</span>
-                        </div>
-                        <div class="continue-card-date">Last edited {rel_time}</div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            render_continue_card_desktop(latest, tpl_disp, rel_time)
         with c_col2:
             st.markdown('<div class="continue-edit-btn-wrapper">', unsafe_allow_html=True)
             if st.button("&#9999;&#65039;", key="btn_continue_icon", use_container_width=True):
@@ -1706,24 +1691,7 @@ def show_home():
         tpl_disp = ALL_TEMPLATES.get(latest["template"], {}).get("name", latest["template"])
         
         st.markdown('<div class="mob-section-header-row mob-continue-section-marker"><span class="mob-section-title">Continue Editing</span></div>', unsafe_allow_html=True)
-        st.markdown(
-            f"""
-            <div class="mob-continue-card">
-                <div class="mob-continue-left">
-                    <div class="mob-continue-thumb">&#x1F4C4;</div>
-                    <div class="mob-continue-info">
-                        <div class="mob-continue-title">{html.escape(latest["title"])}</div>
-                        <div class="mob-continue-meta">
-                            <span class="mob-continue-badge">{tpl_disp}</span>
-                            <span class="mob-continue-time">Edited {rel_time}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mob-continue-right-placeholder"></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        render_continue_card_mobile(latest, tpl_disp, rel_time)
         if st.button("&#9999;&#65039;", key="mob_btn_continue_icon", use_container_width=True):
             load_active_resume(latest["path"])
             st.session_state.navigation_page = "workspace"
@@ -1754,23 +1722,7 @@ def show_home():
                 rel_time = format_relative_time(r["last_edited"])
                 
                 with st.container():
-                    st.markdown(
-                        f"""
-                        <div class="resume-grid-card">
-                            <div class="resume-grid-thumb">
-                                <div style="font-size: 2.5rem; display: flex; align-items: center; justify-content: center; height: 100%;">&#x1F4C4;</div>
-                            </div>
-                            <div class="resume-grid-info">
-                                <div class="resume-grid-title">{html.escape(r["title"])}</div>
-                                <div class="resume-grid-badge-row">
-                                    <span class="theme-badge">{tpl_disp}</span>
-                                </div>
-                                <div class="resume-grid-date">Updated {rel_time}</div>
-                            </div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                    render_resume_grid_card(r, tpl_disp, rel_time)
                     
                     act_col1, act_col2, act_col3 = st.columns([1.2, 1.2, 0.8])
                     with act_col1:
