@@ -20,3 +20,7 @@ Generated_Resume.pdf
 *~
 *.swp
 
+# Generated resume outputs & caches
+exports/
+*.pdf
+.pytest_cache/

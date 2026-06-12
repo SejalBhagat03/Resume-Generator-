@@ -7,8 +7,8 @@ ANALYSIS_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(ANALYSIS_DIR)
 BUILDER_DIR = os.path.join(PROJECT_ROOT, "resume_builder")
 
-MASTER_PROFILE_PATH = os.path.join(PROJECT_ROOT, "master_profile.json")
-VERSIONS_DIR = os.path.join(PROJECT_ROOT, "resume_versions")
+MASTER_PROFILE_PATH = os.path.join(PROJECT_ROOT, "exports", "json", "master_profile.json")
+VERSIONS_DIR = os.path.join(PROJECT_ROOT, "exports", "json", "resume_versions")
 
 # Common fields inherited from Master Profile
 MASTER_KEYS = ["personal", "education", "technical_skills", "achievements", "certifications", "position_of_responsibility"]

@@ -137,10 +137,10 @@ def show_create_resume_dialog():
                 clean_title = re.sub(r"[^a-zA-Z0-9\s_-]", "", title).strip()
                 file_base = clean_title.lower().replace(" ", "_")
                 PROJECT_ROOT = st.session_state.get("PROJECT_ROOT", os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-                new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{file_base}.json")
+                new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{file_base}.json")
                 counter = 1
                 while os.path.exists(new_path):
-                    new_path = os.path.join(PROJECT_ROOT, "resume_versions", f"{file_base}_{counter}.json")
+                    new_path = os.path.join(PROJECT_ROOT, "exports", "json", f"{file_base}_{counter}.json")
                     counter += 1
                     
                 content = copy.deepcopy(st.session_state.DEFAULT_RESUME)

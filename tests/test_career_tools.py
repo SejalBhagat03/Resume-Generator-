@@ -14,7 +14,7 @@ from analysis.consistency_checker import ConsistencyChecker
 from analysis.achievement_quantifier import AchievementQuantifier
 from analysis.gap_analyzer import CareerGapAnalyzer
 from analysis.interview_prep import InterviewPrep
-from services.github_service import GitHubIntegration
+from resume_builder.services.github import GitHubIntegration
 from analysis.evidence_system import EvidenceSystem
 from analysis.project_story import ProjectStoryGenerator
 from analysis.knowledge_graph import KnowledgeGraphRenderer
