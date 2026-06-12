@@ -269,6 +269,8 @@ _CAREER_CSS = """
 """
 
 
+from components.stats_card import kpi_card_html
+
 # ─── Helper Functions ─────────────────────────────────────────────────────────
 def _score_color(score: int, invert: bool = False) -> str:
     """Return CSS class ('kpi-green' / 'kpi-amber' / 'kpi-red') for a score."""
@@ -278,13 +280,7 @@ def _score_color(score: int, invert: bool = False) -> str:
 
 
 def _kpi_card(label: str, value: str, hint: str, color: str) -> str:
-    return (
-        f'<div class="kpi-enhanced {color}">'
-        f'<div class="kpi-lbl2">{label}</div>'
-        f'<div class="kpi-val2 {color}">{value}</div>'
-        f'<div class="kpi-hint2">{hint}</div>'
-        f'</div>'
-    )
+    return kpi_card_html(label, value, hint, color)
 
 
 def _how_to(text: str):
