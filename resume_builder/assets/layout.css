@@ -1,303 +1,301 @@
-/* 1. Global Background */
-body {
-  background-color: #F8F4EE !important;
+/* ═══════════════════════════════════════════════════════
+   LAYOUT — Sidebar · Topbar · Content area
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Global background ── */
+body { background: var(--color-bg, var(--color-bg)) !important; }
+
+/* Hide Streamlit Native Sidebar content if it opens */
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] { display: none !important; }
+
+/* ── Streamlit block-container ── */
+.main .block-container {
+  padding-top:    var(--topbar-h) !important;
+  padding-left:   calc(var(--sidebar-w) + var(--content-gap)) !important;
+  padding-right:  var(--content-gap) !important;
+  padding-bottom: 80px !important;
+  max-width:      calc(var(--content-max-w) + var(--sidebar-w)) !important;
+  width:          100% !important;
+  margin:         0 !important;
+  box-sizing:     border-box !important;
 }
 
-/* ─── 2. STREAMLIT APP SHELL ─────────────────────────────
-   Streamlit renders:  .stApp > section.main > div.block-container
-   We need the main area to sit to the right of the fixed sidebar.
-   The ONLY safe way that scales at any zoom: padding-left = sidebar width.
-   We set this via the CSS variable --sidebar-w.
-   ────────────────────────────────────────────────────── */
-
-/* Desktop ≥768px: sidebar is visible, content shifts right */
-@media (min-width: 768px) {
-  .main .block-container {
-    /* Push content right by exactly the sidebar width */
-    padding-left: calc(var(--sidebar-w) + var(--content-gap)) !important;
-    padding-right: var(--content-gap) !important;
-    padding-top: calc(var(--header-h) + var(--content-gap)) !important;
-    padding-bottom: 80px !important;
-    /* Centering: max-width applies to the whole shifted block */
-    max-width: calc(var(--content-max-w) + var(--sidebar-w)) !important;
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box !important;
-  }
-}
-
-/* Tablet 768–1199px: sidebar hidden (drawer), content full width */
+/* Tablet: sidebar becomes drawer, content full-width */
 @media (min-width: 768px) and (max-width: 1199px) {
   .main .block-container {
     padding-left: var(--content-gap) !important;
-    padding-right: var(--content-gap) !important;
-    max-width: 100% !important;
   }
 }
 
-/* Mobile <768px: no sidebar, full width */
+/* Mobile: no sidebar */
 @media (max-width: 767px) {
   .main .block-container {
-    padding-left: 16px !important;
+    padding-left:  16px !important;
     padding-right: 16px !important;
-    padding-top: calc(var(--header-h-mobile) + 16px) !important;
-    padding-bottom: 80px !important; /* space for bottom nav */
+    padding-top:   calc(var(--topbar-h) + 8px) !important;
+    padding-bottom: 80px !important;
     max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
   }
 }
 
-/* 2. Top Sticky Header */
-.main-header {
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR  (fixed, collapsible icon → full)
+   ═══════════════════════════════════════════════════════ */
+
+.rb-sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  height: 72px;
-  background-color: #FFFFFF !important;
-  border-bottom: 1px solid #E7DED4 !important;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.hamburger-menu {
-  font-size: 1.4rem;
-  color: #1E293B;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.hamburger-menu:hover {
-  background-color: #F8F5EF;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.logo-icon {
-  font-size: 1.5rem;
-}
-.logo-text {
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: #1E293B;
-  font-family: 'Inter', sans-serif;
-  letter-spacing: -0.02em;
-}
-
-.header-center {
-  flex: 1;
-  max-width: 450px;
-  margin: 0 24px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.noti-btn {
-  font-size: 1.3rem;
-  color: #1E293B;
-  position: relative;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 50%;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.noti-btn:hover {
-  background-color: #F8F5EF;
-}
-.noti-badge {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 8px;
-  height: 8px;
-  background-color: #A47148;
-  border-radius: 50%;
-  border: 1.5px solid #FFFFFF;
-}
-.profile-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #A47148;
-  color: #FFFFFF;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  border: 2px solid #E7DED4;
-}
-
-/* Adapt Header for Mobile */
-@media (max-width: 767px) {
-  .main-header {
-    height: 56px;
-    padding: 0 16px;
-  }
-  .header-center {
-    display: none !important; /* hide search on mobile header */
-  }
-  .logo-text {
-    font-size: 1rem;
-  }
-  .profile-avatar {
-    width: 30px;
-    height: 30px;
-    font-size: 0.8rem;
-  }
-}
-
-/* ─── 3. LEFT CANVA-STYLE SIDEBAR ───────────────────────
-   Collapsed by default (64px, icons only).
-   Expands to 240px only when .expanded class is toggled by JS.
-   NEVER expands on hover — that was the bug.
-   ────────────────────────────────────────────────────── */
-.canva-sidebar {
-  position: fixed;
-  top: var(--header-h);
-  left: 0;
   bottom: 0;
-  width: var(--sidebar-collapsed-w);
-  background-color: #FFFFFF !important;
-  border-right: 1px solid #E7DED4 !important;
-  z-index: 999;
+  width: var(--sidebar-w);
+  background: var(--color-bg, var(--color-bg)) !important;
+  border-right: 1px solid var(--color-border);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width var(--transition), transform var(--transition);
+}
+
+/* Brand */
+.rb-sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border);
+  min-height: var(--topbar-h);
+}
+.rb-brand-icon svg { flex-shrink: 0; }
+.rb-brand-text {
+  display: none;
+}
+
+/* Nav menu */
+.rb-sidebar-menu {
+  flex: 1;
+  padding: 16px 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.rb-sidebar-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 0;
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow-x: hidden;
-  overflow-y: auto;
-  /* Critical: never steal space from the content flow */
-  flex-shrink: 0;
-}
-
-/* Expanded state — toggled by JS click on hamburger */
-.canva-sidebar.expanded {
-  width: var(--sidebar-expanded-w) !important;
-  align-items: flex-start !important;
-  padding: 16px 12px !important;
-}
-
-/* Tablet 768–1199px: sidebar hidden, drawer opens on click */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .canva-sidebar {
-    /* Slide in from left as a drawer */
-    transform: translateX(-100%);
-    box-shadow: 4px 0 24px rgba(0,0,0,0.08);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .canva-sidebar.expanded {
-    transform: translateX(0);
-    width: var(--sidebar-expanded-w) !important;
-  }
-}
-
-/* Mobile <768px: sidebar hidden */
-@media (max-width: 767px) {
-  .canva-sidebar {
-    display: none !important;
-  }
-}
-
-/* Sidebar overlay backdrop (tablet) */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.3);
-  z-index: 998;
-  cursor: pointer;
-}
-.sidebar-overlay.visible {
-  display: block;
-}
-
-.sidebar-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 12px;
-  border-radius: 12px;
-  color: #1E293B !important;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 8px;
-  gap: 16px;
-  text-decoration: none;
+  gap: 6px;
+  width: 64px;
+  height: 64px;
+  padding: 8px 4px;
+  border-radius: var(--radius-lg);
   border: none;
   background: transparent;
-  min-height: 48px;
-  white-space: nowrap;
+  color: var(--color-text-2) !important;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-left: 0;
+  border-left: none !important;
 }
-
-/* When expanded, items left-align */
-.canva-sidebar.expanded .sidebar-item {
-  justify-content: flex-start;
+.rb-sidebar-item:hover {
+  background: var(--color-badge-bg);
+  color: var(--color-primary) !important;
 }
-
-.sidebar-item:hover {
-  background-color: #F8F5EF;
-  color: #A47148 !important;
-}
-
-.sidebar-item.active {
-  background-color: #F8F5EF;
-  color: #A47148 !important;
+.rb-sidebar-item.active {
+  background: var(--color-badge-bg) !important;
+  color: var(--color-primary) !important;
+  border-left: none !important;
+  border-radius: var(--radius-lg) !important;
   font-weight: 700;
 }
-
-.sidebar-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: inherit;
-  /* Hidden by default (collapsed state) */
-  opacity: 0;
-  width: 0;
-  overflow: hidden;
-  transition: opacity 0.2s ease, width 0.2s ease;
-  white-space: nowrap;
-}
-
-/* Labels visible only when expanded */
-.canva-sidebar.expanded .sidebar-label {
-  opacity: 1;
-  width: auto;
-}
-
-.sidebar-icon {
-  font-size: 1.3rem;
+.rb-sidebar-icon {
+  font-size: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
+  margin-bottom: 2px;
   flex-shrink: 0;
 }
+.rb-sidebar-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.rb-sidebar-label {
+  font-size: 0.68rem;
+  line-height: 1.1;
+  text-align: center;
+  max-width: 60px;
+  word-wrap: break-word;
+}
 
+.rb-sidebar-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 8px 6px;
+  width: 50px;
+}
+
+/* Upgrade card */
+.rb-upgrade-card {
+  display: none;
+}
+
+/* User profile footer */
+.rb-user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  border-top: 1px solid var(--color-border);
+  cursor: pointer;
+  width: 100%;
+}
+.rb-profile-avatar {
+  width: 38px; height: 38px;
+  background: var(--color-primary);
+  color: #fff !important;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+}
+.rb-profile-info { display: none; }
+.rb-profile-chevron { display: none; }
+
+/* Overlay backdrop (mobile drawer) */
+.rb-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 1090;
+  cursor: pointer;
+}
+.rb-overlay.visible { display: block; }
+
+/* Mobile: sidebar completely hidden (mobile bottom rail is used) */
+@media (max-width: 767px) {
+  .rb-sidebar {
+    display: none !important;
+  }
+  .rb-overlay {
+    display: none !important;
+  }
+  .rb-main-header {
+    left: 0 !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   TOPBAR  (fixed header)
+   ═══════════════════════════════════════════════════════ */
+
+.rb-main-header {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-w);
+  right: 0;
+  height: var(--topbar-h);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1050;
+  box-shadow: var(--shadow-xs);
+  gap: 16px;
+  transition: left var(--transition);
+}
+
+/* Hamburger (hidden completely, mobile nav is handled by bottom rail) */
+.rb-hamburger {
+  display: none !important;
+}
+
+/* Logo (left — shown on mobile, hidden on desktop where sidebar has the brand) */
+.rb-header-logo {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+.rb-header-logo-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-1);
+  white-space: nowrap;
+}
+@media (max-width: 767px) {
+  .rb-header-logo { display: flex; }
+}
+
+/* Search bar (center — hidden on mobile) */
+.rb-header-search {
+  flex: 1;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+}
+.rb-header-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-3);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+.rb-header-search input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 50px;
+  background: #FAFAFA;
+  font-size: 0.85rem;
+  color: var(--color-text-1);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.rb-header-search input:focus { border-color: var(--color-primary); }
+.rb-header-search input::placeholder { color: var(--color-text-3); }
+@media (max-width: 767px) {
+  .rb-header-search { display: none; }
+}
+
+/* Right side actions */
+.rb-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+.rb-noti {
+  position: relative;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background var(--transition);
+}
+.rb-noti:hover { background: var(--color-badge-bg); }
+.rb-noti-badge {
+  position: absolute; top: 4px; right: 3px;
+  width: 8px; height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+}
+.rb-avatar {
+  width: 32px; height: 32px;
+  background: var(--color-primary);
+  color: #fff !important;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; cursor: pointer;
+  border: 2px solid var(--color-border);
+}
+.rb-avatar-chevron { font-size: 0.6rem; color: var(--color-text-2); cursor: pointer; }

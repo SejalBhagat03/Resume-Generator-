@@ -208,7 +208,7 @@ def show_create_resume_dialog():
                 content["metadata"] = {
                     "title": clean_title,
                     "template": sel_tpl,
-                    "color": "#6366F1",
+                    "color": "#A86A3D",
                     "margins": 20,
                     "fscale": 1.0,
                     "fitting": "Auto Compress",

@@ -42,7 +42,7 @@ def save_to_disk(d: dict):
     
     # Sync current UI configuration to metadata on save
     meta["template"] = st.session_state.get("template", meta.get("template", "sejal_original"))
-    meta["color"] = st.session_state.get("color", meta.get("color", "#6366F1"))
+    meta["color"] = st.session_state.get("color", meta.get("color", "#A86A3D"))
     meta["margins"] = st.session_state.get("margins", meta.get("margins", 20))
     meta["fscale"] = st.session_state.get("fscale", meta.get("fscale", 1.0))
     meta["fitting"] = st.session_state.get("fitting", meta.get("fitting", FITTING_OPTS[0]))
@@ -51,6 +51,12 @@ def save_to_disk(d: dict):
     with open(get_profile_path(), "w", encoding="utf-8") as f:
         json.dump(d, f, indent=2)
     _read_json.clear()
+    
+    # Unified Save Pipeline: Create history snapshot automatically on save
+    try:
+        save_checkpoint(get_profile_path(), d)
+    except Exception:
+        pass
 
     # Compile PDF on save so the thumbnail is always up to date
     try:
@@ -94,7 +100,7 @@ def load_active_resume(path: str):
     st.session_state.current_profile_path = path
     st.session_state.resume = resume
     st.session_state.template = meta.get("template", "sejal_original")
-    st.session_state.color = meta.get("color", "#6366F1")
+    st.session_state.color = meta.get("color", "#A86A3D")
     st.session_state.margins = meta.get("margins", 20)
     st.session_state.fscale = meta.get("fscale", 1.0)
     st.session_state.fitting = meta.get("fitting", FITTING_OPTS[0])
@@ -114,14 +120,14 @@ def get_pdf_base64_for_resume(r) -> str:
     pdf_path = get_pdf_path_for_json(path)
     if not os.path.exists(pdf_path):
         try:
-            from resume_builder.generators.pdf_generator import build_pdf as local_build_pdf
+            from core.pdf_engine import build_pdf as local_build_pdf
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             local_build_pdf(
                 data=data,
                 template_id=r.get("template", "sejal_original"),
                 pdf_filename=pdf_path,
-                accent_color=r.get("color", "#6366F1"),
+                accent_color=r.get("color", "#A86A3D"),
             )
         except Exception:
             pass
@@ -156,7 +162,7 @@ def list_resumes() -> list:
                         "path": fpath,
                         "last_edited": last_edited,
                         "template": template,
-                        "color": meta.get("color", "#6366F1")
+                        "color": meta.get("color", "#A86A3D")
                     })
                 except Exception:
                     pass

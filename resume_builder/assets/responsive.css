@@ -6,8 +6,8 @@
     left: 0px !important;
     right: 0px !important;
     width: 100vw !important;
-    background: #FFFFFF !important;
-    border-top: 1px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    border-top: 1px solid var(--color-border) !important;
     padding: 8px 12px 14px 12px !important;
     z-index: 1000 !important;
     box-shadow: 0 -4px 12px rgba(0,0,0,0.03) !important;
@@ -25,7 +25,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
 div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="element-container"] button {
   background: transparent !important;
   border: none !important;
-  color: #94A3B8 !important;
+  color: var(--color-text-3) !important;
   font-size: 0.8rem !important;
   font-weight: 700 !important;
   display: flex !important;
@@ -38,7 +38,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
 
 
 div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-testid="column"]:first-child button {
-  color: #A47148 !important; /* Active item color (Home) */
+  color: var(--color-primary) !important; /* Active item color (Home) */
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -47,46 +47,6 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
 
 /* Mobile viewport container adjustments */
 @media (max-width: 767px) {
-  /* Hide all desktop widgets by content and keys */
-  div[data-testid="element-container"]:has(#hero-marker),
-  div[data-testid="element-container"]:has(#hero-marker) + [data-testid="stHorizontalBlock"],
-  div[data-testid="element-container"]:has(#search-section-marker),
-  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"],
-  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + [data-testid="stHorizontalBlock"],
-  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div[data-testid="element-container"],
-  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div[data-testid="element-container"]:has([data-testid="stHorizontalBlock"]),
-  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div[data-testid="element-container"]:has(input[placeholder="Search resumes..."]),
-  div[data-testid="element-container"]:has(#search-section-marker) + div[data-testid="element-container"] + div[data-testid="element-container"]:has(button[key="home_filter_btn"]),
-  div[data-testid="element-container"]:has(#continue-card-marker),
-  div[data-testid="element-container"]:has(#continue-card-marker) + [data-testid="stHorizontalBlock"],
-  div[data-testid="element-container"]:has(#my-resumes-grid-marker),
-  div[data-testid="element-container"]:has(#my-resumes-grid-marker) + [data-testid="stHorizontalBlock"],
-  div[data-testid="element-container"]:has(#bottom-nav-marker),
-  div[data-testid="element-container"]:has(#bottom-nav-marker) + [data-testid="stHorizontalBlock"],
-  .section-header-row,
-  .resume-grid-card,
-  .template-scroll-container,
-  .dashed-create-card,
-  div[data-testid="element-container"]:has(button[key="hero_create_btn"]),
-  div[data-testid="element-container"]:has(button[key="hero_import_btn"]),
-  div[data-testid="element-container"]:has(.hero-resume-illustration),
-  div[data-testid="element-container"]:has(.search-input-box),
-  div[data-testid="element-container"]:has(input[placeholder="Search resumes..."]),
-  div[data-testid="element-container"]:has(button[key="home_filter_btn"]),
-  div[data-testid="element-container"]:has(.continue-card-content),
-  div[data-testid="element-container"]:has(button[key="btn_continue_icon"]),
-  div[data-testid="element-container"]:has(.resume-grid-card),
-  div[data-testid="element-container"]:has(button[key^="grid_edit_"]),
-  div[data-testid="element-container"]:has(button[key^="grid_dl_pdf_"]),
-  div[data-testid="element-container"]:has(button[key^="grid_options_"]),
-  div[data-testid="element-container"]:has(.dashed-create-card),
-  div[data-testid="element-container"]:has(.template-scroll-container),
-  div[data-testid="element-container"]:has(button[key="nav_home_btn"]),
-  div[data-testid="element-container"]:has(button[key="nav_templates_btn"]),
-  div[data-testid="element-container"]:has(button[key="nav_resumes_btn"]),
-  div[data-testid="element-container"]:has(button[key="nav_profile_btn"]) {
-    display: none !important;
-  }
 
   /* Adjust block-container padding for mobile */
   .main .block-container {
@@ -94,7 +54,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     padding-right: 16px !important;
     padding-top: 80px !important; /* 64px navbar + 16px gap */
     padding-bottom: 96px !important; /* 72px bottom nav + 24px gap */
-    background-color: #F8F4EE !important;
+    background-color: var(--color-bg) !important;
   }
 
   /* Spacing system and headings */
@@ -108,7 +68,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-section-title {
     font-size: 22px !important;
     font-weight: 700 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
     font-family: 'Inter', sans-serif !important;
   }
 
@@ -126,35 +86,35 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   div[data-testid="element-container"]:has(.mob-search-input-box) input {
     height: 56px !important;
     border-radius: 18px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
     padding-left: 20px !important;
     font-size: 15px !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
   }
   div[data-testid="element-container"]:has(.mob-search-input-box) input:focus {
-    border-color: #A47148 !important;
+    border-color: var(--color-primary) !important;
     box-shadow: 0 0 0 3px rgba(164, 113, 72, 0.1) !important;
   }
   div[data-testid="element-container"]:has(button[key="mob_filter_btn"]) button {
     height: 56px !important;
     width: 56px !important;
     border-radius: 18px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
-    color: #1E293B !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text-1) !important;
     font-size: 18px !important;
     padding: 0 !important;
   }
   div[data-testid="element-container"]:has(button[key="mob_filter_btn"]) button:hover {
-    border-color: #A47148 !important;
-    background: #F8F5EF !important;
+    border-color: var(--color-primary) !important;
+    background: var(--color-badge-bg) !important;
   }
 
   /* Mobile Hero Card */
   .mob-hero-card {
-    background: #FFF8F1 !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-badge-bg) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 24px !important;
     padding: 24px 24px 96px 24px !important; /* bottom padding fits buttons */
     position: relative !important;
@@ -173,14 +133,14 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-hero-title {
     font-size: 24px !important;
     font-weight: 800 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
     line-height: 1.25 !important;
     margin: 0 0 8px 0 !important;
     font-family: 'Inter', sans-serif !important;
   }
   .mob-hero-subtitle {
     font-size: 15px !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
     margin: 0 !important;
     line-height: 1.4 !important;
   }
@@ -189,8 +149,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     flex-shrink: 0 !important;
   }
   .mob-illus-resume {
-    background: #FFFFFF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 12px !important;
     padding: 8px 8px 16px 8px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
@@ -205,12 +165,12 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-illus-title {
     font-size: 6px !important;
     font-weight: 800 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     margin-top: 2px !important;
   }
   .mob-illus-line {
     height: 2px !important;
-    background: #F8F5EF !important;
+    background: var(--color-badge-bg) !important;
     border-radius: 1px !important;
     width: 100% !important;
   }
@@ -221,8 +181,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     position: absolute !important;
     bottom: -6px !important;
     right: -10px !important;
-    background: #FFFFFF !important;
-    border: 1.5px solid #A47148 !important;
+    background: var(--color-surface) !important;
+    border: 1.5px solid var(--color-primary) !important;
     border-radius: 50% !important;
     width: 32px !important;
     height: 32px !important;
@@ -236,20 +196,20 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-score-number {
     font-size: 10px !important;
     font-weight: 800 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     line-height: 1 !important;
   }
   .mob-score-text {
     font-size: 3px !important;
     font-weight: 700 !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
     text-transform: uppercase !important;
     margin-top: 1px !important;
   }
   .mob-score-desc {
     font-size: 3px !important;
     font-weight: 800 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
 
   /* Hero buttons positioning inside card */
@@ -271,8 +231,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     max-width: 50% !important;
   }
   div[data-testid="element-container"]:has(button[key="mob_hero_create_btn"]) button {
-    background: #A47148 !important;
-    color: #FFFFFF !important;
+    background: var(--color-primary) !important;
+    color: var(--color-surface) !important;
     border: none !important;
     border-radius: 14px !important;
     height: 52px !important;
@@ -281,9 +241,9 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     box-shadow: 0 4px 14px rgba(164,113,72,0.2) !important;
   }
   div[data-testid="element-container"]:has(button[key="mob_hero_import_btn"]) button {
-    background: #FFFFFF !important;
-    color: #A47148 !important;
-    border: 1.5px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    color: var(--color-primary) !important;
+    border: 1.5px solid var(--color-border) !important;
     border-radius: 14px !important;
     height: 52px !important;
     font-size: 14px !important;
@@ -292,9 +252,9 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
 
   /* Continue Editing Mobile Card */
   .mob-continue-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E7DED4 !important;
-    border-left: 4px solid #A47148 !important;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
+    border-left: 4px solid var(--color-primary) !important;
     border-radius: 20px !important;
     padding: 16px !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
@@ -315,8 +275,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-continue-thumb {
     width: 48px !important;
     height: 48px !important;
-    background: #F8F5EF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-badge-bg) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 10px !important;
     display: flex !important;
     align-items: center !important;
@@ -331,7 +291,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-continue-title {
     font-size: 15px !important;
     font-weight: 700 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
   }
   .mob-continue-meta {
     display: flex !important;
@@ -340,7 +300,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   }
   .mob-continue-badge {
     background: #F5EDE0 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     border-radius: 999px !important;
     font-size: 11px !important;
     font-weight: 700 !important;
@@ -348,7 +308,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   }
   .mob-continue-time {
     font-size: 12px !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
   }
 
   /* Overlay the edit button on continue card */
@@ -364,9 +324,9 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     width: 42px !important;
     height: 42px !important;
     border-radius: 12px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
-    color: #A47148 !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-primary) !important;
     font-size: 16px !important;
     padding: 0 !important;
     box-shadow: none !important;
@@ -374,8 +334,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
 
   /* My Resumes Stacked Cards */
   .mob-resume-card-container {
-    background: #FFFFFF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 20px !important;
     padding: 16px !important;
     height: 120px !important;
@@ -398,8 +358,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-resume-card-thumb {
     width: 56px !important;
     height: 72px !important;
-    background: #F8F5EF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-badge-bg) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 10px !important;
     display: flex !important;
     align-items: center !important;
@@ -414,7 +374,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   .mob-resume-card-title {
     font-size: 15px !important;
     font-weight: 700 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -428,7 +388,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   }
   .mob-resume-card-badge {
     background: #F5EDE0 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     border-radius: 999px !important;
     font-size: 10px !important;
     font-weight: 700 !important;
@@ -436,7 +396,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   }
   .mob-resume-card-time {
     font-size: 11px !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
   }
 
   /* Absolute position Streamlit action columns overlaying the card actions placeholder */
@@ -465,8 +425,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   div[data-testid="element-container"]:has(button[key^="mob_grid_edit_"]) button {
     height: 36px !important;
     border-radius: 10px !important;
-    background: #A47148 !important;
-    color: #FFFFFF !important;
+    background: var(--color-primary) !important;
+    color: var(--color-surface) !important;
     font-size: 12px !important;
     font-weight: 700 !important;
     border: none !important;
@@ -477,9 +437,9 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     height: 36px !important;
     width: 34px !important;
     border-radius: 10px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
-    color: #1E293B !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text-1) !important;
     font-size: 14px !important;
     font-weight: 700 !important;
     padding: 0 !important;
@@ -488,7 +448,7 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
 
   /* Mobile Dashed Create Card */
   .mob-dashed-create-card {
-    background: #FFFFFF !important;
+    background: var(--color-surface) !important;
     border: 2px dashed #D9C2A6 !important;
     border-radius: 20px !important;
     display: flex !important;
@@ -505,12 +465,12 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
   }
   .mob-dashed-create-icon {
     font-size: 24px !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
   .mob-dashed-create-text {
     font-size: 14px !important;
     font-weight: 700 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
 
   /* FAB */
@@ -521,8 +481,8 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     width: 60px !important;
     height: 60px !important;
     border-radius: 50% !important;
-    background: #A47148 !important;
-    color: #FFFFFF !important;
+    background: var(--color-primary) !important;
+    color: var(--color-surface) !important;
     font-size: 28px !important;
     display: flex !important;
     align-items: center !important;
@@ -534,76 +494,54 @@ div[data-testid="element-container"]:has(#bottom-nav-marker) + div[data-testid="
     transition: transform 0.2s !important;
   }
 
-  /* Bottom Nav Glassmorphism */
+  /* Bottom Nav Design (Canva-inspired mini rail for mobile) */
   .mob-bottom-nav {
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     height: 72px !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border-top: 1px solid #E7DED4 !important;
+    background: var(--color-bg) !important;
+    border-top: 1px solid var(--color-border) !important;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
     display: flex !important;
     justify-content: space-around !important;
     align-items: center !important;
     z-index: 1000 !important;
     padding-bottom: 12px !important;
     box-sizing: border-box !important;
+    box-shadow: 0 -4px 16px rgba(43, 27, 18, 0.06) !important;
   }
   .mob-nav-item {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #94A3B8 !important;
+    color: var(--color-text-3) !important;
     cursor: pointer !important;
-    transition: color 0.2s !important;
+    transition: all 0.25s ease !important;
     flex: 1 !important;
+    padding: 6px 0 !important;
+    border-radius: 12px !important;
   }
   .mob-nav-item.active {
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
+    font-weight: 700 !important;
   }
   .mob-nav-icon {
-    font-size: 24px !important;
+    font-size: 20px !important;
+    margin-bottom: 2px !important;
+    transition: transform 0.2s ease !important;
+  }
+  .mob-nav-item:active .mob-nav-icon {
+    transform: scale(0.9) !important;
   }
   .mob-nav-label {
-    font-size: 11px !important;
+    font-size: 10px !important;
     font-weight: 600 !important;
-    margin-top: 4px !important;
+    margin-top: 2px !important;
   }
 }
 
-@media (min-width: 768px) {
-  /* Hide all mobile layout elements on desktop */
-  div[data-testid="element-container"]:has(#mob-hero-marker),
-  div[data-testid="element-container"]:has(#mob-hero-marker) + div[data-testid="element-container"],
-  div[data-testid="element-container"]:has(#mob-hero-marker) + div[data-testid="element-container"] + [data-testid="stHorizontalBlock"],
-  .mob-hero-card,
-  div[data-testid="element-container"]:has(button[key="mob_hero_create_btn"]),
-  div[data-testid="element-container"]:has(button[key="mob_hero_import_btn"]),
-  div[data-testid="element-container"]:has(#mob-search-marker),
-  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"],
-  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + [data-testid="stHorizontalBlock"],
-  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div[data-testid="element-container"],
-  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div[data-testid="element-container"]:has([data-testid="stHorizontalBlock"]),
-  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div[data-testid="element-container"]:has(input[placeholder="Search your resumes..."]),
-  div[data-testid="element-container"]:has(#mob-search-marker) + div[data-testid="element-container"] + div[data-testid="element-container"]:has(button[key="mob_filter_btn"]),
-  div[data-testid="element-container"]:has(.mob-search-row-container),
-  div[data-testid="element-container"]:has(.mob-search-input-box),
-  div[data-testid="element-container"]:has(input[placeholder="Search your resumes..."]),
-  div[data-testid="element-container"]:has(button[key="mob_filter_btn"]),
-  div[data-testid="element-container"]:has(.mob-continue-card),
-  div[data-testid="element-container"]:has(button[key="mob_btn_continue_icon"]),
-  div[data-testid="element-container"]:has(.mob-resume-card-container),
-  div[data-testid="element-container"]:has(.mob-dashed-create-card),
-  div[data-testid="element-container"]:has(button[key^="mob_grid_edit_"]),
-  div[data-testid="element-container"]:has(button[key^="mob_grid_options_"]),
-  .mob-fab,
-  .mob-bottom-nav,
-  div[data-testid="element-container"]:has(.mob-section-header-row),
-  div[data-testid="element-container"]:has(.mob-section-header-row) + div[data-testid="element-container"] {
-    display: none !important;
-  }
-}
+

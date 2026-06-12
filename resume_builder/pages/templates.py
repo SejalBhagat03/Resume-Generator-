@@ -7,12 +7,12 @@ def render_templates_gallery(TID: str):
     st.caption("Choose a curated template style. The live preview updates instantly.")
 
     TPL_INFOS = {
-        "sejal_original": {"name": "Modern Accent", "desc": "Clean typography with subtle color accents.", "icon": "&#x1F3A8;", "color": "#6366F1"},
+        "sejal_original": {"name": "Modern Accent", "desc": "Clean typography with subtle color accents.", "icon": "&#x1F3A8;", "color": "#A86A3D"},
         "ats":            {"name": "ATS Professional", "desc": "Industry-standard, highly scannable layout.", "icon": "&#x1F4BC;", "color": "#1E293B"},
         "modern":         {"name": "Elegant Modern", "desc": "Stylish sans-serif theme with modern headings.", "icon": "&#x2728;", "color": "#0F766E"},
         "creative":       {"name": "Creative Bold", "desc": "Vibrant design to stand out in creative roles.", "icon": "&#x1F680;", "color": "#E11D48"},
         "minimal":        {"name": "Minimalist Clean", "desc": "Simple, elegant spacing focusing on content.", "icon": "&#x1F4C4;", "color": "#475569"},
-        "two_column":     {"name": "Two Column Splitted", "desc": "Balanced two-column split layout.", "icon": "&#x1F4CA;", "color": "#7C3AED"}
+        "two_column":     {"name": "Two Column Splitted", "desc": "Balanced two-column split layout.", "icon": "&#x1F4CA;", "color": "#854D0E"}
     }
 
     g_cols = st.columns(3, gap="small")
@@ -22,7 +22,7 @@ def render_templates_gallery(TID: str):
             is_selected = (TID == tpl_id)
             border_css = f"border: 2px solid {info['color'] if is_selected else '#E2E8F0'};"
             bg_css = f"background: {info['color']}08;" if is_selected else "background: #FFFFFF;"
-            shadow_css = "box-shadow: 0 4px 12px rgba(99,102,241,0.12);" if is_selected else "box-shadow: 0 1px 3px rgba(0,0,0,0.02);"
+            shadow_css = "box-shadow: 0 4px 12px rgba(168,106,61,0.12);" if is_selected else "box-shadow: 0 1px 3px rgba(0,0,0,0.02);"
             
             st.markdown(
                 f'<div style="{border_css} {bg_css} {shadow_css} border-radius: 12px; padding: 12px; height: 180px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">'

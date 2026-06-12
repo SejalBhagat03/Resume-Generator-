@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import os
 import copy
+from resume_builder.utils.helpers import clean_html
 from analysis.master_profile import (
     ensure_setup, load_master_profile, save_master_profile,
     list_versions, load_version, save_version, update_resume_with_master, save_active_resume_and_sync
@@ -86,7 +87,7 @@ _CAREER_CSS = """
 <style>
 /* ── Hero ──────────────────────────────────────────────────────────────── */
 .career-hero {
-    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+    background: linear-gradient(135deg, #A86A3D 0%, #8E5A33 100%);
     border-radius: 16px;
     padding: 26px 32px;
     margin-bottom: 20px;
@@ -159,12 +160,12 @@ _CAREER_CSS = """
 .cc-section-title {
     font-size: .76rem;
     font-weight: 700;
-    color: #6366F1;
+    color: #A86A3D;
     text-transform: uppercase;
     letter-spacing: .09em;
     margin: 22px 0 10px;
     padding-bottom: 5px;
-    border-bottom: 2px solid #EEF2FF;
+    border-bottom: 2px solid #E9DED2;
 }
 
 /* ── Active Tool Header ─────────────────────────────────────────────────── */
@@ -235,7 +236,7 @@ _CAREER_CSS = """
 .ach-section-tag {
     font-size: .65rem;
     font-weight: 700;
-    color: #6366F1;
+    color: #A86A3D;
     text-transform: uppercase;
     letter-spacing: .07em;
     margin-bottom: 8px;
@@ -294,21 +295,26 @@ def _section_title(text: str):
 # ─── Main Entry Point ─────────────────────────────────────────────────────────
 def show_career_center():
     st.markdown(_CAREER_CSS, unsafe_allow_html=True)
-    st.markdown("""
-    <style>
-    .adv-tools-expander summary {
-        font-size: 1rem !important;
-        font-weight: 700 !important;
-        color: #4F46E5 !important;
-    }
-    .tool-card-btn button {
-        border-radius: 10px !important;
-        padding: 10px 8px !important;
-        height: auto !important;
-        min-height: 52px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        clean_html(
+            """
+            <style>
+            .adv-tools-expander summary {
+                font-size: 1rem !important;
+                font-weight: 700 !important;
+                color: #A86A3D !important;
+            }
+            .tool-card-btn button {
+                border-radius: 10px !important;
+                padding: 10px 8px !important;
+                height: auto !important;
+                min-height: 52px !important;
+            }
+            </style>
+            """
+        ),
+        unsafe_allow_html=True
+    )
 
     d = st.session_state.resume
     ensure_setup(d)
@@ -375,9 +381,9 @@ def show_career_center():
     with g1:
         is_active = (active_id == "consistency")
         st.markdown(
-            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'<div style="border: 2px solid {"#A86A3D" if is_active else "#E2E8F0"}; '
             f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
-            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'background: {"#F4ECE3" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
             f'  <div>'
             f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">🚀 Improve Resume</div>'
             f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">Fix ATS issues, improve content quality, and strengthen bullets.</p>'
@@ -397,9 +403,9 @@ def show_career_center():
     with g2:
         is_active = (active_id == "interview_prep")
         st.markdown(
-            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'<div style="border: 2px solid {"#A86A3D" if is_active else "#E2E8F0"}; '
             f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
-            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'background: {"#F4ECE3" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
             f'  <div>'
             f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">💼 Interview Prep</div>'
             f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">Project questions, HR preparation, and technical practice.</p>'
@@ -418,9 +424,9 @@ def show_career_center():
     with g3:
         is_active = (active_id == "gap_analyzer")
         st.markdown(
-            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'<div style="border: 2px solid {"#A86A3D" if is_active else "#E2E8F0"}; '
             f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
-            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'background: {"#F4ECE3" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
             f'  <div>'
             f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">📈 Skill Gap Analysis</div>'
             f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">See how your skills match target roles and where to focus learning.</p>'
@@ -440,9 +446,9 @@ def show_career_center():
     with g4:
         is_active = (active_id == "github")
         st.markdown(
-            f'<div style="border: 2px solid {"#6366F1" if is_active else "#E2E8F0"}; '
+            f'<div style="border: 2px solid {"#A86A3D" if is_active else "#E2E8F0"}; '
             f'border-radius: 12px; padding: 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; '
-            f'background: {"#EEF2FF" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
+            f'background: {"#F4ECE3" if is_active else "#FFFFFF"}; transition: all 0.2s ease;">'
             f'  <div>'
             f'    <div style="font-weight: 800; font-size: 1.02rem; color: #1E293B;">🐙 GitHub Projects</div>'
             f'    <p style="font-size: 0.8rem; color: #64748B; margin-top: 6px; line-height: 1.3;">Connect repos and import projects directly into your resume.</p>'
@@ -682,7 +688,7 @@ def show_career_center():
                     label = f"[{q['skill']}] {q['question']}"
                 with st.expander(label):
                     st.markdown(
-                        f'<div style="background:#F8FAFC;border-left:3px solid #6366F1;'
+                        f'<div style="background:#F8FAFC;border-left:3px solid #A86A3D;'
                         f'padding:8px 12px;border-radius:4px;margin-bottom:8px;font-size:.84rem;">'
                         f'<i>Interviewer Intent:</i> <b>{q["reason"]}</b>'
                         f'</div>',
@@ -871,7 +877,7 @@ def show_career_center():
                         st.markdown(
                             f'<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;'
                             f'padding:10px 14px;margin-bottom:8px;">'
-                            f'<b style="color:#6366F1;">{label}</b><br/>'
+                            f'<b style="color:#A86A3D;">{label}</b><br/>'
                             f'<span style="color:#1E293B;font-size:.88rem;">{star[key]}</span>'
                             f'</div>',
                             unsafe_allow_html=True,

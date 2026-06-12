@@ -49,7 +49,7 @@ from resume_builder.components.navbar import render_navbar
 from resume_builder.components.dialogs import show_import_dialog
 from resume_builder.components.wizard import show_create_resume_dialog
 from resume_builder.components.sidebar import render_sidebar
-from resume_builder.components.hero import render_hero
+
 from resume_builder.components.resume_card import render_resume_grid_card, render_continue_card_desktop, render_continue_card_mobile
 from resume_builder.components.search_bar import render_search_bar_desktop, render_search_bar_mobile
 from resume_builder.components.bottom_nav import render_bottom_nav
@@ -119,14 +119,14 @@ for css_file in css_files:
 FITTING_OPTS = ["Auto Compress", "Keep Original", "Multi-Page"]
 BUILTIN      = {"sejal_original","ats","modern","creative","minimal","two_column"}
 ACCENT_PRESETS = {
-    "Indigo": "#6366F1", "Blue": "#2563EB", "Emerald": "#10B981",
-    "Rose": "#E11D48", "Violet": "#7C3AED", "Slate": "#475569",
+    "Brown": "#A86A3D", "Blue": "#2563EB", "Emerald": "#10B981",
+    "Rose": "#E11D48", "Bronze": "#854D0E", "Slate": "#475569",
 }
 
 # Load settings defaults from config file if available
 app_defaults = {
     "template": "sejal_original",
-    "color": "#6366F1",
+    "color": "#A86A3D",
     "margins": 20,
     "fscale": 1.0,
     "fitting": FITTING_OPTS[0],
@@ -337,20 +337,22 @@ if "resume_loaded" not in st.session_state:
 # ═══════════════════════════════════════════════════════
 # ROUTING CONTROLLER
 # ═══════════════════════════════════════════════════════
-# Route check immediately stops the page if we are on My Resumes Home
-if st.session_state.navigation_page in ("dashboard", "home"):
-    show_home()
-    st.stop()
-
-if st.session_state.navigation_page == "career":
-    st.session_state.navigation_page = "workspace"
-    st.session_state.workspace_tab = "Insights"
-    st.rerun()
 
 if st.session_state.get("show_import", False):
     st.session_state.show_import = False
     show_import_dialog()
 
-# Render editor workspace
-show_editor()
+if st.session_state.get("navigation_page") == "career":
+    st.session_state.navigation_page = "workspace"
+    st.session_state.workspace_tab = "Insights"
+    st.rerun()
+
+PAGES = {
+    "dashboard": show_home,
+    "home": show_home,
+    "workspace": show_editor,
+}
+
+current_page = st.session_state.get("navigation_page", "home")
+PAGES.get(current_page, show_home)()
 

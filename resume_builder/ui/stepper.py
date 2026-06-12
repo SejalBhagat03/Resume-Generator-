@@ -1,5 +1,6 @@
 import streamlit as st
 from typing import List
+from resume_builder.utils.helpers import clean_html
 
 def render_stepper(current_step: int, steps: List[str]):
     """Render a horizontal stepper with circles.
@@ -20,21 +21,23 @@ def render_stepper(current_step: int, steps: List[str]):
         with col:
             # Circle
             st.markdown(
-                f"""
-                <div style="
-                    width:{size}px;
-                    height:{size}px;
-                    line-height:{size}px;
-                    border:{'2px' if is_current else '1px'} solid {border};
-                    border-radius:50%;
-                    background:{circle_bg};
-                    color:#fff;
-                    font-weight:600;
-                    text-align:center;
-                    margin:auto;
-                ">{idx + 1}</div>
-                <div style="text-align:center;font-size:0.75rem;color:#2C2C2C;margin-top:4px;">{title}</div>
-                """,
+                clean_html(
+                    f"""
+                    <div style="
+                        width:{size}px;
+                        height:{size}px;
+                        line-height:{size}px;
+                        border:{'2px' if is_current else '1px'} solid {border};
+                        border-radius:50%;
+                        background:{circle_bg};
+                        color:#fff;
+                        font-weight:600;
+                        text-align:center;
+                        margin:auto;
+                    ">{idx + 1}</div>
+                    <div style="text-align:center;font-size:0.75rem;color:#2C2C2C;margin-top:4px;">{title}</div>
+                    """
+                ),
                 unsafe_allow_html=True,
             )
             # Connecting line (except after the last step)
@@ -43,3 +46,4 @@ def render_stepper(current_step: int, steps: List[str]):
                     "<div style='height:2px;background:#8B5E3C;margin:4px auto;width:100%;'></div>",
                     unsafe_allow_html=True,
                 )
+

@@ -32,3 +32,10 @@ def format_relative_time(timestamp: float) -> str:
         else:
             struct = time.localtime(timestamp)
             return time.strftime("%d %b %Y", struct)
+
+def clean_html(html_str: str) -> str:
+    """Removes all leading whitespace from each line to prevent Streamlit preformatted code block interpretation."""
+    if not html_str:
+        return ""
+    return "\n".join(line.strip() for line in html_str.split("\n"))
+

@@ -1,39 +1,69 @@
-/* ── Base — force light theme on Streamlit Cloud & local ── */
-html, body, [data-testid="stAppViewContainer"],
+/* ═══════════════════════════════════════════════════════
+   BASE — Streamlit overrides, resets, global type
+   ═══════════════════════════════════════════════════════ */
+
+/* Force light theme */
+html, body,
+[data-testid="stAppViewContainer"],
 [data-testid="stAppViewContainer"] > section,
-[data-testid="stVerticalBlock"],
 .main .block-container {
-  font-family: 'Inter', sans-serif !important;
-  background: #F8F4EE !important; /* Update background to beige/cream */
-  color: #1E293B !important;
+  font-family: var(--font-sans) !important;
+  background: var(--color-bg) !important;
+  color: var(--color-text-1) !important;
 }
 
-/* Force all generic text dark so cloud dark-mode doesn't override */
+/* Strip Streamlit chrome */
+#MainMenu, footer,
+[data-testid="stHeader"],
+[data-testid="stDecoration"],
+[data-testid="stToolbar"],
+[data-testid="stStatusWidget"] {
+  display: none !important;
+}
+
+/* Remove default Streamlit app padding */
+[data-testid="stAppViewContainer"] > .main {
+  padding: 0 !important;
+}
+
+/* Box sizing everywhere */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Generic text color reset */
 p, span, div, li, td, th, label,
 h1, h2, h3, h4, h5, h6 {
-  color: #1E293B;
+  color: var(--color-text-1);
 }
 
 /* Streamlit markdown elements */
 [data-testid="stMarkdownContainer"] p,
 [data-testid="stMarkdownContainer"] span,
-[data-testid="stMarkdownContainer"] li,
 [data-testid="stMarkdownContainer"] h1,
 [data-testid="stMarkdownContainer"] h2,
 [data-testid="stMarkdownContainer"] h3 {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
-#MainMenu, footer, [data-testid="stHeader"],
-[data-testid="stDecoration"], [data-testid="stToolbar"] { display: none !important; }
-
-/* ── Modern App Padding ── */
-/* IMPORTANT: Do NOT put padding or max-width here.
-   All sizing is handled by the layout system below (via CSS variables).
-   This rule only sets box-sizing to ensure padding is included in width calc. */
-.block-container {
-  box-sizing: border-box !important;
+/* Remove default button styles Streamlit adds */
+button {
+  font-family: var(--font-sans) !important;
+  cursor: pointer;
 }
-[data-testid="stAppViewContainer"] > .main { padding: 0 !important; }
 
+/* Utility: visually hide but keep accessible */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
 
+/* Responsive show/hide utilities */
+.rb-desktop-only { display: block; }
+.rb-mobile-only  { display: none;  }
+
+@media (max-width: 767px) {
+  .rb-desktop-only { display: none  !important; }
+  .rb-mobile-only  { display: block !important; }
+}

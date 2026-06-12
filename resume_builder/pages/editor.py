@@ -6,6 +6,7 @@ import re
 import copy
 import html
 import base64
+from resume_builder.utils.helpers import clean_html
 
 # Import storage services
 from resume_builder.services.storage import (
@@ -46,8 +47,8 @@ MAX_HISTORY = 30
 FITTING_OPTS = ["Auto Compress", "Keep Original", "Multi-Page"]
 
 ACCENT_PRESETS = {
-    "Indigo": "#6366F1", "Blue": "#2563EB", "Emerald": "#10B981",
-    "Rose": "#E11D48", "Violet": "#7C3AED", "Slate": "#475569",
+    "Brown": "#A86A3D", "Blue": "#2563EB", "Emerald": "#10B981",
+    "Rose": "#E11D48", "Bronze": "#854D0E", "Slate": "#475569",
 }
 
 DEFAULT = {
@@ -540,11 +541,11 @@ def show_editor():
             
     with c_accent:
         COLOR_ICONS = {
-            "Indigo": "&#128309; Indigo",
+            "Brown": "&#128996; Brown",
             "Blue": "&#128309; Blue",
             "Emerald": "&#128994; Emerald",
             "Rose": "&#128308; Rose",
-            "Violet": "&#128995; Violet",
+            "Bronze": "&#128999; Bronze",
             "Slate": "&#9899; Slate",
             "Custom": "&#x1F3A8; Custom"
         }
@@ -625,7 +626,7 @@ def show_editor():
                 with sc_meta:
                     st.markdown(
                         f'<div style="display: flex; flex-direction: column; justify-content: center; height: 55px; line-height: 1.25;">'
-                        f'  <span style="font-size: 0.72rem; font-weight: 700; color: #6366F1; text-transform: uppercase; letter-spacing: 0.05em;">Step {current_step + 1} of 6: {step_title}</span>'
+                        f'  <span style="font-size: 0.72rem; font-weight: 700; color: #A86A3D; text-transform: uppercase; letter-spacing: 0.05em;">Step {current_step + 1} of 6: {step_title}</span>'
                         f'  <span style="font-size: 0.82rem; font-weight: 600; color: #1E293B; margin-top: 1px;">{step_subtitle}</span>'
                         f'</div>',
                         unsafe_allow_html=True
@@ -1169,21 +1170,26 @@ def show_editor():
     if right_col:
         with right_col:
             st.markdown('<div id="right-panel-anchor"></div>', unsafe_allow_html=True)
-            st.markdown("""
-            <style>
-            @media (min-width: 768px) {
-              [data-testid="column"]:has(#right-panel-anchor) {
-                position: sticky;
-                top: 2rem;
-                align-self: flex-start;
-                max-height: calc(100vh - 4rem);
-                overflow-y: auto;
-              }
-              [data-testid="column"]:has(#right-panel-anchor)::-webkit-scrollbar { width: 6px; }
-              [data-testid="column"]:has(#right-panel-anchor)::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-            }
-            </style>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                clean_html(
+                    """
+                    <style>
+                    @media (min-width: 768px) {
+                      [data-testid="column"]:has(#right-panel-anchor) {
+                        position: sticky;
+                        top: 2rem;
+                        align-self: flex-start;
+                        max-height: calc(100vh - 4rem);
+                        overflow-y: auto;
+                      }
+                      [data-testid="column"]:has(#right-panel-anchor)::-webkit-scrollbar { width: 6px; }
+                      [data-testid="column"]:has(#right-panel-anchor)::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+                    }
+                    </style>
+                    """
+                ),
+                unsafe_allow_html=True
+            )
 
             try:
                 hs = calculate_health_score(d)
@@ -1469,57 +1475,68 @@ setTimeout(sendHeight, 100);
                         for s in hs["suggestions"][:5]:
                             st.markdown(f"- {s}")
     else:
-        st.markdown("""
-        <div class="preview-card" style="display:flex;flex-direction:column;
-          align-items:center;justify-content:center;min-height:480px;gap:12px;">
-          <div style="font-size:3.5rem;">&#x1F4C4;</div>
-          <div style="font-size:.95rem;color:#64748B;font-weight:500;text-align:center;">
-            Your live resume preview will appear here.<br>
-            <span style="font-size:.8rem;color:#94A3B8;">
-            Edits on the left update automatically.</span>
-          </div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown(
+            clean_html(
+                """
+                <div class="preview-card" style="display:flex;flex-direction:column;
+                  align-items:center;justify-content:center;min-height:480px;gap:12px;">
+                  <div style="font-size:3.5rem;">&#x1F4C4;</div>
+                  <div style="font-size:.95rem;color:#64748B;font-weight:500;text-align:center;">
+                    Your live resume preview will appear here.<br>
+                    <span style="font-size:.8rem;color:#94A3B8;">
+                    Edits on the left update automatically.</span>
+                  </div>
+                </div>
+                """
+            ),
+            unsafe_allow_html=True
+        )
         if st.session_state.cmsg:
             st.error(f"&#x274C; {st.session_state.cmsg}")
 
     # Keyboard shortcuts mapping script
-    st.markdown("""
-    <script>
-    const parentDoc = window.parent.document;
-    parentDoc.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        const buttons = parentDoc.querySelectorAll('button');
-        for (const btn of buttons) {
-            if (btn.innerText.trim() === '↩' && !btn.disabled) {
-                btn.click();
-                break;
+    st.markdown(
+        clean_html(
+            """
+            <script>
+            const parentDoc = window.parent.document;
+            parentDoc.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                const buttons = parentDoc.querySelectorAll('button');
+                for (const btn of buttons) {
+                    if (btn.innerText.trim() === '↩' && !btn.disabled) {
+                        btn.click();
+                        break;
+                    }
+                }
             }
-        }
-    }
-    if ((e.ctrlKey && e.key.toLowerCase() === 'y') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'z')) {
-        e.preventDefault();
-        const buttons = parentDoc.querySelectorAll('button');
-        for (const btn of buttons) {
-            if (btn.innerText.trim() === '↪' && !btn.disabled) {
-                btn.click();
-                break;
+            if ((e.ctrlKey && e.key.toLowerCase() === 'y') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'z')) {
+                e.preventDefault();
+                const buttons = parentDoc.querySelectorAll('button');
+                for (const btn of buttons) {
+                    if (btn.innerText.trim() === '↪' && !btn.disabled) {
+                        btn.click();
+                        break;
+                    }
+                }
             }
-        }
-    }
-    if (e.ctrlKey && e.key.toLowerCase() === 's') {
-        e.preventDefault();
-        const buttons = parentDoc.querySelectorAll('button');
-        for (const btn of buttons) {
-            if (btn.innerText.trim().includes('Save to File') && !btn.disabled) {
-                btn.click();
-                break;
+            if (e.ctrlKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                const buttons = parentDoc.querySelectorAll('button');
+                for (const btn of buttons) {
+                    if (btn.innerText.trim().includes('Save to File') && !btn.disabled) {
+                        btn.click();
+                        break;
+                    }
+                }
             }
-        }
-    }
-    });
-    </script>
-    """, unsafe_allow_html=True)
+            });
+            </script>
+            """
+        ),
+        unsafe_allow_html=True
+    )
 
     # ── FIXED BOTTOM ACTIONS BAR ──
     if st.session_state.navigation_page == "workspace":

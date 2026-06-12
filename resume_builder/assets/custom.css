@@ -5,13 +5,13 @@ html, body, [data-testid="stAppViewContainer"],
 .main .block-container {
   font-family: 'Inter', sans-serif !important;
   background: #F8F4EE !important; /* Update background to beige/cream */
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* Force all generic text dark so cloud dark-mode doesn't override */
 p, span, div, li, td, th, label,
 h1, h2, h3, h4, h5, h6 {
-  color: #1E293B;
+  color: var(--color-text-1);
 }
 
 /* Streamlit markdown elements */
@@ -21,7 +21,7 @@ h1, h2, h3, h4, h5, h6 {
 [data-testid="stMarkdownContainer"] h1,
 [data-testid="stMarkdownContainer"] h2,
 [data-testid="stMarkdownContainer"] h3 {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 #MainMenu, footer, [data-testid="stHeader"],
@@ -39,7 +39,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Light Premium Top Bar Toolbar ── */
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-  background: #FFFFFF !important;
+  background: var(--color-surface) !important;
   padding: 14px 20px !important;
   border-radius: 16px !important;
   border: 1px solid #D9C2A9 !important;
@@ -51,25 +51,25 @@ div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="
 /* Style selectboxes inside the top bar */
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] > div {
   border-radius: 10px !important;
-  border: 1px solid #E2E8F0 !important;
-  background-color: #F8FAFC !important;
+  border: 1px solid var(--color-border) !important;
+  background-color: var(--color-badge-bg) !important;
   height: 38px !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] span {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
   font-weight: 500 !important;
   font-size: 0.82rem !important;
 }
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stSelectbox div[data-baseweb="select"] svg {
-  fill: #1E293B !important;
+  fill: var(--color-text-1) !important;
 }
 
 /* Style buttons inside the top bar */
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button {
-  background-color: #F8FAFC !important;
-  border: 1px solid #E2E8F0 !important;
-  color: #1E293B !important;
+  background-color: var(--color-badge-bg) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text-1) !important;
   border-radius: 10px !important;
   height: 38px !important;
   font-size: 0.83rem !important;
@@ -82,17 +82,17 @@ div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button:hover:not(:disabled) {
   background-color: #F1F5F9 !important;
   border-color: #CBD5E1 !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] button:disabled {
   opacity: 0.5 !important;
-  color: #94A3B8 !important;
+  color: var(--color-text-3) !important;
 }
 
 /* Custom styling for color picker block inside top bar */
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="stColorPickerColorBlock"] {
   border-radius: 8px !important;
-  border: 1px solid #E2E8F0 !important;
+  border: 1px solid var(--color-border) !important;
 }
 div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] .stColorPicker > div {
   margin-top: -6px !important;
@@ -158,7 +158,7 @@ div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="
 
 /* Ensure secondary buttons and other text blocks are readable */
 .stButton button[kind="secondary"] {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
   background-color: #EDE5D9 !important;
   border: 1px solid #C4A78C !important;
 }
@@ -168,7 +168,7 @@ div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="
 }
 
 .stTextInput input, .stTextArea textarea {
-  border-radius: 7px !important; border-color: #E2E8F0 !important;
+  border-radius: 7px !important; border-color: var(--color-border) !important;
   font-family: 'Inter', sans-serif !important; font-size: .82rem !important;
   padding: 6px 10px !important;
   background: #FAFBFF !important;
@@ -183,33 +183,33 @@ div:has(#top-bar-marker) + div[data-testid="element-container"] > [data-testid="
 
 /* Inputs Placeholders Contrast */
 .stTextInput input::placeholder, .stTextArea textarea::placeholder {
-  color: #64748B !important; opacity: 1 !important;
+  color: var(--color-text-2) !important; opacity: 1 !important;
 }
 .stTextInput input::-webkit-input-placeholder, .stTextArea textarea::-webkit-input-placeholder {
-  color: #64748B !important; opacity: 1 !important;
+  color: var(--color-text-2) !important; opacity: 1 !important;
 }
 .stTextInput input::-moz-placeholder, .stTextArea textarea::-moz-placeholder {
-  color: #64748B !important; opacity: 1 !important;
+  color: var(--color-text-2) !important; opacity: 1 !important;
 }
 .stTextInput input:-ms-input-placeholder, .stTextArea textarea:-ms-input-placeholder {
-  color: #64748B !important; opacity: 1 !important;
+  color: var(--color-text-2) !important; opacity: 1 !important;
 }
 
 div[data-testid="stWidgetLabel"] p {
   font-size: .78rem !important; font-weight: 600 !important;
-  color: #1E293B !important; margin-bottom: 2px !important;
+  color: var(--color-text-1) !important; margin-bottom: 2px !important;
 }
 
 div[data-testid="element-container"] { margin-bottom: 0.3rem !important; }
 
 .stExpander {
-  border: 1.5px solid #E2E8F0 !important; border-radius: 10px !important;
+  border: 1.5px solid var(--color-border) !important; border-radius: 10px !important;
   background: #FAFBFF !important; margin-bottom: 5px !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 .repo-card {
-  background: #FFFFFF;
+  background: var(--color-surface);
   border: 1px solid #D9C2A9;
   border-radius: 18px;
   padding: 18px;
@@ -295,19 +295,19 @@ div[data-testid="element-container"] { margin-bottom: 0.3rem !important; }
 }
 .stExpander summary {
   font-size: .82rem !important; font-weight: 600 !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 .stExpander summary:hover {
-  color: #6366F1 !important;
+  color: var(--color-primary) !important;
 }
 .stExpander summary svg {
-  fill: #1E293B !important;
+  fill: var(--color-text-1) !important;
 }
 .stExpander [data-testid="stExpanderDetails"] p,
 .stExpander [data-testid="stExpanderDetails"] span,
 .stExpander [data-testid="stExpanderDetails"] div,
 .stExpander [data-testid="stExpanderDetails"] li {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 .stTabs [data-baseweb="tab-list"] {
@@ -326,7 +326,7 @@ div[data-testid="element-container"] { margin-bottom: 0.3rem !important; }
 .stSlider { padding: 0 2px !important; }
 div[data-testid="stSlider"] { margin-bottom: 0 !important; }
 div[data-testid="stSlider"] span {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* ── Metric pill ── */
@@ -334,9 +334,9 @@ div[data-testid="stSlider"] span {
   background: #fff; border: 1.5px solid #D9C2A9; border-radius: 10px;
   padding: 10px 12px; text-align: center;
 }
-.kpi-lbl { font-size: .62rem; font-weight: 700; color: #94A3B8;
+.kpi-lbl { font-size: .62rem; font-weight: 700; color: var(--color-text-3);
   text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1px; }
-.kpi-val { font-size: 1.7rem; font-weight: 800; line-height: 1.1; color: #1E293B !important; } .c-green { color: #8B5E3C !important; } .c-amber { color: #A67A5F !important; } .c-red { color: #B0532F !important; }
+.kpi-val { font-size: 1.7rem; font-weight: 800; line-height: 1.1; color: var(--color-text-1) !important; } .c-green { color: #8B5E3C !important; } .c-amber { color: #A67A5F !important; } .c-red { color: #B0532F !important; }
 
 /* ── Import upload zone ── */
 .upload-zone {
@@ -346,7 +346,7 @@ div[data-testid="stSlider"] span {
 }
 
 /* ── Divider ── */
-.hdiv { border-top: 1.5px solid #E2E8F0; margin: 12px 0; }
+.hdiv { border-top: 1.5px solid var(--color-border); margin: 12px 0; }
 
 /* Scrollbar styling */
 .left-panel::-webkit-scrollbar { width: 5px; } .left-panel::-webkit-scrollbar-thumb { background: #C4A78C; border-radius: 10px; }
@@ -361,7 +361,7 @@ div[data-testid="stSlider"] span {
 [data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h4,
 [data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h5,
 [data-testid="stAppViewContainer"] .main [data-testid="stMarkdownContainer"] h6 {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* Standard Streamlit metrics labels and values */
@@ -369,30 +369,30 @@ div[data-testid="stMetricLabel"] {
   color: #475569 !important;
 }
 div[data-testid="stMetricValue"] {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* Standard selectbox contrast */
 .main div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
   background-color: #FAFBFF !important;
-  border: 1px solid #E2E8F0 !important;
-  color: #1E293B !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text-1) !important;
 }
 .main div[data-testid="stSelectbox"] div[data-baseweb="select"] span {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 .main div[data-testid="stSelectbox"] div[data-baseweb="select"] svg {
-  fill: #1E293B !important;
+  fill: var(--color-text-1) !important;
 }
 
 /* Radio button text visibility */
 div[data-testid="stRadio"] label span {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* Checkbox labels */
 div[data-testid="stCheckbox"] label span {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* File uploader contrast */
@@ -401,26 +401,26 @@ div[data-testid="stFileUploader"] section {
   border: 1px dashed #C7D2FE !important;
 }
 div[data-testid="stFileUploader"] section * {
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* ── Onboarding Banner ─────────────────────────────────── */
 .onboarding-banner {
-  background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
-  border: 1.5px solid #C7D2FE;
-  border-left: 4px solid #6366F1;
+  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-border) 100%);
+  border: 1.5px solid #D9C2A9;
+  border-left: 4px solid var(--color-primary);
   border-radius: 12px;
   padding: 12px 18px;
   font-size: .86rem;
-  color: #3730A3;
+  color: #5A3D28;
   line-height: 1.5;
   margin-bottom: 4px;
 }
-.onboarding-banner b { color: #312E81; }
+.onboarding-banner b { color: #3E2718; }
 .onboarding-banner .ob-step {
   display: inline-flex;
   align-items: center;
-  background: rgba(99,102,241,.12);
+  background: rgba(168,106,61,.12);
   border-radius: 100px;
   padding: 2px 10px;
   margin: 0 3px;
@@ -430,9 +430,9 @@ div[data-testid="stFileUploader"] section * {
 
 /* ── Tab Hint Chips ────────────────────────────────────── */
 .tab-hint {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-left: 3px solid #6366F1;
+  background: var(--color-badge-bg);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
   border-radius: 8px;
   padding: 8px 13px;
   font-size: .8rem;
@@ -441,13 +441,13 @@ div[data-testid="stFileUploader"] section * {
   line-height: 1.45;
 }
 .tab-hint .th-icon { margin-right: 5px; }
-.tab-hint b { color: #1E293B; }
+.tab-hint b { color: var(--color-text-1); }
 
 /* Sub-header Progress Card Styling */
 div:has(#sub-header-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-  background: #FFFFFF !important;
+  background: var(--color-surface) !important;
   border-radius: 16px !important;
-  border: 1px solid #E2E8F0 !important;
+  border: 1px solid var(--color-border) !important;
   padding: 12px 20px !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
   margin-bottom: 12px !important;
@@ -473,7 +473,7 @@ div[data-testid="stDialog"] div[role="dialog"] {
   width: 90% !important;
   border-radius: 16px !important;
   border: 1px solid #E8DED2 !important;
-  background-color: #FFFFFF !important;
+  background-color: var(--color-surface) !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
 }
 
@@ -489,14 +489,14 @@ div[data-testid="stDialog"] div[role="dialog"] {
 }
 .wizard-header .icon {
   font-size: 1.8rem !important;
-  background: #F8F5EF !important;
+  background: var(--color-badge-bg) !important;
   width: 44px !important;
   height: 44px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   border-radius: 12px !important;
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
 }
 .wizard-title {
   font-size: 1.35rem !important;
@@ -506,7 +506,7 @@ div[data-testid="stDialog"] div[role="dialog"] {
 }
 .wizard-subtitle {
   font-size: 0.85rem !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
   margin-top: 2px !important;
 }
 
@@ -523,9 +523,9 @@ div[data-testid="stDialog"] div[role="dialog"] {
   width: 32px !important;
   height: 32px !important;
   border-radius: 50% !important;
-  background: #FFFFFF !important;
+  background: var(--color-surface) !important;
   border: 2px solid #D8CFC2 !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -536,15 +536,15 @@ div[data-testid="stDialog"] div[role="dialog"] {
   z-index: 1 !important;
 }
 .wizard-step.active {
-  border-color: #A47148 !important;
-  background: #A47148 !important;
-  color: #FFFFFF !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-primary) !important;
+  color: var(--color-surface) !important;
   box-shadow: 0 0 0 4px rgba(164, 113, 72, 0.15) !important;
 }
 .wizard-step.completed {
-  border-color: #A47148 !important;
-  background: #F8F5EF !important;
-  color: #A47148 !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-badge-bg) !important;
+  color: var(--color-primary) !important;
 }
 .wizard-stepper-connector {
   flex: 1 !important;
@@ -554,7 +554,7 @@ div[data-testid="stDialog"] div[role="dialog"] {
   transition: background-color 0.2s ease !important;
 }
 .wizard-stepper-connector.completed {
-  background: #A47148 !important;
+  background: var(--color-primary) !important;
 }
 
 /* Stepper Labels below circles */
@@ -570,14 +570,14 @@ div[data-testid="stDialog"] div[role="dialog"] {
   text-align: center !important;
   font-size: 0.8rem !important;
   font-weight: 600 !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
 }
 .wizard-stepper-label.active {
   color: #1E2A44 !important;
   font-weight: 700 !important;
 }
 .wizard-stepper-label.completed {
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
 }
 
 /* Target card horizontal grid blocks via marker */
@@ -589,7 +589,7 @@ div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-tes
 
 /* Card Column */
 div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"] {
-  background: #FFFFFF !important;
+  background: var(--color-surface) !important;
   border: 1.5px solid #E8DED2 !important;
   border-radius: 14px !important;
   padding: 20px 16px !important;
@@ -605,15 +605,15 @@ div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-tes
 
 /* Selected/Highlighted Card Column (contains a disabled Select button) */
 div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"]:has(button[disabled]) {
-  border-color: #A47148 !important;
-  background-color: #F8F5EF !important;
+  border-color: var(--color-primary) !important;
+  background-color: var(--color-badge-bg) !important;
   box-shadow: 0 8px 20px rgba(164, 113, 72, 0.08) !important;
 }
 
 /* Hover style for Card Column */
 div:has(#wizard-cards-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] div[data-testid="column"]:hover:not(:has(button[disabled])) {
   transform: translateY(-2px) !important;
-  border-color: #A47148 !important;
+  border-color: var(--color-primary) !important;
   box-shadow: 0 8px 16px rgba(0,0,0,0.03) !important;
 }
 
@@ -703,8 +703,8 @@ body {
   left: 0;
   right: 0;
   height: 72px;
-  background-color: #FFFFFF !important;
-  border-bottom: 1px solid #E7DED4 !important;
+  background-color: var(--color-surface) !important;
+  border-bottom: 1px solid var(--color-border) !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -721,7 +721,7 @@ body {
 
 .hamburger-menu {
   font-size: 1.4rem;
-  color: #1E293B;
+  color: var(--color-text-1);
   cursor: pointer;
   padding: 4px;
   border-radius: 6px;
@@ -731,7 +731,7 @@ body {
   justify-content: center;
 }
 .hamburger-menu:hover {
-  background-color: #F8F5EF;
+  background-color: var(--color-badge-bg);
 }
 
 .logo-container {
@@ -745,7 +745,7 @@ body {
 .logo-text {
   font-weight: 700;
   font-size: 1.15rem;
-  color: #1E293B;
+  color: var(--color-text-1);
   font-family: 'Inter', sans-serif;
   letter-spacing: -0.02em;
 }
@@ -763,7 +763,7 @@ body {
 }
 .noti-btn {
   font-size: 1.3rem;
-  color: #1E293B;
+  color: var(--color-text-1);
   position: relative;
   cursor: pointer;
   padding: 6px;
@@ -774,7 +774,7 @@ body {
   justify-content: center;
 }
 .noti-btn:hover {
-  background-color: #F8F5EF;
+  background-color: var(--color-badge-bg);
 }
 .noti-badge {
   position: absolute;
@@ -782,22 +782,22 @@ body {
   right: 4px;
   width: 8px;
   height: 8px;
-  background-color: #A47148;
+  background-color: var(--color-primary);
   border-radius: 50%;
-  border: 1.5px solid #FFFFFF;
+  border: 1.5px solid var(--color-surface);
 }
 .profile-avatar {
   width: 36px;
   height: 36px;
-  background-color: #A47148;
-  color: #FFFFFF;
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 0.9rem;
-  border: 2px solid #E7DED4;
+  border: 2px solid var(--color-border);
 }
 
 /* Adapt Header for Mobile */
@@ -830,8 +830,8 @@ body {
   left: 0;
   bottom: 0;
   width: var(--sidebar-collapsed-w);
-  background-color: #FFFFFF !important;
-  border-right: 1px solid #E7DED4 !important;
+  background-color: var(--color-surface) !important;
+  border-right: 1px solid var(--color-border) !important;
   z-index: 999;
   display: flex;
   flex-direction: column;
@@ -892,7 +892,7 @@ body {
   justify-content: center;
   padding: 12px;
   border-radius: 12px;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: 8px;
@@ -910,13 +910,13 @@ body {
 }
 
 .sidebar-item:hover {
-  background-color: #F8F5EF;
-  color: #A47148 !important;
+  background-color: var(--color-badge-bg);
+  color: var(--color-primary) !important;
 }
 
 .sidebar-item.active {
-  background-color: #F8F5EF;
-  color: #A47148 !important;
+  background-color: var(--color-badge-bg);
+  color: var(--color-primary) !important;
   font-weight: 700;
 }
 
@@ -950,7 +950,7 @@ body {
 /* 4. Hero Section Card styling */
 div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
   background: linear-gradient(135deg, #FFFDF9 0%, #F5EDE0 100%) !important;
-  border: 1px solid #E7DED4 !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 24px !important;
   padding: 32px !important;
   box-shadow: 0 8px 30px rgba(0,0,0,0.06) !important;
@@ -984,7 +984,7 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
 .hero-headline {
   font-size: 1.8rem !important;
   font-weight: 800 !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
   line-height: 1.25 !important;
   letter-spacing: -0.02em !important;
   margin-bottom: 12px !important;
@@ -992,14 +992,14 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
 
 .hero-subtext {
   font-size: 0.95rem !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
   line-height: 1.5 !important;
   margin-bottom: 20px !important;
 }
 
 .hero-resume-illustration {
-  background: #FFFFFF !important;
-  border: 1px solid #E7DED4 !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 16px !important;
   padding: 16px 16px 32px 16px !important;
   box-shadow: 0 8px 30px rgba(0,0,0,0.04) !important;
@@ -1015,7 +1015,7 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
 .illus-avatar {
   width: 28px !important;
   height: 28px !important;
-  background: #F8F5EF !important;
+  background: var(--color-badge-bg) !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
@@ -1025,13 +1025,13 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
 .illus-title {
   font-size: 0.65rem !important;
   font-weight: 800 !important;
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
   letter-spacing: 0.05em !important;
   margin-top: 4px !important;
 }
 .illus-line {
   height: 4px !important;
-  background: #F8F5EF !important;
+  background: var(--color-badge-bg) !important;
   border-radius: 2px !important;
   width: 100% !important;
 }
@@ -1042,8 +1042,8 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
   position: absolute !important;
   bottom: 16px !important;
   right: -12px !important;
-  background: #FFFFFF !important;
-  border: 2px solid #A47148 !important;
+  background: var(--color-surface) !important;
+  border: 2px solid var(--color-primary) !important;
   border-radius: 50% !important;
   width: 56px !important;
   height: 56px !important;
@@ -1057,20 +1057,20 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
 .score-number {
   font-size: 0.95rem !important;
   font-weight: 800 !important;
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
   line-height: 1 !important;
 }
 .score-text {
   font-size: 0.35rem !important;
   font-weight: 700 !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
   text-transform: uppercase !important;
   margin-top: 2px !important;
 }
 .score-desc {
   font-size: 0.38rem !important;
   font-weight: 800 !important;
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
 }
 
 /* Hero responsive overrides */
@@ -1107,28 +1107,28 @@ div:has(#hero-marker) + div[data-testid="element-container"] > [data-testid="stH
 }
 div:has(.search-input-box) input {
   border-radius: 12px !important;
-  border: 1px solid #E7DED4 !important;
-  background: #FFFFFF !important;
+  border: 1px solid var(--color-border) !important;
+  background: var(--color-surface) !important;
   height: 46px !important;
   padding-left: 16px !important;
   font-size: 0.9rem !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 div:has(.search-input-box) input:focus {
-  border-color: #A47148 !important;
+  border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 3px rgba(164, 113, 72, 0.1) !important;
 }
 div:has(button[key="home_filter_btn"]) button {
   height: 46px !important;
   border-radius: 12px !important;
-  border: 1px solid #E7DED4 !important;
-  background: #FFFFFF !important;
-  color: #1E293B !important;
+  border: 1px solid var(--color-border) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text-1) !important;
 }
 div:has(button[key="home_filter_btn"]) button:hover {
-  border-color: #A47148 !important;
-  background: #F8F5EF !important;
-  color: #A47148 !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-badge-bg) !important;
+  color: var(--color-primary) !important;
 }
 
 
@@ -1211,8 +1211,8 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
 
 /* Single Resume Grid Card */
 .resume-grid-card {
-  background: #FFFFFF !important;
-  border: 1px solid #E7DED4 !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 20px !important;
   padding: 16px !important;
   box-shadow: 0 8px 30px rgba(0,0,0,0.02) !important;
@@ -1231,8 +1231,8 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
 
 .resume-grid-thumb {
   height: 130px !important;
-  background: #F8F5EF !important;
-  border: 1px solid #E7DED4 !important;
+  background: var(--color-badge-bg) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
@@ -1250,7 +1250,7 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
 .resume-grid-title {
   font-size: 0.9rem !important;
   font-weight: 700 !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
   margin-top: 4px !important;
 }
 
@@ -1263,7 +1263,7 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
 
 .resume-grid-date {
   font-size: 0.72rem !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
   margin-top: auto !important;
 }
 
@@ -1295,8 +1295,8 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
 .template-scroll-card {
   min-width: 140px !important;
   max-width: 140px !important;
-  background: #FFFFFF !important;
-  border: 1px solid #E7DED4 !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 16px !important;
   padding: 12px !important;
   text-align: center !important;
@@ -1306,24 +1306,24 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
 }
 .template-scroll-card:hover {
   transform: translateY(-2px) !important;
-  border-color: #A47148 !important;
+  border-color: var(--color-primary) !important;
   box-shadow: 0 8px 20px rgba(164,113,72,0.06) !important;
 }
 .template-scroll-thumb {
   height: 100px !important;
-  background: #F8F5EF !important;
+  background: var(--color-badge-bg) !important;
   border-radius: 10px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 2.2rem !important;
   margin-bottom: 8px !important;
-  border: 1px solid #E7DED4 !important;
+  border: 1px solid var(--color-border) !important;
 }
 .template-scroll-name {
   font-size: 0.75rem !important;
   font-weight: 700 !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 
 /* 9. Mobile Sticky Bottom Nav */
@@ -1334,8 +1334,8 @@ div[data-testid="stVerticalBlock"]:has(#my-resumes-grid-marker):not(:has(div[dat
     left: 0px !important;
     right: 0px !important;
     width: 100vw !important;
-    background: #FFFFFF !important;
-    border-top: 1px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    border-top: 1px solid var(--color-border) !important;
     padding: 8px 12px 14px 12px !important;
     z-index: 1000 !important;
     box-shadow: 0 -4px 12px rgba(0,0,0,0.03) !important;
@@ -1353,7 +1353,7 @@ div:has(#bottom-nav-marker) + div[data-testid="element-container"] > [data-testi
 div:has(#bottom-nav-marker) + div[data-testid="element-container"] button {
   background: transparent !important;
   border: none !important;
-  color: #94A3B8 !important;
+  color: var(--color-text-3) !important;
   font-size: 0.8rem !important;
   font-weight: 700 !important;
   display: flex !important;
@@ -1366,7 +1366,7 @@ div:has(#bottom-nav-marker) + div[data-testid="element-container"] button {
 
 
 div:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-testid="column"]:first-child button {
-  color: #A47148 !important; /* Active item color (Home) */
+  color: var(--color-primary) !important; /* Active item color (Home) */
 }
 
 /* ── Section Header Row ── */
@@ -1380,7 +1380,7 @@ div:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-test
 .section-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--color-text-1);
   letter-spacing: -0.01em;
 }
 
@@ -1388,7 +1388,7 @@ div:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-test
 .theme-badge {
   display: inline-block;
   background: #F5EDE0;
-  color: #A47148;
+  color: var(--color-primary);
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
@@ -1399,9 +1399,9 @@ div:has(#bottom-nav-marker) + div[data-testid="element-container"] div[data-test
 /* ── Continue Editing Card (refactored) ── */
 /* Outer container: styled as a horizontal card */
 div:has(#continue-card-marker) + div[data-testid="element-container"] > [data-testid="stHorizontalBlock"] {
-  background: #FFFFFF !important;
-  border: 1px solid #E7DED4 !important;
-  border-left: 4px solid #A47148 !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-left: 4px solid var(--color-primary) !important;
   border-radius: 20px !important;
   padding: 16px 20px !important;
   box-shadow: 0 8px 30px rgba(0,0,0,0.02) !important;
@@ -1422,10 +1422,10 @@ div:has(#continue-card-marker) + div[data-testid="element-container"] > [data-te
   width: 56px !important;
   min-width: 56px !important;
   height: 72px !important;
-  border: 1px solid #E7DED4 !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 8px !important;
   overflow: hidden !important;
-  background: #F8F5EF !important;
+  background: var(--color-badge-bg) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1440,11 +1440,11 @@ div:has(#continue-card-marker) + div[data-testid="element-container"] > [data-te
 .continue-card-title {
   font-size: 0.95rem !important;
   font-weight: 700 !important;
-  color: #1E293B !important;
+  color: var(--color-text-1) !important;
 }
 .continue-card-date {
   font-size: 0.75rem !important;
-  color: #64748B !important;
+  color: var(--color-text-2) !important;
 }
 
 /* Continue edit button wrapper aligns the button vertically in the column */
@@ -1459,20 +1459,20 @@ div:has(button[key="btn_continue_icon"]) button {
   width: 42px !important;
   height: 42px !important;
   border-radius: 12px !important;
-  border: 1px solid #E7DED4 !important;
-  background: #FFFFFF !important;
-  color: #A47148 !important;
+  border: 1px solid var(--color-border) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-primary) !important;
   font-size: 1rem !important;
   box-shadow: none !important;
 }
 div:has(button[key="btn_continue_icon"]) button:hover {
-  border-color: #A47148 !important;
-  background: #F8F5EF !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-badge-bg) !important;
 }
 
 /* ── Dashed Create Card ── */
 .dashed-create-card {
-  background: #FFFFFF !important;
+  background: var(--color-surface) !important;
   border: 2px dashed #D9C2A6 !important;
   border-radius: 20px !important;
   display: flex !important;
@@ -1486,25 +1486,25 @@ div:has(button[key="btn_continue_icon"]) button:hover {
   min-height: 160px !important;
 }
 .dashed-create-card:hover {
-  border-color: #A47148 !important;
+  border-color: var(--color-primary) !important;
   background: #FFFBF7 !important;
   box-shadow: 0 8px 24px rgba(164,113,72,0.06) !important;
   transform: translateY(-2px) !important;
 }
 .dashed-create-icon {
   font-size: 2rem !important;
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
 }
 .dashed-create-text {
   font-size: 0.85rem !important;
   font-weight: 600 !important;
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
 }
 
 /* ── Hero CTA Buttons override ── */
 div:has(button[key="hero_create_btn"]) button {
-  background: linear-gradient(135deg, #A47148, #C0895E) !important;
-  color: #FFFFFF !important;
+  background: linear-gradient(135deg, var(--color-primary), #C0895E) !important;
+  color: var(--color-surface) !important;
   border: none !important;
   border-radius: 12px !important;
   height: 48px !important;
@@ -1517,9 +1517,9 @@ div:has(button[key="hero_create_btn"]) button:hover {
   box-shadow: 0 8px 20px rgba(164,113,72,0.4) !important;
 }
 div:has(button[key="hero_import_btn"]) button {
-  background: #FFFFFF !important;
-  color: #A47148 !important;
-  border: 1.5px solid #A47148 !important;
+  background: var(--color-surface) !important;
+  color: var(--color-primary) !important;
+  border: 1.5px solid var(--color-primary) !important;
   border-radius: 12px !important;
   height: 48px !important;
   font-size: 0.95rem !important;
@@ -1531,7 +1531,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
 
 /* ── Hero highlight span ── */
 .hero-highlight {
-  color: #A47148 !important;
+  color: var(--color-primary) !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1600,7 +1600,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-section-title {
     font-size: 22px !important;
     font-weight: 700 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
     font-family: 'Inter', sans-serif !important;
   }
 
@@ -1618,35 +1618,35 @@ div:has(button[key="hero_import_btn"]) button:hover {
   div:has(.mob-search-input-box) input {
     height: 56px !important;
     border-radius: 18px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
     padding-left: 20px !important;
     font-size: 15px !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
   }
   div:has(.mob-search-input-box) input:focus {
-    border-color: #A47148 !important;
+    border-color: var(--color-primary) !important;
     box-shadow: 0 0 0 3px rgba(164, 113, 72, 0.1) !important;
   }
   div:has(button[key="mob_filter_btn"]) button {
     height: 56px !important;
     width: 56px !important;
     border-radius: 18px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
-    color: #1E293B !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text-1) !important;
     font-size: 18px !important;
     padding: 0 !important;
   }
   div:has(button[key="mob_filter_btn"]) button:hover {
-    border-color: #A47148 !important;
-    background: #F8F5EF !important;
+    border-color: var(--color-primary) !important;
+    background: var(--color-badge-bg) !important;
   }
 
   /* Mobile Hero Card */
   .mob-hero-card {
-    background: #FFF8F1 !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-badge-bg) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 24px !important;
     padding: 24px 24px 96px 24px !important; /* bottom padding fits buttons */
     position: relative !important;
@@ -1665,14 +1665,14 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-hero-title {
     font-size: 24px !important;
     font-weight: 800 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
     line-height: 1.25 !important;
     margin: 0 0 8px 0 !important;
     font-family: 'Inter', sans-serif !important;
   }
   .mob-hero-subtitle {
     font-size: 15px !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
     margin: 0 !important;
     line-height: 1.4 !important;
   }
@@ -1681,8 +1681,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
     flex-shrink: 0 !important;
   }
   .mob-illus-resume {
-    background: #FFFFFF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 12px !important;
     padding: 8px 8px 16px 8px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
@@ -1697,12 +1697,12 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-illus-title {
     font-size: 6px !important;
     font-weight: 800 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     margin-top: 2px !important;
   }
   .mob-illus-line {
     height: 2px !important;
-    background: #F8F5EF !important;
+    background: var(--color-badge-bg) !important;
     border-radius: 1px !important;
     width: 100% !important;
   }
@@ -1713,8 +1713,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
     position: absolute !important;
     bottom: -6px !important;
     right: -10px !important;
-    background: #FFFFFF !important;
-    border: 1.5px solid #A47148 !important;
+    background: var(--color-surface) !important;
+    border: 1.5px solid var(--color-primary) !important;
     border-radius: 50% !important;
     width: 32px !important;
     height: 32px !important;
@@ -1728,20 +1728,20 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-score-number {
     font-size: 10px !important;
     font-weight: 800 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     line-height: 1 !important;
   }
   .mob-score-text {
     font-size: 3px !important;
     font-weight: 700 !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
     text-transform: uppercase !important;
     margin-top: 1px !important;
   }
   .mob-score-desc {
     font-size: 3px !important;
     font-weight: 800 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
 
   /* Hero buttons positioning inside card */
@@ -1763,8 +1763,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
     max-width: 50% !important;
   }
   div:has(button[key="mob_hero_create_btn"]) button {
-    background: #A47148 !important;
-    color: #FFFFFF !important;
+    background: var(--color-primary) !important;
+    color: var(--color-surface) !important;
     border: none !important;
     border-radius: 14px !important;
     height: 52px !important;
@@ -1773,9 +1773,9 @@ div:has(button[key="hero_import_btn"]) button:hover {
     box-shadow: 0 4px 14px rgba(164,113,72,0.2) !important;
   }
   div:has(button[key="mob_hero_import_btn"]) button {
-    background: #FFFFFF !important;
-    color: #A47148 !important;
-    border: 1.5px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    color: var(--color-primary) !important;
+    border: 1.5px solid var(--color-border) !important;
     border-radius: 14px !important;
     height: 52px !important;
     font-size: 14px !important;
@@ -1784,9 +1784,9 @@ div:has(button[key="hero_import_btn"]) button:hover {
 
   /* Continue Editing Mobile Card */
   .mob-continue-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E7DED4 !important;
-    border-left: 4px solid #A47148 !important;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
+    border-left: 4px solid var(--color-primary) !important;
     border-radius: 20px !important;
     padding: 16px !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
@@ -1807,8 +1807,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-continue-thumb {
     width: 48px !important;
     height: 48px !important;
-    background: #F8F5EF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-badge-bg) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 10px !important;
     display: flex !important;
     align-items: center !important;
@@ -1823,7 +1823,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-continue-title {
     font-size: 15px !important;
     font-weight: 700 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
   }
   .mob-continue-meta {
     display: flex !important;
@@ -1832,7 +1832,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   }
   .mob-continue-badge {
     background: #F5EDE0 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     border-radius: 999px !important;
     font-size: 11px !important;
     font-weight: 700 !important;
@@ -1840,7 +1840,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   }
   .mob-continue-time {
     font-size: 12px !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
   }
 
   /* Overlay the edit button on continue card */
@@ -1856,9 +1856,9 @@ div:has(button[key="hero_import_btn"]) button:hover {
     width: 42px !important;
     height: 42px !important;
     border-radius: 12px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
-    color: #A47148 !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-primary) !important;
     font-size: 16px !important;
     padding: 0 !important;
     box-shadow: none !important;
@@ -1866,8 +1866,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
 
   /* My Resumes Stacked Cards */
   .mob-resume-card-container {
-    background: #FFFFFF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 20px !important;
     padding: 16px !important;
     height: 120px !important;
@@ -1890,8 +1890,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-resume-card-thumb {
     width: 56px !important;
     height: 72px !important;
-    background: #F8F5EF !important;
-    border: 1px solid #E7DED4 !important;
+    background: var(--color-badge-bg) !important;
+    border: 1px solid var(--color-border) !important;
     border-radius: 10px !important;
     display: flex !important;
     align-items: center !important;
@@ -1906,7 +1906,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   .mob-resume-card-title {
     font-size: 15px !important;
     font-weight: 700 !important;
-    color: #1E293B !important;
+    color: var(--color-text-1) !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -1920,7 +1920,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   }
   .mob-resume-card-badge {
     background: #F5EDE0 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
     border-radius: 999px !important;
     font-size: 10px !important;
     font-weight: 700 !important;
@@ -1928,7 +1928,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
   }
   .mob-resume-card-time {
     font-size: 11px !important;
-    color: #64748B !important;
+    color: var(--color-text-2) !important;
   }
 
   /* Absolute position Streamlit action columns overlaying the card actions placeholder */
@@ -1957,8 +1957,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
   div:has(button[key^="mob_grid_edit_"]) button {
     height: 36px !important;
     border-radius: 10px !important;
-    background: #A47148 !important;
-    color: #FFFFFF !important;
+    background: var(--color-primary) !important;
+    color: var(--color-surface) !important;
     font-size: 12px !important;
     font-weight: 700 !important;
     border: none !important;
@@ -1969,9 +1969,9 @@ div:has(button[key="hero_import_btn"]) button:hover {
     height: 36px !important;
     width: 34px !important;
     border-radius: 10px !important;
-    border: 1px solid #E7DED4 !important;
-    background: #FFFFFF !important;
-    color: #1E293B !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text-1) !important;
     font-size: 14px !important;
     font-weight: 700 !important;
     padding: 0 !important;
@@ -1980,7 +1980,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
 
   /* Mobile Dashed Create Card */
   .mob-dashed-create-card {
-    background: #FFFFFF !important;
+    background: var(--color-surface) !important;
     border: 2px dashed #D9C2A6 !important;
     border-radius: 20px !important;
     display: flex !important;
@@ -1997,12 +1997,12 @@ div:has(button[key="hero_import_btn"]) button:hover {
   }
   .mob-dashed-create-icon {
     font-size: 24px !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
   .mob-dashed-create-text {
     font-size: 14px !important;
     font-weight: 700 !important;
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
 
   /* FAB */
@@ -2013,8 +2013,8 @@ div:has(button[key="hero_import_btn"]) button:hover {
     width: 60px !important;
     height: 60px !important;
     border-radius: 50% !important;
-    background: #A47148 !important;
-    color: #FFFFFF !important;
+    background: var(--color-primary) !important;
+    color: var(--color-surface) !important;
     font-size: 28px !important;
     display: flex !important;
     align-items: center !important;
@@ -2036,7 +2036,7 @@ div:has(button[key="hero_import_btn"]) button:hover {
     background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    border-top: 1px solid #E7DED4 !important;
+    border-top: 1px solid var(--color-border) !important;
     display: flex !important;
     justify-content: space-around !important;
     align-items: center !important;
@@ -2049,13 +2049,13 @@ div:has(button[key="hero_import_btn"]) button:hover {
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #94A3B8 !important;
+    color: var(--color-text-3) !important;
     cursor: pointer !important;
     transition: color 0.2s !important;
     flex: 1 !important;
   }
   .mob-nav-item.active {
-    color: #A47148 !important;
+    color: var(--color-primary) !important;
   }
   .mob-nav-icon {
     font-size: 24px !important;
