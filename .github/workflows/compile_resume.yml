@@ -3,7 +3,7 @@ name: Compile Resume PDF
 on:
   push:
     paths:
-      - 'resume.json'
+      - 'exports/json/*.json'
   workflow_dispatch:
 
 permissions:
@@ -29,23 +29,23 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install reportlab pypdf
+          pip install -r config/requirements.txt
 
-      # 4. Compile Resume
+      # 4. Compile Resume PDFs
       - name: Compile Resume PDF
         run: |
-          python generate_resume.py
+          python scripts/build_resume.py
 
       # 5. Commit and Push the compiled PDF
-      - name: Commit and Push Compiled PDF
+      - name: Commit and Push Compiled PDFs
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add Sejal_Bhagat_Resume.pdf
+          git add exports/pdf/*.pdf
           
           # Only commit and push if there are changes
           if ! git diff --cached --quiet; then
-            git commit -m "chore(pdf): auto-compile latest resume PDF [skip ci]"
+            git commit -m "chore(pdf): auto-compile latest resume PDFs [skip ci]"
             git push
           else
             echo "No changes in compiled PDF."
